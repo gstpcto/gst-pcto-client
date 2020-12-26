@@ -130,11 +130,13 @@ export default function Dashboard() {
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                         Dashboard
                     </Typography>
+                    {/*
                     <IconButton color="inherit">
                         <Badge badgeContent={4} color="secondary">
                             <NotificationsIcon />
                         </Badge>
                     </IconButton>
+                    */}
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -158,7 +160,7 @@ export default function Dashboard() {
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
                     <Grid container spacing={3}>
-
+                        {/* contents  */}
                     </Grid>
                     <Box pt={4}>
                         <Copyright />
