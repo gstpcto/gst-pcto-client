@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignIn(props) {
   const classes = useStyles();
-
+  const [reload, setReload] =  React.useState(null);
   const data = {
     username: null,
     password: null
@@ -60,9 +60,10 @@ export default function SignIn(props) {
     data[input] = e.target.value;
   };
 
-  const handleLogin = () => {
-    auth.login(data);
-    // props.history.push('/dashboard');
+  const handleLogin = async () => {
+    await auth.login(data);
+    setReload(null);
+    if(auth.isAuthenticated())props.history.push('/dashboard');
   };
 
   return (

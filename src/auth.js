@@ -5,8 +5,9 @@ class Auth {
         this.authenticated = false;
     }
 
-    login({username, password}) {
-        axios.post('http://gstpcto.herokuapp.com/login', {
+    async login({username, password}) {
+        const _this = this;
+        await axios.post('http://gstpcto.herokuapp.com/login', {
             username: username,
             password: password
         })
@@ -15,8 +16,8 @@ class Auth {
                 const responseData = response.data;
                 const { data } = responseData;
                 console.log(data);
-                console.log(this.authenticated);
-                this.authenticated = true;
+                _this.authenticated = true;
+                console.log(_this.authenticated);
             })
             .catch(function (error) {
                 console.log(error);
