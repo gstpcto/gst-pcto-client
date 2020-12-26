@@ -12,6 +12,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import auth from '../auth';
 
 function Copyright() {
   return (
@@ -47,11 +48,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignIn() {
+export default function SignIn(props) {
   const classes = useStyles();
 
+  const data = {
+    username: null,
+    password: null
+  };
+
+  const handleChange = (input) => e => {
+    data[input] = e.target.value;
+  };
+
+  const handleLogin = () => {
+    auth.login(data);
+    // props.history.push('/dashboard');
+  };
+
   return (
-    
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <Paper className={classes.paper}>
@@ -62,7 +76,7 @@ export default function SignIn() {
           Accedi al portale
         </Typography>
         <form className={classes.form} noValidate>
-          <TextField
+          <TextField onChange={handleChange('username')}
             variant="outlined"
             margin="normal"
             required
@@ -73,7 +87,7 @@ export default function SignIn() {
             autoComplete="email"
             autoFocus
           />
-          <TextField
+          <TextField onChange={handleChange('password')}
             variant="outlined"
             margin="normal"
             required
@@ -84,16 +98,12 @@ export default function SignIn() {
             id="password"
             autoComplete="current-password"
           />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Rircodami"
-          />
           <Button
-            type="submit"
             fullWidth
             variant="contained"
             color="primary"
             className={classes.submit}
+            onClick={handleLogin}
           >
             ACCEDI
           </Button>

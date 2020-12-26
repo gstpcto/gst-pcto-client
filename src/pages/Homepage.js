@@ -8,7 +8,6 @@ export default function Homepage(props) {
             <Navbar {...props}/>
             <Grid container>
                 <Grid item xs={12}>
-                    cagasburro
                 </Grid>
             </Grid>
         </>
