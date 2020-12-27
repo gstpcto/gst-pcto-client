@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
-  errorMessage : {
+  errorMessage: {
     color: "#e53935",
   }
 }));
@@ -42,9 +42,9 @@ export default function Login(props) {
   const [loginUsername, setLoginUsername] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  
+
   const handleLogin = async () => {
-    await auth.login({username: loginUsername, password: loginPassword});
+    await auth.login({ username: loginUsername, password: loginPassword });
     if (auth.isAuthenticated()) {
       props.history.push('/dashboard');
     } else {
@@ -66,7 +66,7 @@ export default function Login(props) {
           {errorMessage}
         </Typography>
         <form className={classes.form} noValidate>
-          <TextField onChange={(e)=>{
+          <TextField onChange={(e) => {
             setLoginUsername(e.target.value);
           }}
             variant="outlined"
@@ -79,7 +79,7 @@ export default function Login(props) {
             autoComplete="email"
             autoFocus
           />
-          <TextField onChange={(e)=>{
+          <TextField onChange={(e) => {
             setLoginPassword(e.target.value);
           }}
             variant="outlined"

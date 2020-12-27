@@ -23,7 +23,7 @@ export default function Navbar(props) {
             <AppBar position="static">
                 <Toolbar>
                     <Typography edge="start" variant="h6" className={classes.title}>
-                        PCTO Pazzo Sgravato
+                        GSTPCTO
                     </Typography>
                     <Button color="inherit" startIcon={<VpnKeyIcon />} onClick={() => {
                         history.push('/login')

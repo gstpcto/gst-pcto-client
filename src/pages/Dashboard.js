@@ -133,10 +133,8 @@ export default function Dashboard(props) {
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                         Dashboard
                     </Typography>
-                    <Button onClick={() => { auth.logout(); props.history.push('/')}}
-                        variant="text"
-                        startIcon={<MeetingRoomIcon />}
-                        color="default">
+                    <Button color="inherit" onClick={() => { auth.logout(); props.history.push('/')}}
+                        startIcon={<MeetingRoomIcon />}>
                         Logout
                     </Button>
                 </Toolbar>
