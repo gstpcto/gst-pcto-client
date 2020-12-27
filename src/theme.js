@@ -6,6 +6,6 @@ export const theme = createMuiTheme({
         primary: {
             main: blue[700] // "#03dac6",
         },
-        type: 'dark',
+        type: 'light',
     },
 });
