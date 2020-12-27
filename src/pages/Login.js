@@ -11,6 +11,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import auth from '../auth';
 import Copyright from '../components/Copyright';
+import Spinner from 'react-spinner-material';
+import EventListener from 'react-event-listener';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -38,22 +40,43 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Login(props) {
   const classes = useStyles();
-
+  const [loading, setLoading] = useState(false);
   const [loginUsername, setLoginUsername] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleLogin = async () => {
+    setLoading(true);
     await auth.login({ username: loginUsername, password: loginPassword });
+
+
     if (auth.isAuthenticated()) {
       props.history.push('/dashboard');
+      setLoading(false);
     } else {
       setErrorMessage("Accesso fallito (come te)");
     }
   };
 
+  const handleKeyPress = (e)=>{
+    e.preventDefault();
+    //console.log(e);
+    if (e.key==="Enter") handleLogin()
+  }
+
   return (
+    loading ?  
     <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <Container className={classes.paper}>
+        <Spinner radius={100} color={"#1976d2"} stroke={3} visible={true} />
+      </Container>
+    </Container> 
+    :
+    <Container component="main" maxWidth="xs">
+      <EventListener 
+        target="window"
+        onKeyPress={handleKeyPress}/>
       <CssBaseline />
       <Paper className={classes.paper}>
         <Avatar className={classes.avatar}>
