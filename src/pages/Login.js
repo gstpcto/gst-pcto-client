@@ -49,17 +49,17 @@ export default function Login(props) {
     setLoading(true);
     await auth.login({ username: loginUsername, password: loginPassword });
 
-    
+    setLoading(false);
     if (auth.isAuthenticated()) {
       props.history.push('/dashboard');
-      setLoading(false);
+      
     } else {
       setErrorMessage("Accesso fallito (come te)");
     }
   };
 
   const handleKeyPress = (e)=>{
-    e.preventDefault();
+    //e.preventDefault();
     //console.log(e);
     if (e.key==="Enter") handleLogin()
   }
