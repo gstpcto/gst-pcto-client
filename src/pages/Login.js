@@ -11,8 +11,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import auth from '../auth';
 import Copyright from '../components/Copyright';
-import Spinner from 'react-spinner-material';
 import EventListener from 'react-event-listener';
+import { CircularProgress } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -49,7 +49,7 @@ export default function Login(props) {
     setLoading(true);
     await auth.login({ username: loginUsername, password: loginPassword });
 
-
+    
     if (auth.isAuthenticated()) {
       props.history.push('/dashboard');
       setLoading(false);
@@ -69,7 +69,7 @@ export default function Login(props) {
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <Container className={classes.paper}>
-        <Spinner radius={100} color={"#1976d2"} stroke={3} visible={true} />
+        <CircularProgress />
       </Container>
     </Container> 
     :
