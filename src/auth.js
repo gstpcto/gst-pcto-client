@@ -1,12 +1,7 @@
 import axios from 'axios';
 
 class Auth {
-    constructor() {
-        this.authenticated = false;
-    }
-
     async login({username, password}) {
-        const _this = this;
         await axios.post('http://gstpcto.herokuapp.com/login', {
             username: username,
             password: password
@@ -16,20 +11,23 @@ class Auth {
                 const responseData = response.data;
                 const { data } = responseData;
                 console.log(data);
-                _this.authenticated = true;
-                console.log(_this.authenticated);
+                localStorage.setItem('token', data);
             })
             .catch(function (error) {
-                console.log(error);
+                console.error(error);
             });
     }
 
     logout() {
-        this.authenticated = false;
+        localStorage.removeItem("token");
     }
 
     isAuthenticated() {
-        return this.authenticated;
+        const jwtToken = localStorage.getItem('token');
+        if (jwtToken === null || jwtToken === undefined || jwtToken ===  "" || jwtToken === "null" || jwtToken === "undefined"){
+            return false;   // Non è presente un token.
+        } 
+        return true;    // È presente un token, la verifica della validità avviene server-side.
     }
 }
 

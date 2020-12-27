@@ -45,7 +45,7 @@ export default function NoLogin(props) {
                 <Button className={classes.button} 
                     variant="contained" 
                     onClick={()=>{
-                        props.history.push("/signin");
+                        props.history.push("/login");
                     }}>
                     Login
                 </Button>

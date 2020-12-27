@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -31,26 +31,24 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  errorMessage : {
+    color: "#e53935",
+  }
 }));
 
-export default function SignIn(props) {
+export default function Login(props) {
   const classes = useStyles();
-  const [reload, setReload] = React.useState(null);
 
-  const data = {
-    username: null,
-    password: null
-  };
-
-  const handleChange = (input) => e => {
-    data[input] = e.target.value;
-  };
-
+  const [loginUsername, setLoginUsername] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  
   const handleLogin = async () => {
-    await auth.login(data);
-    setReload(null);
-    if (auth.isAuthenticated() && reload == null) {
+    await auth.login({username: loginUsername, password: loginPassword});
+    if (auth.isAuthenticated()) {
       props.history.push('/dashboard');
+    } else {
+      setErrorMessage("Accesso fallito (come te)");
     }
   };
 
@@ -64,8 +62,13 @@ export default function SignIn(props) {
         <Typography component="h1" variant="h5">
           Accedi al portale
         </Typography>
+        <Typography className={classes.errorMessage} component="h2" variant="h6">
+          {errorMessage}
+        </Typography>
         <form className={classes.form} noValidate>
-          <TextField onChange={handleChange('username')}
+          <TextField onChange={(e)=>{
+            setLoginUsername(e.target.value);
+          }}
             variant="outlined"
             margin="normal"
             required
@@ -76,7 +79,9 @@ export default function SignIn(props) {
             autoComplete="email"
             autoFocus
           />
-          <TextField onChange={handleChange('password')}
+          <TextField onChange={(e)=>{
+            setLoginPassword(e.target.value);
+          }}
             variant="outlined"
             margin="normal"
             required
@@ -94,7 +99,7 @@ export default function SignIn(props) {
             className={classes.submit}
             onClick={handleLogin}
           >
-            ACCEDI
+            Accedi
           </Button>
         </form>
       </Paper>

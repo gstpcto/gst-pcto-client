@@ -17,10 +17,11 @@ import Grid from '@material-ui/core/Grid';
 // import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import Button from '@material-ui/core/Button'
 import { mainListItems } from '../components/listItems';
 import Copyright from '../components/Copyright';
+import auth from '../auth';
 
 const drawerWidth = 240;
 
@@ -105,7 +106,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Dashboard(props) {
     const classes = useStyles();
-    const [open, setOpen] = React.useState(true);
+    const [open, setOpen] = React.useState(false);
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -132,9 +133,9 @@ export default function Dashboard(props) {
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                         Dashboard
                     </Typography>
-                    <Button onClick={() => { props.history.push("/"); }}
+                    <Button onClick={() => { auth.logout(); props.history.push('/')}}
                         variant="text"
-                        startIcon={<ExitToAppIcon />}
+                        startIcon={<MeetingRoomIcon />}
                         color="default">
                         Logout
                     </Button>
@@ -160,6 +161,13 @@ export default function Dashboard(props) {
                 <Container maxWidth="lg" className={classes.container}>
                     <Grid container spacing={3}>
                         {/* contents  */}
+
+                        <Grid container item >
+                            
+                        </Grid>
+
+
+
                     </Grid>
                     <Box pt={4}>
                         <Copyright />

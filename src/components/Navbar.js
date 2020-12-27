@@ -4,6 +4,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import VpnKeyIcon from '@material-ui/icons/VpnKey';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -24,8 +25,8 @@ export default function Navbar(props) {
                     <Typography edge="start" variant="h6" className={classes.title}>
                         PCTO Pazzo Sgravato
                     </Typography>
-                    <Button color="inherit" onClick={() => {
-                        history.push('/signin')
+                    <Button color="inherit" startIcon={<VpnKeyIcon />} onClick={() => {
+                        history.push('/login')
                     }}>Login</Button>
                 </Toolbar>
             </AppBar>
