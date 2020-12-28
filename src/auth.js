@@ -2,7 +2,7 @@ import axios from 'axios';
 
 class Auth {
     async login({username, password}) {
-        await axios.post('http://gstpcto.herokuapp.com/login', {
+        await axios.post('https://gstpcto.eu-central-1.elasticbeanstalk.com/login', {
             username: username,
             password: password
         })
