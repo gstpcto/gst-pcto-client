@@ -13,7 +13,6 @@ import Fade from '@material-ui/core/Fade';
 import MainFeaturedPost from '../components/MainFeaturedPost';
 import FeaturedPost from '../components/FeaturedPost';
 
-
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
     marginTop: theme.spacing(3),
@@ -54,21 +53,17 @@ export default function Homepage(props) {
 
   return (
     <React.Fragment>
-      <Navbar {...props} />
+      <Navbar />
       <Container className={classes.mainGrid} maxWidth="lg">
         <main>
           <MainFeaturedPost post={mainPost} />
           <Grid container spacing={4}>
+            {/* Crea x FeaturedPost prendendo i dati da otherPosts.js */}
             {otherPosts.map((post) => (
               <FeaturedPost key={post.title} post={post} />
             ))}
-            {isStandalone ? (
-              ''
-            ) : (
-              <>
-                <FeaturedPost post={standaloneCard} onClick={handleOpen} />
-              </>
-            )}
+            {/* se non è standalone (PWA) mostra il post per l'installazione */}
+            {!isStandalone && <FeaturedPost post={standaloneCard} onClick={handleOpen} />} 
           </Grid>
           <Modal
             aria-labelledby="transition-modal-title"
@@ -86,6 +81,7 @@ export default function Homepage(props) {
               <Grid className={classes.paper}>
                 <h2 id="transition-modal-title">Installa la nostra PWA</h2>
                 <Grid container item spacing={1}>
+                  {/* Mostra la gif per l'installazione della pwa di android se su un dispositivo android, oppure quello ios su tutti gli altri. */}
                   {userAgent.indexOf('android') > -1 ? (
                     <Grid item xs={6}>
                       <img className={classes.gifSizing} src="/assets/pwa_android.gif" alt="Android PWA Installation" />

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import Paper from '@material-ui/core/Paper';
@@ -13,6 +12,7 @@ import auth from '../auth';
 import Copyright from '../components/Copyright';
 import EventListener from 'react-event-listener';
 import { CircularProgress } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -40,6 +40,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Login(props) {
   const classes = useStyles();
+  const history = useHistory();
+
   const [loading, setLoading] = useState(false);
   const [loginUsername, setLoginUsername] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -51,84 +53,84 @@ export default function Login(props) {
 
     setLoading(false);
     if (auth.isAuthenticated()) {
-      props.history.push('/dashboard');
-      
+      history.push('/dashboard');
     } else {
       setErrorMessage("Accesso fallito (come te)");
     }
   };
 
-  const handleKeyPress = (e)=>{
+  const handleKeyPress = (e) => {
     //e.preventDefault();
     //console.log(e);
-    if (e.key==="Enter") handleLogin()
+    if (e.key === "Enter") handleLogin()
   }
 
   return (
-    loading ?  
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <Container className={classes.paper}>
-        <CircularProgress />
+    loading ?
+
+      <Container component="main" maxWidth="xs">
+        <Container className={classes.paper}>
+          <CircularProgress />
+        </Container>
       </Container>
-    </Container> 
-    :
-    <Container component="main" maxWidth="xs">
-      <EventListener 
-        target="window"
-        onKeyPress={handleKeyPress}/>
-      <CssBaseline />
-      <Paper className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Accedi al portale
+
+      :
+
+      <Container component="main" maxWidth="xs">
+        <EventListener
+          target="window"
+          onKeyPress={handleKeyPress} />
+        <Paper className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Accedi al portale
         </Typography>
-        <Typography className={classes.errorMessage} component="h2" variant="h6">
-          {errorMessage}
-        </Typography>
-        <form className={classes.form} noValidate>
-          <TextField onChange={(e) => {
-            setLoginUsername(e.target.value);
-          }}
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Indirizzo Email"
-            name="email"
-            autoComplete="email"
-            autoFocus
-          />
-          <TextField onChange={(e) => {
-            setLoginPassword(e.target.value);
-          }}
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            onClick={handleLogin}
-          >
-            Accedi
+          <Typography className={classes.errorMessage} component="h2" variant="h6">
+            {errorMessage}
+          </Typography>
+          <form className={classes.form} noValidate>
+            <TextField onChange={(e) => {
+              setLoginUsername(e.target.value);
+            }}
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Indirizzo Email"
+              name="email"
+              autoComplete="email"
+              autoFocus
+            />
+            <TextField onChange={(e) => {
+              setLoginPassword(e.target.value);
+            }}
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+            />
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              onClick={handleLogin}
+            >
+              Accedi
           </Button>
-        </form>
-      </Paper>
-      <Box mt={8}>
-        <Copyright />
-      </Box>
-    </Container>
+          </form>
+        </Paper>
+        <Box mt={8}>
+          <Copyright />
+        </Box>
+      </Container>
   );
 }

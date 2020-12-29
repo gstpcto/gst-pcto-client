@@ -3,11 +3,11 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
-import WarningIcon from '@material-ui/icons/Warning';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import { amber } from '@material-ui/core/colors';
+import { red } from '@material-ui/core/colors';
+import FindInPageIcon from '@material-ui/icons/FindInPage';
 import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
@@ -20,17 +20,17 @@ const useStyles = makeStyles((theme) => ({
     },
     avatar: {
         margin: theme.spacing(1),
-        backgroundColor: amber[600],
+        backgroundColor: red[600],
     },
     text: {
-        textAlign: "center",
+        textAlign: 'center',
     },
     button: {
         margin: theme.spacing(2, 0, 2),
     },
 }));
 
-export default function NoLogin(props) {
+export default function NotFound() {
     const classes = useStyles();
     const history = useHistory();
 
@@ -39,13 +39,13 @@ export default function NoLogin(props) {
             <CssBaseline />
             <Paper className={classes.paper}>
                 <Avatar className={classes.avatar}>
-                    <WarningIcon />
+                    <FindInPageIcon />
                 </Avatar>
                 <Typography className={classes.text} component="h1" variant="h5">
-                    È necessario fare il login per accedere a questa pagina.
+                    404 Not Found
                 </Typography>
-                <Button className={classes.button} variant="contained" onClick={() => { history.push("/login"); }}>
-                    Login
+                <Button className={classes.button} variant="contained" onClick={() => { history.push('/'); }} >
+                    Vai alla Home
                 </Button>
             </Paper>
         </Container>

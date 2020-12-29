@@ -5,6 +5,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -15,9 +16,10 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function Navbar(props) {
+export default function Navbar() {
     const classes = useStyles();
-    const { history } = props;
+    const history = useHistory();
+
     return (
         <div className={classes.root}>
             <AppBar position="static">
