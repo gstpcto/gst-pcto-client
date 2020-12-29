@@ -54,35 +54,6 @@ export default function Homepage(props) {
 
   return (
     <React.Fragment>
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        className={classes.modal}
-        open={open}
-        onClose={handleClose}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-      >
-        <Fade in={open}>
-          <Grid className={classes.paper}>
-            <h2 id="transition-modal-title">Installa la nostra PWA</h2>
-            <Grid container item spacing={1}>
-              {userAgent.indexOf('android') > -1 ? (
-                <Grid item xs={6}>
-                  <img className={classes.gifSizing} src="/assets/pwa_android.gif" alt="Android PWA Installation" />
-                </Grid>
-              ) : (
-                <Grid item xs={6}>
-                  <img className={classes.gifSizing} src="/assets/pwa_ios.gif" alt="iOS PWA Installation" />
-                </Grid>
-              )}
-            </Grid>
-          </Grid>
-        </Fade>
-      </Modal>
       <Navbar {...props} />
       <Container className={classes.mainGrid} maxWidth="lg">
         <main>
@@ -99,6 +70,35 @@ export default function Homepage(props) {
               </>
             )}
           </Grid>
+          <Modal
+            aria-labelledby="transition-modal-title"
+            aria-describedby="transition-modal-description"
+            className={classes.modal}
+            open={open}
+            onClose={handleClose}
+            closeAfterTransition
+            BackdropComponent={Backdrop}
+            BackdropProps={{
+              timeout: 500,
+            }}
+          >
+            <Fade in={open}>
+              <Grid className={classes.paper}>
+                <h2 id="transition-modal-title">Installa la nostra PWA</h2>
+                <Grid container item spacing={1}>
+                  {userAgent.indexOf('android') > -1 ? (
+                    <Grid item xs={6}>
+                      <img className={classes.gifSizing} src="/assets/pwa_android.gif" alt="Android PWA Installation" />
+                    </Grid>
+                  ) : (
+                    <Grid item xs={6}>
+                      <img className={classes.gifSizing} src="/assets/pwa_ios.gif" alt="iOS PWA Installation" />
+                    </Grid>
+                  )}
+                </Grid>
+              </Grid>
+            </Fade>
+          </Modal>
         </main>
       </Container>
       <Footer title="GSTPCTO" description="Gestionale per i percorsi per le competenze trasversali e per l'orientamento" />
