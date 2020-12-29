@@ -22,5 +22,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# custon stuff
 .eslintcache
 .vscode/
+src/temp

@@ -22,6 +22,7 @@ import Button from '@material-ui/core/Button'
 import { mainListItems } from '../components/listItems';
 import Copyright from '../components/Copyright';
 import auth from '../auth';
+import { useHistory } from 'react-router-dom';
 
 const drawerWidth = 240;
 
@@ -106,6 +107,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Dashboard(props) {
     const classes = useStyles();
+    const history = useHistory();
+
     const [open, setOpen] = React.useState(false);
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -133,7 +136,7 @@ export default function Dashboard(props) {
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                         Dashboard
                     </Typography>
-                    <Button color="inherit" onClick={() => { auth.logout(); props.history.push('/')}}
+                    <Button color="inherit" onClick={() => { auth.logout(); history.push('/')}}
                         startIcon={<MeetingRoomIcon />}>
                         Logout
                     </Button>

@@ -22,7 +22,9 @@ function App() {
           <Login />
         </Route>
 
-        <ProtectedRoute exact path="/dashboard" component={Dashboard} />
+        <ProtectedRoute exact path="/dashboard">
+          <Dashboard />
+        </ProtectedRoute>
 
         <Route path="*">
           <NotFound />
