@@ -27,7 +27,7 @@ export default function FeaturedPost(props) {
 
     return (
         <Grid item xs={12} md={6}>
-            <CardActionArea component="a" href={post.linkUrl}>
+            <CardActionArea component="a"  onClick={props.onClick} {... (post.linkUrl) === "#" ? "" : `href=${post.linkUrl}`}>
                 <Card className={classes.card}>
                     <div className={classes.cardDetails}>
                         <CardContent>

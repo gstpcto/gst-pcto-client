@@ -7,13 +7,4 @@ export const otherPosts = [
         imageText: 'Foto di Marc Mueller da Pexels',
         linkUrl: '/dashboard',
     },
-    {
-        title: 'Sample Text',
-        subtitle: 'Non so che scrive',
-        description:
-            'Laborum Lorem amet proident fugiat fugiat voluptate eiusmod fugiat esse laborum.',
-        image: 'https://cdn.discordapp.com/attachments/792810070441197598/792810132714029109/pexels-anthony-shkraba-4348401.jpg',
-        imageText: 'Foto di Anthony Shkraba da Pexels',
-        linkUrl: '#',
-    },
 ];
