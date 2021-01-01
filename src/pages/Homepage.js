@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+// import { useHistory } from 'react-router-dom';
 import { mainPost } from '../components/mainPost';
 import { otherPosts } from '../components/otherPosts';
 import { standaloneCard } from '../components/standaloneCard';
@@ -35,12 +36,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Homepage(props) {
+export default function Homepage() {
   const classes = useStyles();
+  // const history = useHistory();
+
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches ? true : false;
-
   const [open, setOpen] = React.useState(false);
-
   const userAgent = navigator.userAgent.toLowerCase();
 
   const handleOpen = () => {

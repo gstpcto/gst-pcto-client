@@ -116,7 +116,7 @@ export default function Dashboard(props) {
     const handleDrawerClose = () => {
         setOpen(false);
     };
-    
+
     // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     return (
@@ -136,7 +136,7 @@ export default function Dashboard(props) {
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                         Dashboard
                     </Typography>
-                    <Button color="inherit" onClick={() => { auth.logout(); history.push('/')}}
+                    <Button color="inherit" onClick={() => { auth.logout(); history.push('/') }}
                         startIcon={<MeetingRoomIcon />}>
                         Logout
                     </Button>
@@ -164,7 +164,7 @@ export default function Dashboard(props) {
                         {/* contents  */}
 
                         <Grid container item >
-                            
+
                         </Grid>
 
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -23,11 +24,12 @@ const useStyles = makeStyles({
 
 export default function FeaturedPost(props) {
     const classes = useStyles();
+    const history = useHistory();
     const { post } = props;
 
     return (
         <Grid item xs={12} md={6}>
-            <CardActionArea component="a" onClick={props.onClick} href={post.linkUrl}>
+            <CardActionArea component="a" onClick={() =>  { history.push(post.linkUrl) }}>
                 <Card className={classes.card}>
                     <div className={classes.cardDetails}>
                         <CardContent>

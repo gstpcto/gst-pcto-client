@@ -26,5 +26,6 @@ yarn-error.log*
 
 # custon stuff
 .eslintcache
+debug.log
 .vscode/
 src/temp

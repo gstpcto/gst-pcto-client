@@ -1,11 +1,12 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { HashRouter as Router, Switch, Route } from 'react-router-dom';
 import Homepage from './pages/Homepage';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import NoLogin from './pages/NoLogin';
 import { PrivateRoute } from './PrivateRoute';
 import NotFound from './pages/NotFound';
+
 function App() {
   return (
     <Router>
