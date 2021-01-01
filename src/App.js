@@ -4,7 +4,7 @@ import Homepage from './pages/Homepage';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import NoLogin from './pages/NoLogin';
-import { ProtectedRoute } from './ProtectedRoute';
+import { PrivateRoute } from './PrivateRoute';
 import NotFound from './pages/NotFound';
 function App() {
   return (
@@ -22,9 +22,9 @@ function App() {
           <Login />
         </Route>
 
-        <ProtectedRoute exact path="/dashboard">
+        <PrivateRoute exact path="/dashboard">
           <Dashboard />
-        </ProtectedRoute>
+        </PrivateRoute>
 
         <Route path="*">
           <NotFound />
