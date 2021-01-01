@@ -5,7 +5,9 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 import { useHistory } from 'react-router-dom';
+import auth from '../auth';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -27,9 +29,15 @@ export default function Navbar() {
                     <Typography edge="start" variant="h6" className={classes.title}>
                         GSTPCTO
                     </Typography>
-                    <Button color="inherit" startIcon={<VpnKeyIcon />} onClick={() => {
-                        history.push('/login')
-                    }}>Login</Button>
+                    { auth.isAuthenticated() ? 
+                        <Button color="inherit" startIcon={<DashboardIcon />} onClick={() => {
+                            history.push('/dashboard')
+                        }}>Dashboard</Button>
+                    :
+                        <Button color="inherit" startIcon={<VpnKeyIcon />} onClick={() => {
+                            history.push('/login')
+                        }}>Login</Button>
+                    }
                 </Toolbar>
             </AppBar>
         </div>
