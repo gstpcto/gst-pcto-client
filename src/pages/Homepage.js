@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 // import { useHistory } from 'react-router-dom';
 import { mainPost } from '../components/mainPost';
@@ -13,6 +13,7 @@ import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import MainFeaturedPost from '../components/MainFeaturedPost';
 import FeaturedPost from '../components/FeaturedPost';
+import PWAPost from '../components/PWAPost';
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
@@ -41,7 +42,7 @@ export default function Homepage() {
   // const history = useHistory();
 
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches ? true : false;
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const userAgent = navigator.userAgent.toLowerCase();
 
   const handleOpen = () => {
@@ -64,7 +65,7 @@ export default function Homepage() {
               <FeaturedPost key={post.title} post={post} />
             ))}
             {/* se non è standalone (PWA) mostra il post per l'installazione */}
-            {!isStandalone && <FeaturedPost post={standaloneCard} onClick={handleOpen} />} 
+            {!isStandalone && <PWAPost post={standaloneCard} onClick={handleOpen} />}
           </Grid>
           <Modal
             aria-labelledby="transition-modal-title"
@@ -88,10 +89,10 @@ export default function Homepage() {
                       <img className={classes.gifSizing} src="/assets/pwa_android.gif" alt="Android PWA Installation" />
                     </Grid>
                   ) : (
-                    <Grid item xs={6}>
-                      <img className={classes.gifSizing} src="/assets/pwa_ios.gif" alt="iOS PWA Installation" />
-                    </Grid>
-                  )}
+                      <Grid item xs={6}>
+                        <img className={classes.gifSizing} src="/assets/pwa_ios.gif" alt="iOS PWA Installation" />
+                      </Grid>
+                    )}
                 </Grid>
               </Grid>
             </Fade>

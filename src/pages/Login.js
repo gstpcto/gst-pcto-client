@@ -8,7 +8,8 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import auth from '../auth';
+import { useAuth } from '../ProvideAuth';
+
 import Copyright from '../components/Copyright';
 import EventListener from 'react-event-listener';
 import { CircularProgress } from '@material-ui/core';
@@ -41,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Login(props) {
   const classes = useStyles();
   const history = useHistory();
-
+  const auth = useAuth();
   const [loading, setLoading] = useState(false);
   const [loginUsername, setLoginUsername] = useState("");
   const [loginPassword, setLoginPassword] = useState("");

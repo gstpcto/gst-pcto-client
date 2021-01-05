@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import { useHistory } from 'react-router-dom';
-import auth from '../auth';
+import { useAuth } from '../ProvideAuth';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Navbar() {
     const classes = useStyles();
     const history = useHistory();
+    const auth = useAuth();
 
     return (
         <div className={classes.root}>

@@ -6,32 +6,35 @@ import Dashboard from './pages/Dashboard';
 import NoLogin from './pages/NoLogin';
 import { PrivateRoute } from './PrivateRoute';
 import NotFound from './pages/NotFound';
+import ProvideAuth from './ProvideAuth';
 
 function App() {
   return (
-    <Router>
-      <Switch>
-        <Route exact path="/">
-          <Homepage />
-        </Route>
+    <ProvideAuth>
+      <Router>
+        <Switch>
+          <Route exact path="/">
+            <Homepage />
+          </Route>
 
-        <Route path="/nologin">
-          <NoLogin />
-        </Route>
+          <Route path="/nologin">
+            <NoLogin />
+          </Route>
 
-        <Route exact path="/login">
-          <Login />
-        </Route>
+          <Route exact path="/login">
+            <Login />
+          </Route>
 
-        <PrivateRoute exact path="/dashboard">
-          <Dashboard />
-        </PrivateRoute>
+          <PrivateRoute exact path="/dashboard">
+            <Dashboard />
+          </PrivateRoute>
 
-        <Route path="*">
-          <NotFound />
-        </Route>
-      </Switch>
-    </Router>
+          <Route path="*">
+            <NotFound />
+          </Route>
+        </Switch>
+      </Router>
+    </ProvideAuth>
   );
 }
 

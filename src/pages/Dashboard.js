@@ -21,7 +21,8 @@ import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import Button from '@material-ui/core/Button'
 import { mainListItems } from '../components/listItems';
 import Copyright from '../components/Copyright';
-import auth from '../auth';
+import { useAuth } from '../ProvideAuth';
+
 import { useHistory } from 'react-router-dom';
 
 const drawerWidth = 240;
@@ -108,6 +109,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Dashboard(props) {
     const classes = useStyles();
     const history = useHistory();
+    const auth = useAuth();
 
     const [open, setOpen] = React.useState(false);
     const handleDrawerOpen = () => {
