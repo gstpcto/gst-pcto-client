@@ -19,7 +19,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import Button from '@material-ui/core/Button'
-import { mainListItems } from '../components/listItems';
+import { studentListItems } from '../components/menuItems';
 import Copyright from '../components/Copyright';
 import { useAuth } from '../ProvideAuth';
 
@@ -157,20 +157,16 @@ export default function Dashboard(props) {
                     </IconButton>
                 </div>
                 <Divider />
-                <List>{mainListItems}</List>
+                <List>{studentListItems}</List>
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
                     <Grid container spacing={3}>
                         {/* contents  */}
-
                         <Grid container item >
 
                         </Grid>
-
-
-
                     </Grid>
                     <Box pt={4}>
                         <Copyright />
