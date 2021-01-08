@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { HashRouter as Router, Switch, Route } from 'react-router-dom';
 import Homepage from './pages/Homepage';
 import Login from './pages/Login';
@@ -6,35 +6,41 @@ import Dashboard from './pages/Dashboard';
 import NoLogin from './pages/NoLogin';
 import { PrivateRoute } from './PrivateRoute';
 import NotFound from './pages/NotFound';
-import ProvideAuth from './ProvideAuth';
+import { useAuth } from './ProvideAuth';
 
 function App() {
+  const auth = useAuth();
+
+  useEffect(() => {
+    console.error("useEffect App");
+    auth.setUserJSON();
+    console.error("useEffect App setUserJSON");
+  }, [auth]);
+
   return (
-    <ProvideAuth>
-      <Router>
-        <Switch>
-          <Route exact path="/">
-            <Homepage />
-          </Route>
+    <Router>
+      <Switch>
+        <Route exact path="/">
+          <Homepage />
+        </Route>
 
-          <Route path="/nologin">
-            <NoLogin />
-          </Route>
+        <Route path="/nologin">
+          <NoLogin />
+        </Route>
 
-          <Route exact path="/login">
-            <Login />
-          </Route>
+        <Route exact path="/login">
+          <Login />
+        </Route>
 
-          <PrivateRoute exact path="/dashboard">
-            <Dashboard />
-          </PrivateRoute>
+        <PrivateRoute exact path="/dashboard">
+          <Dashboard />
+        </PrivateRoute>
 
-          <Route path="*">
-            <NotFound />
-          </Route>
-        </Switch>
-      </Router>
-    </ProvideAuth>
+        <Route path="*">
+          <NotFound />
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 

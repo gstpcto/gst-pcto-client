@@ -30,7 +30,7 @@ export default function Navbar() {
                     <Typography edge="start" variant="h6" className={classes.title}>
                         GSTPCTO
                     </Typography>
-                    { auth.isAuthenticated() ? 
+                    {auth.isAuthenticated() ? 
                         <Button color="inherit" startIcon={<DashboardIcon />} onClick={() => {
                             history.push('/dashboard')
                         }}>Dashboard</Button>
