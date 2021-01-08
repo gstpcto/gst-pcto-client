@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -22,7 +22,7 @@ import Button from '@material-ui/core/Button'
 import { studentListItems } from '../components/menuItems';
 import Copyright from '../components/Copyright';
 import { useAuth } from '../ProvideAuth';
-
+import { CircularProgress } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 
 const drawerWidth = 240;
@@ -111,6 +111,7 @@ export default function Dashboard(props) {
     const history = useHistory();
     const auth = useAuth();
 
+
     const [open, setOpen] = React.useState(false);
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -122,6 +123,7 @@ export default function Dashboard(props) {
     // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     return (
+        auth.user?
         <div className={classes.root}>
             <CssBaseline />
             <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
@@ -174,5 +176,10 @@ export default function Dashboard(props) {
                 </Container>
             </main>
         </div>
+            : <Container component="main" maxWidth="xs">
+                <Container className={classes.paper}>
+                    <CircularProgress />
+                </Container>
+            </Container>
     );
 }

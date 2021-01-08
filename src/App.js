@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { HashRouter as Router, Switch, Route } from 'react-router-dom';
 import Homepage from './pages/Homepage';
 import Login from './pages/Login';
@@ -6,11 +6,18 @@ import Dashboard from './pages/Dashboard';
 import NoLogin from './pages/NoLogin';
 import { PrivateRoute } from './PrivateRoute';
 import NotFound from './pages/NotFound';
-import ProvideAuth from './ProvideAuth';
+import { useAuth } from './ProvideAuth';
+
 
 function App() {
+  const auth = useAuth();
+
+  useEffect(()=>{
+    auth.checkLogin();
+    console.log(auth);
+  }, []);
+
   return (
-    <ProvideAuth>
       <Router>
         <Switch>
           <Route exact path="/">
@@ -34,7 +41,7 @@ function App() {
           </Route>
         </Switch>
       </Router>
-    </ProvideAuth>
+    
   );
 }
 

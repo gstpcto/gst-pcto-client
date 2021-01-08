@@ -42,6 +42,11 @@ function useProvideAuth() {
     const logout = () => {
         localStorage.setItem('token', '');
     }
+    const checkLogin = () =>{
+        const jwtToken = localStorage.getItem('token');
+        setUser(JSON.parse(atob(jwtToken.split('.')[1])));
+    } 
+
 
     const isAuthenticated = () => {
         const jwtToken = localStorage.getItem('token');
@@ -50,6 +55,7 @@ function useProvideAuth() {
         if (jwtToken === null || jwtToken === undefined || jwtToken === '' || jwtToken === 'null' || jwtToken === 'undefined' || !jwtToken.match(re)) {
             return false; // Non è presente un token
         }
+        //setUser(atob(jwtToken.split('.')[1]));
         return true;    // È presente un token, la verifica della validità avviene server-side.
     }
 
@@ -57,6 +63,7 @@ function useProvideAuth() {
         user,
         login,
         logout,
-        isAuthenticated
+        isAuthenticated,
+        checkLogin
     };
 }
