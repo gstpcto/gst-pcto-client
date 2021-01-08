@@ -9,11 +9,12 @@ import List from '@material-ui/core/List';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
 
 export default function MenuItems({ level }) {
+  console.log(level);
   switch (level) {
-    case 0: 
+    case 0:
       return (
         <List>
-          <ListItem button onClick={() => { console.log("cagasburr") }}>
+          <ListItem button>
             <ListItemIcon>
               <DashboardIcon />
             </ListItemIcon>
@@ -30,6 +31,54 @@ export default function MenuItems({ level }) {
               <SettingsIcon />
             </ListItemIcon>
             <ListItemText primary="Impostazioni Profilo" />
+          </ListItem>
+        </List>
+      );
+
+    case 1:
+      return (
+        <List>
+          <ListItem button>
+            <ListItemIcon>
+              <DashboardIcon />
+            </ListItemIcon>
+            <ListItemText primary="Dashboard" />
+          </ListItem>
+        </List>
+      );
+
+    case 2:
+      return (
+        <List>
+          <ListItem button>
+            <ListItemIcon>
+              <DashboardIcon />
+            </ListItemIcon>
+            <ListItemText primary="Dashboard" /> {/* Voti */}
+          </ListItem>
+        </List>
+      );
+
+    case 3:
+      return (
+        <List>
+          <ListItem button>
+            <ListItemIcon>
+              <DashboardIcon />
+            </ListItemIcon>
+            <ListItemText primary="Dashboard" /> {/* Voti */}
+          </ListItem>
+        </List>
+      );
+
+    case 4:
+      return (
+        <List>
+          <ListItem button>
+            <ListItemIcon>
+              <DashboardIcon />
+            </ListItemIcon>
+            <ListItemText primary="Dashboard" /> {/* Voti */}
           </ListItem>
         </List>
       );

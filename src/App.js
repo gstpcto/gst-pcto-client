@@ -14,6 +14,7 @@ function App() {
   useEffect(()=>{
     auth.checkLogin();
     console.log(auth);
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -31,7 +32,7 @@ function App() {
             <Login />
           </Route>
 
-          <PrivateRoute exact path="/dashboard">
+          <PrivateRoute path="/dashboard">
             <Dashboard />
           </PrivateRoute>
 

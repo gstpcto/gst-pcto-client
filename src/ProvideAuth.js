@@ -32,7 +32,7 @@ function useProvideAuth() {
                 const { data } = responseData; // JWT
                 // console.log(data);
                 localStorage.setItem('token', data);
-                setUser(atob(data.split('.')[1]));
+                setUser(JSON.parse(atob(localStorage.getItem('token').split('.')[1])));
             })
             .catch(function (error) {
                 console.error(error);
