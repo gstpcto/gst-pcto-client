@@ -1,4 +1,4 @@
-import React, {useEffect }from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -20,6 +20,7 @@ import Button from '@material-ui/core/Button'
 import MenuItems from '../components/MenuItems';
 import Copyright from '../components/Copyright';
 import { useAuth } from '../ProvideAuth';
+import { CircularProgress } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 
 const drawerWidth = 240;
@@ -108,6 +109,7 @@ export default function Dashboard(props) {
     const history = useHistory();
     const auth = useAuth();
 
+
     const [open, setOpen] = React.useState(false);
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -116,18 +118,11 @@ export default function Dashboard(props) {
         setOpen(false);
     };
 
-    useEffect(() => {
-        console.error("useEffect App");
-        auth.setUserJSON();
-        console.error("useEffect App setUserJSON");
-    }, [auth]);
-
-    // auth.setUserJSON();
-
     // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
     console.log(auth);
 
     return (
+        auth.user?
         <div className={classes.root}>
             <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
                 <Toolbar className={classes.toolbar}>
@@ -179,5 +174,10 @@ export default function Dashboard(props) {
                 </Container>
             </main>
         </div>
+            : <Container component="main" maxWidth="xs">
+                <Container className={classes.paper}>
+                    <CircularProgress />
+                </Container>
+            </Container>
     );
 }
