@@ -43,8 +43,10 @@ function useProvideAuth() {
         localStorage.setItem('token', '');
     }
     const checkLogin = () =>{
-        const jwtToken = localStorage.getItem('token');
-        setUser(JSON.parse(atob(jwtToken.split('.')[1])));
+        if (isAuthenticated()){
+            const jwtToken = localStorage.getItem('token');
+            setUser(JSON.parse(atob(jwtToken.split('.')[1])));
+        }
     } 
 
 
