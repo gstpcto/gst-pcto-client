@@ -32,7 +32,8 @@ function useProvideAuth() {
                 const { data } = responseData; // JWT
                 // console.log(data);
                 localStorage.setItem('token', data);
-                setUser(JSON.parse(atob(localStorage.getItem('token').split('.')[1])));
+                localStorage.setItem('user', atob(localStorage.getItem('token').split('.')[1]));
+                setUser(JSON.parse(localStorage.getItem('user')));
             })
             .catch(function (error) {
                 console.error(error);
@@ -42,13 +43,13 @@ function useProvideAuth() {
     const logout = () => {
         localStorage.setItem('token', '');
     }
-    const checkLogin = () =>{
+
+    const checkLogin = () => {
         if (isAuthenticated()){
             const jwtToken = localStorage.getItem('token');
             setUser(JSON.parse(atob(jwtToken.split('.')[1])));
         }
-    } 
-
+    }
 
     const isAuthenticated = () => {
         const jwtToken = localStorage.getItem('token');

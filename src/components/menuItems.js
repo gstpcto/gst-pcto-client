@@ -8,91 +8,123 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import List from '@material-ui/core/List';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
 
-export default function MenuItems({ level }) {
-  console.log(level);
-  switch (level) {
-    case 0:
-      return (
-        <List>
-          <ListItem button>
-            <ListItemIcon>
-              <DashboardIcon />
-            </ListItemIcon>
-            <ListItemText primary="Dashboard" /> {/* Voti */}
-          </ListItem>
-          <ListItem button>
-            <ListItemIcon>
-              <DescriptionIcon />
-            </ListItemIcon>
-            <ListItemText primary="Dossier" />
-          </ListItem>
-          <ListItem button>
-            <ListItemIcon>
-              <SettingsIcon />
-            </ListItemIcon>
-            <ListItemText primary="Impostazioni Profilo" />
-          </ListItem>
-        </List>
-      );
+export default function MenuItems({ level, setFragment }) {
 
-    case 1:
-      return (
-        <List>
-          <ListItem button>
-            <ListItemIcon>
-              <DashboardIcon />
-            </ListItemIcon>
-            <ListItemText primary="Dashboard" />
-          </ListItem>
-        </List>
-      );
+  const getMenu = (level) => {
+    switch (level) {
+      case 0:
+        return (
+            <>
+                <ListItem
+                    button
+                    onClick={() => {
+                        setFragment({
+                            titolo: 'Dashboard',
+                            component: <>Dashboard Studente</>,
+                        });
+                    }}
+                >
+                    <ListItemIcon>
+                        <DashboardIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Dashboard" /> {/* Voti */}
+                </ListItem>
+                <ListItem
+                    button
+                    onClick={() => {
+                        setFragment({
+                            titolo: 'Dossier',
+                            component: <>Dossier Studente</>,
+                        });
+                    }}
+                >
+                    <ListItemIcon>
+                        <DescriptionIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Dossier" />
+                </ListItem>
+                <ListItem
+                    button
+                    onClick={() => {
+                        setFragment({
+                            titolo: 'Impostazioni Profilo',
+                            component: <>Impostazioni Profilo Studente</>,
+                        });
+                    }}
+                >
+                    <ListItemIcon>
+                        <SettingsIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Impostazioni Profilo" />
+                </ListItem>
+            </>
+        );
 
-    case 2:
-      return (
-        <List>
-          <ListItem button>
-            <ListItemIcon>
-              <DashboardIcon />
-            </ListItemIcon>
-            <ListItemText primary="Dashboard" /> {/* Voti */}
-          </ListItem>
-        </List>
-      );
+      case 1:
+        return (
+          <>
+            <ListItem button>
+              <ListItemIcon>
+                <DashboardIcon />
+              </ListItemIcon>
+              <ListItemText primary="Dashboard" />
+            </ListItem>
+          </>
+        );
 
-    case 3:
-      return (
-        <List>
-          <ListItem button>
-            <ListItemIcon>
-              <DashboardIcon />
-            </ListItemIcon>
-            <ListItemText primary="Dashboard" /> {/* Voti */}
-          </ListItem>
-        </List>
-      );
+      case 2:
+        return (
+          <>
+            <ListItem button>
+              <ListItemIcon>
+                <DashboardIcon />
+              </ListItemIcon>
+              <ListItemText primary="Dashboard" /> {/* Voti */}
+            </ListItem>
+          </>
+        );
 
-    case 4:
-      return (
-        <List>
-          <ListItem button>
-            <ListItemIcon>
-              <DashboardIcon />
-            </ListItemIcon>
-            <ListItemText primary="Dashboard" /> {/* Voti */}
-          </ListItem>
-        </List>
-      );
+      case 3:
+        return (
+          <>
+            <ListItem button>
+              <ListItemIcon>
+                <DashboardIcon />
+              </ListItemIcon>
+              <ListItemText primary="Dashboard" /> {/* Voti */}
+            </ListItem>
+          </>
+        );
 
-    default:
-      return (
-        <List>
-          <ListItem button>
-            <ListItemIcon>
-              <NotInterestedIcon />
-            </ListItemIcon>
-            <ListItemText primary="Che ci fai qui?" />
-          </ListItem>
-        </List>
-      );
+      case 4:
+        return (
+          <>
+            <ListItem button>
+              <ListItemIcon>
+                <DashboardIcon />
+              </ListItemIcon>
+              <ListItemText primary="Dashboard" /> {/* Voti */}
+            </ListItem>
+          </>
+        );
+
+      default:
+        return (
+          <>
+            <ListItem button>
+              <ListItemIcon>
+                <NotInterestedIcon />
+              </ListItemIcon>
+              <ListItemText primary="Che ci fai qui?" />
+            </ListItem>
+          </>
+        );
+    }
   }
+
+  return (
+    <List>
+      { getMenu(level) }
+    </List>
+  );
 }
