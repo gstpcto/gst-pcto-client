@@ -17,7 +17,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import Button from '@material-ui/core/Button'
-import MenuItems from '../components/MenuItems';
+import MenuItems from '../components/menuItems';
 import Copyright from '../components/Copyright';
 import { useAuth } from '../ProvideAuth';
 import { CircularProgress } from '@material-ui/core';
