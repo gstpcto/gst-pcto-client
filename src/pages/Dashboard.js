@@ -174,13 +174,13 @@ export default function Dashboard(props) {
                         <Grid item xs={12} >
                             <Box fontWeight="fontWeightBold">
                                 <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                                Bentornato, {auth.user["nome"]}{auth.user["cognome"]}!
+                                Bentornato, {auth.user["nome"]+" "}{auth.user["cognome"]}!
                                 </Typography>
                             </Box>
                         </Grid>
                         <Grid item xs={12}> 
                             <Paper className={classes.paper}>
-                                <Voti />
+                                    {auth.user["livello"] == 0 ? <Voti auth={auth} />: ""}
                             </Paper>
                         </Grid>
                     </Grid>

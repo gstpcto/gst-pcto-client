@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext } from 'react';
 import axios from 'axios';
 
 export const authContext = createContext();
-
+export const baseroute = 'https://gstpcto.eu-central-1.elasticbeanstalk.com';
 const loginRoute = 'https://gstpcto.eu-central-1.elasticbeanstalk.com/login';
 
 export default function ProvideAuth({ children }) {
@@ -28,10 +28,10 @@ function useProvideAuth() {
             password: password
         })
             .then(function (response) {
-                console.log(response);
+                //console.log(response);
                 const responseData = response.data;
                 const { data } = responseData; // JWT
-                // console.log(data);
+                console.log("pippolone", data);
                 localStorage.setItem('token', data);
                 setUser(JSON.parse(atob(localStorage.getItem('token').split('.')[1])));
                 setToken(data);
