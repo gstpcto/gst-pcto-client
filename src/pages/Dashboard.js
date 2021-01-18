@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -109,6 +109,10 @@ export default function Dashboard(props) {
     const history = useHistory();
     const auth = useAuth();
 
+    const [titolo, setTitolo] = useState("Dashboard");
+    const changeTitle = (text) =>{
+        setTitolo(text);
+    }
 
     const [open, setOpen] = React.useState(false);
     const handleDrawerOpen = () => {
@@ -136,7 +140,7 @@ export default function Dashboard(props) {
                         <MenuIcon />
                     </IconButton>
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                        Dashboard
+                        {titolo}
                     </Typography>
                     <Button color="inherit" onClick={() => { auth.logout(); history.push('/') }}
                         startIcon={<MeetingRoomIcon />}>
@@ -157,7 +161,7 @@ export default function Dashboard(props) {
                     </IconButton>
                 </div>
                 <Divider />
-                <MenuItems level={auth.user["livello"]}/>
+                <MenuItems level={auth.user["livello"]} change={changeTitle}/>
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />

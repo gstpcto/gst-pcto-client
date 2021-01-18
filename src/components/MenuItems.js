@@ -8,25 +8,26 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import List from '@material-ui/core/List';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
 
-export default function MenuItems({ level }) {
+export default function MenuItems({ level, change }) {
   console.log(level);
+
   switch (level) {
     case 0:
       return (
         <List>
-          <ListItem button>
+          <ListItem onClick={()=>{change("Dashboard")}} button >
             <ListItemIcon>
               <DashboardIcon />
             </ListItemIcon>
             <ListItemText primary="Dashboard" /> {/* Voti */}
           </ListItem>
-          <ListItem button>
+          <ListItem onClick={() => { change("Dossier") }} button>
             <ListItemIcon>
               <DescriptionIcon />
             </ListItemIcon>
             <ListItemText primary="Dossier" />
           </ListItem>
-          <ListItem button>
+          <ListItem onClick={() => { change("Impostazioni Profilo") }} button>
             <ListItemIcon>
               <SettingsIcon />
             </ListItemIcon>
