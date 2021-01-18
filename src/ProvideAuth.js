@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext } from 'react';
 import axios from 'axios';
 
-const authContext = createContext();
+export const authContext = createContext();
 
 const loginRoute = 'https://gstpcto.eu-central-1.elasticbeanstalk.com/login';
 
@@ -20,6 +20,7 @@ export function useAuth() {
 
 function useProvideAuth() {
     const [user, setUser] = useState(null);
+    const [token, setToken] = useState(null);
 
     const login = async ({ username, password }) => {
         await axios.post(loginRoute, {
@@ -33,6 +34,7 @@ function useProvideAuth() {
                 // console.log(data);
                 localStorage.setItem('token', data);
                 setUser(JSON.parse(atob(localStorage.getItem('token').split('.')[1])));
+                setToken(data);
             })
             .catch(function (error) {
                 console.error(error);
@@ -46,6 +48,7 @@ function useProvideAuth() {
         if (isAuthenticated()){
             const jwtToken = localStorage.getItem('token');
             setUser(JSON.parse(atob(jwtToken.split('.')[1])));
+            setToken(jwtToken)
         }
     } 
 
@@ -63,6 +66,7 @@ function useProvideAuth() {
 
     return {
         user,
+        token,
         login,
         logout,
         isAuthenticated,
