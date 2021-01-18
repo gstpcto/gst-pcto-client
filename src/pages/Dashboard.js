@@ -17,7 +17,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import Button from '@material-ui/core/Button'
-import MenuItems from '../components/menuItems';
+import MenuItems from '../components/MenuItems';
 import Copyright from '../components/Copyright';
 import { useAuth } from '../ProvideAuth';
 import { CircularProgress } from '@material-ui/core';
@@ -165,7 +165,7 @@ export default function Dashboard(props) {
                     <Grid container spacing={3}>
                         {/* contents  */}
                         <Grid container item >
-                            
+                            {auth.user["livello"]}
                         </Grid>
                     </Grid>
                     <Box pt={4}>
