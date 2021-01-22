@@ -14,11 +14,14 @@ const useStyles = makeStyles((theme) => ({
         height: 240,
     },
     paperContainer: {
-        padding: theme.spacing(2),
+        paddingTop: theme.spacing(2),
+        paddingBottom: theme.spacing(2),
+        paddingLeft: 0,
+        paddingRight: 0,
         overflow: 'auto',
     },
     markMargin: {
-        margin: "0px 5px 0px 5px"
+        margin: '0px 5px 0px 5px',
     },
     fixedWidth: {
         width: 150,
@@ -33,7 +36,6 @@ export default function VotiWrapper({ auth }) {
     const [isError, setError] = useState(false);
     const [data, setData] = useState([]);
 
-
     useEffect(() => {
         const fetchData = async () => {
             setError(false);
@@ -42,7 +44,7 @@ export default function VotiWrapper({ auth }) {
             try {
                 const response = await axios.get(`${baseRoute}/voti/voti`, { params: { token: auth.token } });
                 setData(response.data['data']);
-                console.log("stampo i voti");
+                console.log('stampo i voti');
                 console.log(data);
             } catch (error) {
                 setError(true);
@@ -56,17 +58,14 @@ export default function VotiWrapper({ auth }) {
     return isLoading ? (
         <CircularProgress />
     ) : (
-        // <div>{data[0].Valutazione}</div>
-        <Grid item xs={12}>
-                <Box className={classes.paperContainer} display="flex" flexDirection="row">
-                    {data.map(({ Nome, Data, Descrizione, Valutazione }, index) => {
-                        return (
-                            <Box className={classes.markMargin}>
-                                <ComponentVoti key={index} Nome={Nome} Data={Data} Descrizione={Descrizione} Valutazione={Valutazione}/>
-                            </Box>
-                        );
-                    })}
-                </Box>
-        </Grid>
+        <Box className={classes.paperContainer} display="flex" flexDirection="row">
+            {data.map(({ Nome, Data, Descrizione, Valutazione }, index) => {
+                return (
+                    <Box className={classes.markMargin}>
+                        <ComponentVoti key={index} Nome={Nome} Data={Data} Descrizione={Descrizione} Valutazione={Valutazione} />
+                    </Box>
+                );
+            })}
+        </Box>
     );
 }
