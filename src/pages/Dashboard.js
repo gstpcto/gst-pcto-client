@@ -10,9 +10,6 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-// import Badge from '@material-ui/core/Badge';
-import Paper from '@material-ui/core/Paper';
-// import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
@@ -22,7 +19,7 @@ import Copyright from '../components/Copyright';
 import { useAuth } from '../ProvideAuth';
 import { CircularProgress } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import Voti from '../components/voti'
+import Voti from '../components/Voti'
 
 const drawerWidth = 240;
 
@@ -178,11 +175,7 @@ export default function Dashboard(props) {
                                 </Typography>
                             </Box>
                         </Grid>
-                        <Grid item xs={12}> 
-                            <Paper className={classes.paper}>
-                                    {auth.user["livello"] == 0 ? <Voti auth={auth} />: ""}
-                            </Paper>
-                        </Grid>
+                        {auth.user["livello"] === 0 ? <Voti auth={auth} /> : ""}
                     </Grid>
 
                     <Box pt={4}>

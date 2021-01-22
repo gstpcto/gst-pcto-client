@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext } from 'react';
 import axios from 'axios';
 
 export const authContext = createContext();
-export const baseroute = 'https://gstpcto.eu-central-1.elasticbeanstalk.com';
+export const baseRoute = 'https://gstpcto.eu-central-1.elasticbeanstalk.com';
 const loginRoute = 'https://gstpcto.eu-central-1.elasticbeanstalk.com/login';
 
 export default function ProvideAuth({ children }) {
