@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState} from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -10,24 +10,25 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-// import Badge from '@material-ui/core/Badge';
-// import Paper from '@material-ui/core/Paper';
-// import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
-import Button from '@material-ui/core/Button';
+import Button from '@material-ui/core/Button'
 import MenuItems from '../components/MenuItems';
 import Copyright from '../components/Copyright';
 import { useAuth } from '../ProvideAuth';
 import { CircularProgress } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
+import Voti from '../components/Voti'
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
+    },
+    bold: {
+        fontWeight: 500,
     },
     toolbar: {
         paddingRight: 24, // keep right padding when drawer closed
@@ -109,7 +110,12 @@ export default function Dashboard(props) {
     const history = useHistory();
     const auth = useAuth();
 
-    const [open, setOpen] = useState(false);
+    const [titolo, setTitolo] = useState("Dashboard");
+    const changeTitle = (text) =>{
+        setTitolo(text);
+    }
+
+    const [open, setOpen] = React.useState(false);
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -117,56 +123,28 @@ export default function Dashboard(props) {
         setOpen(false);
     };
 
-    const defaultComponent = () => {
-        switch (auth.user['livello']) {
-            case 0:
-                return <>Dashboard Studente</>;
-            case 1:
-                return <>Dashboard liv1</>;
-            case 2:
-                return <>Dashboard liv2</>;
-            case 3:
-                return <>Dashboard liv3</>;
-            case 4:
-                return <>Dashboard liv4</>;
-            default:
-                return <>bruhhhh</>;
-        }
-    };
+    // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+    console.log(auth);
 
-    /* fragment = {chiave: String, titolo: String, component: Component} */
-    const [fragment, setFragment] = useState({
-        titolo: 'Dashboard',
-        component: null,
-    });
-
-
-    useEffect(()=>{
-        if (auth.user) {
-            setFragment({titolo: "Dashboard", component: defaultComponent()})
-        } else {
-            setFragment({ titolo: 'Dashboard', component: <CircularProgress /> });
-        }
-    }, []);
-
-    return auth.user ? (
+    return (
+        auth.user?
         <div className={classes.root}>
             <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
                 <Toolbar className={classes.toolbar}>
-                    <IconButton edge="start" color="inherit" aria-label="open drawer" onClick={handleDrawerOpen} className={clsx(classes.menuButton, open && classes.menuButtonHidden)}>
+                    <IconButton
+                        edge="start"
+                        color="inherit"
+                        aria-label="open drawer"
+                        onClick={handleDrawerOpen}
+                        className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
+                    >
                         <MenuIcon />
                     </IconButton>
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                        {fragment.titolo}
+                        {titolo}
                     </Typography>
-                    <Button
-                        color="inherit"
-                        onClick={() => {
-                            auth.logout();
-                            history.push('/');
-                        }}
-                        startIcon={<MeetingRoomIcon />}
-                    >
+                    <Button color="inherit" onClick={() => { auth.logout(); history.push('/') }}
+                        startIcon={<MeetingRoomIcon />}>
                         Logout
                     </Button>
                 </Toolbar>
@@ -184,28 +162,32 @@ export default function Dashboard(props) {
                     </IconButton>
                 </div>
                 <Divider />
-                <MenuItems level={auth.user['livello']} setFragment={setFragment} />
+                <MenuItems level={auth.user["livello"]} change={changeTitle}/>
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
                     <Grid container spacing={3}>
-                        {/* contents  */}
-                        <Grid container item>
-                            {fragment.component}
+                        <Grid item xs={12} >
+                            <Box fontWeight="fontWeightBold">
+                                <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+                                Bentornato, {auth.user["nome"]+" "}{auth.user["cognome"]}!
+                                </Typography>
+                            </Box>
                         </Grid>
+                        {auth.user["livello"] === 0 ? <Voti auth={auth} /> : ""}
                     </Grid>
+
                     <Box pt={4}>
                         <Copyright />
                     </Box>
                 </Container>
             </main>
         </div>
-    ) : (
-        <Container component="main" maxWidth="xs">
-            <Container className={classes.paper}>
-                <CircularProgress />
+            : <Container component="main" maxWidth="xs">
+                <Container className={classes.paper}>
+                    <CircularProgress />
+                </Container>
             </Container>
-        </Container>
     );
 }
