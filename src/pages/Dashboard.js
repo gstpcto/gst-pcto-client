@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -13,13 +13,13 @@ import Grid from '@material-ui/core/Grid';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
-import Button from '@material-ui/core/Button'
+import Button from '@material-ui/core/Button';
 import MenuItems from '../components/MenuItems';
 import Copyright from '../components/Copyright';
+import DashboardLevelOne from '../components/DashboardLevelOne';
 import { useAuth } from '../ProvideAuth';
 import { CircularProgress } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import Voti from '../components/Voti'
 
 const drawerWidth = 240;
 
@@ -110,10 +110,10 @@ export default function Dashboard(props) {
     const history = useHistory();
     const auth = useAuth();
 
-    const [titolo, setTitolo] = useState("Dashboard");
-    const changeTitle = (text) =>{
+    const [titolo, setTitolo] = useState('Dashboard');
+    const changeTitle = (text) => {
         setTitolo(text);
-    }
+    };
 
     const [open, setOpen] = React.useState(false);
     const handleDrawerOpen = () => {
@@ -126,25 +126,24 @@ export default function Dashboard(props) {
     // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
     console.log(auth);
 
-    return (
-        auth.user?
+    return auth.user ? (
         <div className={classes.root}>
             <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
                 <Toolbar className={classes.toolbar}>
-                    <IconButton
-                        edge="start"
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={handleDrawerOpen}
-                        className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
-                    >
+                    <IconButton edge="start" color="inherit" aria-label="open drawer" onClick={handleDrawerOpen} className={clsx(classes.menuButton, open && classes.menuButtonHidden)}>
                         <MenuIcon />
                     </IconButton>
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                         {titolo}
                     </Typography>
-                    <Button color="inherit" onClick={() => { auth.logout(); history.push('/') }}
-                        startIcon={<MeetingRoomIcon />}>
+                    <Button
+                        color="inherit"
+                        onClick={() => {
+                            auth.logout();
+                            history.push('/');
+                        }}
+                        startIcon={<MeetingRoomIcon />}
+                    >
                         Logout
                     </Button>
                 </Toolbar>
@@ -162,20 +161,21 @@ export default function Dashboard(props) {
                     </IconButton>
                 </div>
                 <Divider />
-                <MenuItems level={auth.user["livello"]} change={changeTitle}/>
+                <MenuItems level={auth.user['livello']} change={changeTitle} />
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
                     <Grid container spacing={3}>
-                        <Grid item xs={12} >
+                        <Grid item xs={12}>
                             <Box fontWeight="fontWeightBold">
                                 <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                                Bentornato, {auth.user["nome"]+" "}{auth.user["cognome"]}!
+                                    Bentornato, {auth.user['nome'] + ' '}
+                                    {auth.user['cognome']}!
                                 </Typography>
                             </Box>
                         </Grid>
-                        {auth.user["livello"] === 0 ? <Voti auth={auth} /> : ""}
+                        <DashboardLevelOne/>
                     </Grid>
 
                     <Box pt={4}>
@@ -184,10 +184,11 @@ export default function Dashboard(props) {
                 </Container>
             </main>
         </div>
-            : <Container component="main" maxWidth="xs">
-                <Container className={classes.paper}>
-                    <CircularProgress />
-                </Container>
+    ) : (
+        <Container component="main" maxWidth="xs">
+            <Container className={classes.paper}>
+                <CircularProgress />
             </Container>
+        </Container>
     );
 }

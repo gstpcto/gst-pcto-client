@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { baseRoute } from '../ProvideAuth';
 import axios from 'axios';
-import { Grid, Box } from '@material-ui/core';
+import { Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { CircularProgress } from '@material-ui/core';
 import ComponentVoti from './ComponentVoti';
-
+import { useAuth } from '../ProvideAuth';
 const useStyles = makeStyles((theme) => ({
     paper: {
         display: 'flex',
@@ -28,14 +28,15 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function VotiWrapper({ auth }) {
+export default function VotiWrapper() {
+    const auth = useAuth();
     console.log('dentro a voti', auth);
     console.log('capiamo', auth.token);
     const classes = useStyles();
     const [isLoading, setLoading] = useState(true);
+    // eslint-disable-next-line
     const [isError, setError] = useState(false);
     const [data, setData] = useState([]);
-
     useEffect(() => {
         const fetchData = async () => {
             setError(false);
