@@ -2,8 +2,7 @@ import React, { createContext, useState, useContext } from 'react';
 import axios from 'axios';
 
 export const authContext = createContext();
-export const baseRoute = 'https://gstpcto.eu-central-1.elasticbeanstalk.com';
-const loginRoute = 'https://gstpcto.eu-central-1.elasticbeanstalk.com/login';
+export const baseRoute = 'https://mattia.hopto.org';
 
 export default function ProvideAuth({ children }) {
     const auth = useProvideAuth();
@@ -23,7 +22,7 @@ function useProvideAuth() {
     const [token, setToken] = useState(null);
 
     const login = async ({ username, password }) => {
-        await axios.post(loginRoute, {
+        await axios.post(`${baseRoute}/login`, {
             username: username,
             password: password
         })
