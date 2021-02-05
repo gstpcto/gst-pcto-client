@@ -30,14 +30,15 @@ export default function Navbar() {
                     <Typography edge="start" variant="h6" className={classes.title}>
                         GSTPCTO
                     </Typography>
-                    {auth.isAuthenticated() ? 
-                        <Button color="inherit" startIcon={<DashboardIcon />} onClick={() => {
-                            history.push('/dashboard')
-                        }}>Dashboard</Button>
-                    :
-                        <Button color="inherit" startIcon={<VpnKeyIcon />} onClick={() => {
-                            history.push('/login')
-                        }}>Login</Button>
+                    {
+                        auth.isAuthenticated() ?
+                            <Button color="inherit" startIcon={<DashboardIcon />} onClick={() => {
+                                history.push('/dashboard')
+                            }}>Dashboard</Button>
+                            :
+                            <Button color="inherit" startIcon={<VpnKeyIcon />} onClick={() => {
+                                history.push('/login')
+                            }}>Login</Button>
                     }
                 </Toolbar>
             </AppBar>

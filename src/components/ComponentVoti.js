@@ -14,7 +14,7 @@ const useStyles = makeStyles({
         backgroundColor: red[500],
     },
     bgYellow: {
-        backgroundColor: yellow[500],
+        backgroundColor: yellow[800],
     },
     bgGreen: {
         backgroundColor: green[500],
@@ -24,9 +24,6 @@ const useStyles = makeStyles({
         flexDirection: 'row',
         height: 150,
         overflow: 'auto',
-    },
-    cardDetails: {
-        flex: 1,
     },
     cardMedia: {
         width: 150,

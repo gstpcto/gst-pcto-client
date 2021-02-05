@@ -6,3 +6,21 @@
     -webkit-user-select: none;
     -ms-user-select: none;
 }
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+::-webkit-scrollbar-track {
+    border-radius: 50px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: silver;
+    border-radius: 50px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: gray;
+}
