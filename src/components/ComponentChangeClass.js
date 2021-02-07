@@ -33,6 +33,9 @@ export default function ComponentChangeClass() {
     };
 
     const handleChange = async ({classe, sezione, indirizzo}) => {
+        console.log("button click"); //TODO: remove
+        console.log(classe, sezione, indirizzo);
+        
         axios
             .put(`${baseRoute}/studenti/cambiaClasse`, {
                 token: localStorage.getItem('token'),
@@ -40,7 +43,7 @@ export default function ComponentChangeClass() {
                     classe: classe,
                     sezione: sezione,
                     indirizzo: indirizzo,
-                    as: '2019/20',
+                    as: '2020/21',
                 }
             }
         )
@@ -50,6 +53,7 @@ export default function ComponentChangeClass() {
             .catch(function (error) {
                 console.log(error);
             });
+
     };
 
 

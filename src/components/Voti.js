@@ -46,7 +46,7 @@ export default function VotiWrapper() {
                 const response = await axios.get(`${baseRoute}/voti/voti`, { params: { token: auth.token } });
                 setData(response.data['data']);
                 console.log('stampo i voti');
-                console.log(data);
+                console.log("i voti", data);
             } catch (error) {
                 setError(true);
             }
@@ -61,9 +61,10 @@ export default function VotiWrapper() {
     ) : (
         <Box className={classes.paperContainer} display="flex" flexDirection="row">
             {data.map(({ Nome, Data, Descrizione, Valutazione }, index) => {
+                
                 return (
                     <Box className={classes.markMargin}>
-                        <ComponentVoti key={index} Nome={Nome} Data={Data} Descrizione={Descrizione} Valutazione={Valutazione} />
+                        <ComponentVoti key={index} Nome={Nome} Data={Data.split('T')[0]} Descrizione={Descrizione} Valutazione={Valutazione} />
                     </Box>
                 );
             })}

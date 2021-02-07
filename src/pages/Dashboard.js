@@ -175,7 +175,7 @@ export default function Dashboard(props) {
                                 </Typography>
                             </Box>
                         </Grid>
-                        <DashboardLevelOne/>
+                        {auth.user["livello"] == 0 ? <DashboardLevelOne />: ""}
                     </Grid>
 
                     <Box pt={4}>
