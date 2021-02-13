@@ -5,7 +5,7 @@ export default function Copyright() {
         <Typography variant="body2" color="textSecondary" align="center">
             {'Copyright © '}
             <Link color="inherit" href="https://github.com/gstpcto">
-                Team GST-PCTO
+                Andrea Lin e Mattia Ferrari
             </Link>{', '}
             {new Date().getFullYear()}
             {'.'}

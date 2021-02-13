@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { CircularProgress } from '@material-ui/core';
 import ComponentVoti from './ComponentVoti';
 import { useAuth } from '../ProvideAuth';
+
 const useStyles = makeStyles((theme) => ({
     paper: {
         display: 'flex',

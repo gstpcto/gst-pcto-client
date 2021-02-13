@@ -16,7 +16,7 @@ import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import Button from '@material-ui/core/Button';
 import MenuItems from '../components/MenuItems';
 import Copyright from '../components/Copyright';
-import DashboardLevelOne from '../components/DashboardLevelOne';
+import DashboardLevelOne from '../fragments/DashboardLevelOne';
 import { useAuth } from '../ProvideAuth';
 import { CircularProgress } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
@@ -151,7 +151,7 @@ export default function Dashboard(props) {
             setFragment({ titolo: 'Dashboard', component: <CircularProgress /> });
         }
         // eslint-disable-next-line
-    }, []);
+    }, [auth]);
 
     return auth.user ? (
         <div className={classes.root}>
@@ -196,13 +196,12 @@ export default function Dashboard(props) {
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
                             <Box fontWeight="fontWeightBold">
-                                <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                                    Bentornato, {auth.user['nome'] + ' '}
-                                    {auth.user['cognome']}!
+                                <Typography component="h1" variant="h6" color="inherit" className={classes.title}>
+                                    Bentornato, {auth.user['nome'] + ' ' + auth.user['cognome'] + '!'}
                                 </Typography>
                             </Box>
                         </Grid>
-                        <Grid container item>
+                        <Grid xs={12} container item>
                             {fragment.component}
                         </Grid>
                     </Grid>
