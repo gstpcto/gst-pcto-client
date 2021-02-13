@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -110,11 +110,6 @@ export default function Dashboard(props) {
     const history = useHistory();
     const auth = useAuth();
 
-    const [titolo, setTitolo] = useState('Dashboard');
-    const changeTitle = (text) => {
-        setTitolo(text);
-    };
-
     const [open, setOpen] = React.useState(false);
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -126,6 +121,38 @@ export default function Dashboard(props) {
     // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
     console.log(auth);
 
+    const defaultComponent = () => {
+        switch (auth.user['livello']) {
+            case 0:
+                return <DashboardLevelOne />;
+            case 1:
+                return <>Dashboard liv1</>;
+            case 2:
+                return <>Dashboard liv2</>;
+            case 3:
+                return <>Dashboard liv3</>;
+            case 4:
+                return <>Dashboard liv4</>;
+            default:
+                return <>bruhhhh</>;
+        }
+    };
+
+    /* fragment = {chiave: String, titolo: String, component: Component} */
+    const [fragment, setFragment] = useState({
+        titolo: 'Dashboard',
+        component: null,
+    });
+
+    useEffect(() => {
+        if (auth.user) {
+            setFragment({ titolo: 'Dashboard', component: defaultComponent() });
+        } else {
+            setFragment({ titolo: 'Dashboard', component: <CircularProgress /> });
+        }
+        // eslint-disable-next-line
+    }, []);
+
     return auth.user ? (
         <div className={classes.root}>
             <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
@@ -134,7 +161,7 @@ export default function Dashboard(props) {
                         <MenuIcon />
                     </IconButton>
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                        {titolo}
+                        {fragment.titolo}
                     </Typography>
                     <Button
                         color="inherit"
@@ -161,7 +188,7 @@ export default function Dashboard(props) {
                     </IconButton>
                 </div>
                 <Divider />
-                <MenuItems level={auth.user['livello']} change={changeTitle} />
+                <MenuItems level={auth.user['livello']} setFragment={setFragment} />
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
@@ -175,7 +202,9 @@ export default function Dashboard(props) {
                                 </Typography>
                             </Box>
                         </Grid>
-                        {auth.user["livello"] == 0 ? <DashboardLevelOne />: ""}
+                        <Grid container item>
+                            {fragment.component}
+                        </Grid>
                     </Grid>
 
                     <Box pt={4}>
