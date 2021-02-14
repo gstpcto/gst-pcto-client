@@ -8,7 +8,6 @@ const useStyles = makeStyles((theme) => ({
     formControl: {
         marginTop: theme.spacing(1),
         marginBottom: theme.spacing(1),
-        minWidth: 150,
     },
     paperContainer: {
         padding: theme.spacing(2),
@@ -101,7 +100,7 @@ export default function ComponentChangeClass() {
             <Box className={classes.boxContainer}>
                 <Button
                     variant="contained"
-                    color="primary"
+                    color="secondary"
                     onClick={() => {
                         handleChange({ classe, sezione, indirizzo });
                     }}

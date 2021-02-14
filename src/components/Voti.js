@@ -14,15 +14,13 @@ const useStyles = makeStyles((theme) => ({
     fixedHeight: {
         height: 240,
     },
-    paperContainer: {
+    boxContainer: {
         paddingTop: theme.spacing(2),
         paddingBottom: theme.spacing(2),
         paddingLeft: 0,
         paddingRight: 0,
         overflow: 'auto',
-    },
-    markMargin: {
-        margin: '0px 5px 0px 5px',
+        display: 'flex'
     },
     fixedWidth: {
         width: 150,
@@ -47,7 +45,7 @@ export default function VotiWrapper() {
                 const response = await axios.get(`${baseRoute}/voti/voti`, { params: { token: auth.token } });
                 setData(response.data['data']);
                 console.log('stampo i voti');
-                console.log("i voti", data);
+                console.log('i voti', data);
             } catch (error) {
                 setError(true);
             }
@@ -60,13 +58,10 @@ export default function VotiWrapper() {
     return isLoading ? (
         <CircularProgress />
     ) : (
-        <Box className={classes.paperContainer} display="flex" flexDirection="row">
+        <Box className={classes.boxContainer} mx={1}>
             {data.map(({ Nome, Data, Descrizione, Valutazione }, index) => {
-                
                 return (
-                    <Box className={classes.markMargin}>
                         <ComponentVoti key={index} Nome={Nome} Data={Data.split('T')[0]} Descrizione={Descrizione} Valutazione={Valutazione} />
-                    </Box>
                 );
             })}
         </Box>

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import { Box } from '@material-ui/core';
-import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import clsx from 'clsx';
@@ -61,7 +60,7 @@ export default function ComponentVoti({ Nome, Data, Descrizione, Valutazione }) 
     const fixedSizeCardDetails = clsx(classes.card, classes.maxWidth);
 
     return (
-        <Grid item xs={12}>
+        <Box mx={1}>
             <Card className={classes.card}>
                 <Box className={fixedSizeCardMedia} display="flex" justifyContent="center" alignItems="center">
                     <Typography variant="h1">{Valutazione}</Typography>
@@ -79,7 +78,7 @@ export default function ComponentVoti({ Nome, Data, Descrizione, Valutazione }) 
                     </CardContent>
                 </div>
             </Card>
-        </Grid>
+        </Box>
     );
 }
 

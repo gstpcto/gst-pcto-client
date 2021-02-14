@@ -1,11 +1,21 @@
 import React from 'react';
-import { Box } from '@material-ui/core';
+import { Grid, Box } from '@material-ui/core';
 import ComponentChangeClass from '../components/ComponentChangeClass';
+import ComponentChangePassword from '../components/ComponentChangePassword';
 
 export default function SettingsLevelOne() {
     return (
-        <Box>
-            <ComponentChangeClass />
-        </Box>
+        <>
+            <Grid item xs={12} lg={6}>
+                <Box>
+                    <ComponentChangeClass />
+                </Box>
+            </Grid>
+            <Grid item xs={12} lg={6}>
+                <Box>
+                    <ComponentChangePassword />
+                </Box>
+            </Grid>
+        </>
     );
 }

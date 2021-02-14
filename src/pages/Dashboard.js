@@ -193,17 +193,8 @@ export default function Dashboard(props) {
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12}>
-                            <Box fontWeight="fontWeightBold">
-                                <Typography component="h1" variant="h6" color="inherit" className={classes.title}>
-                                    Bentornato, {auth.user['nome'] + ' ' + auth.user['cognome'] + '!'}
-                                </Typography>
-                            </Box>
-                        </Grid>
-                        <Grid xs={12} container item>
-                            {fragment.component}
-                        </Grid>
+                    <Grid container spacing={1}>
+                        {fragment.component}
                     </Grid>
 
                     <Box pt={4}>
