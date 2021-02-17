@@ -36,22 +36,23 @@ export default function VotiWrapper() {
     // eslint-disable-next-line
     const [isError, setError] = useState(false);
     const [data, setData] = useState([]);
-    useEffect(() => {
-        const fetchData = async () => {
-            setError(false);
-            setLoading(true);
 
-            try {
-                const response = await axios.get(`${baseRoute}/voti/voti`, { params: { token: auth.token } });
+    useEffect(() => {
+        setError(false);
+        setLoading(true);
+        axios
+            .get(`${baseRoute}/voti/voti`, { params: { token: auth.token } })
+            .then(function (response) {
+                console.log(response);
                 setData(response.data['data']);
-                console.log('stampo i voti');
-                console.log('i voti', data);
-            } catch (error) {
+            })
+            .catch(function (error) {
+                console.log(error);
                 setError(true);
-            }
-            setLoading(false);
-        };
-        fetchData();
+            })
+            .finally(function () {
+                setLoading(false);
+            });
         // eslint-disable-next-line
     }, []);
 

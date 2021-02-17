@@ -16,10 +16,13 @@ import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import Button from '@material-ui/core/Button';
 import MenuItems from '../components/MenuItems';
 import Copyright from '../components/Copyright';
-import DashboardLevelZero from '../fragments/DashboardLevelZero';
 import { useAuth } from '../ProvideAuth';
 import { CircularProgress } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
+
+// Default Dashboards
+import DashboardLevelZero from '../fragments/DashboardLevelZero';
+import DashboardLevelOne from '../fragments/DashboardLevelOne';
 
 const drawerWidth = 240;
 
@@ -126,7 +129,7 @@ export default function Dashboard(props) {
             case 0:
                 return <DashboardLevelZero />;
             case 1:
-                return <>Dashboard liv1</>;
+                return <DashboardLevelOne />;
             case 2:
                 return <>Dashboard liv2</>;
             case 3:

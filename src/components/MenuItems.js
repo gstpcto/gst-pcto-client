@@ -9,6 +9,7 @@ import List from '@material-ui/core/List';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
 import DashboardLevelZero from '../fragments/DashboardLevelZero';
 import SettingsLevelZero from '../fragments/SettingsLevelZero';
+import DashboardLevelOne from '../fragments/DashboardLevelOne';
 
 export default function MenuItems({ level, setFragment }) {
     const getMenu = (level) => {
@@ -64,7 +65,15 @@ export default function MenuItems({ level, setFragment }) {
             case 1:
                 return (
                     <>
-                        <ListItem button>
+                        <ListItem
+                            button
+                            onClick={() => {
+                                setFragment({
+                                    titolo: 'Dashboard',
+                                    component: <DashboardLevelOne />,
+                                });
+                            }}
+                        >
                             <ListItemIcon>
                                 <DashboardIcon />
                             </ListItemIcon>

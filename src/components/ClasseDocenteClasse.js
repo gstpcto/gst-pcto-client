@@ -11,7 +11,7 @@ import { CircularProgress } from '@material-ui/core';
 import axios from 'axios';
 import { useAuth } from '../ProvideAuth';
 
-export default function ComponentProjectsTable() {
+export default function ClasseDocenteClasse() {
     const auth = useAuth();
     const [isLoading, setLoading] = useState(true);
     // eslint-disable-next-line
@@ -22,10 +22,10 @@ export default function ComponentProjectsTable() {
         setError(false);
         setLoading(true);
         axios
-            .get(`${baseRoute}/progetti/myProjects`, { params: { token: auth.token } })
+            .get(`${baseRoute}/progetti/classiAlunni`, { params: { token: auth.token } })
             .then(function (response) {
                 console.log(response);
-                setData(response.data['data']);
+                setData(response.data['progetti'][0]['alunni']);
             })
             .catch(function (error) {
                 console.log(error);
@@ -45,14 +45,28 @@ export default function ComponentProjectsTable() {
                 <TableHead>
                     <TableRow>
                         <TableCell scope="col" component="th">
-                            Progetti
+                            Classe
+                        </TableCell>
+                        <TableCell scope="col" component="th">
+                            Nome
+                        </TableCell>
+                        <TableCell scope="col" component="th">
+                            Cognome
                         </TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {data.map(({ Descrizione, Durata, Ente, ID, LinkValutazioni, Nome, Periodo, Valutazione }, index) => (
+                    {data.map(({ iduser, nome, cognome, idclasse, ...rest }, index) => (
                         <TableRow key={index}>
-                            <TableCell scope="row">{Nome}</TableCell>
+                            <TableCell scope="row">
+                                {idclasse} 
+                            </TableCell>
+                            <TableCell scope="row">
+                                {nome}
+                            </TableCell>
+                            <TableCell scope="row">
+                                {cognome}
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
