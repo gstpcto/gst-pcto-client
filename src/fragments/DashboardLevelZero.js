@@ -4,7 +4,7 @@ import { Grid, Box, Typography } from '@material-ui/core';
 import ComponentProjectsTable from '../components/ComponentProjectsTable';
 import { useAuth } from '../ProvideAuth';
 
-export default function DashboardLevelOne() {
+export default function DashboardLevelZero() {
     const auth = useAuth();
     return (
         <>

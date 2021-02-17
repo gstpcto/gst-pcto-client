@@ -7,8 +7,8 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import DescriptionIcon from '@material-ui/icons/Description';
 import List from '@material-ui/core/List';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
-import DashboardLevelOne from '../fragments/DashboardLevelOne';
-import SettingsLevelOne from '../fragments/SettingsLevelOne';
+import DashboardLevelZero from '../fragments/DashboardLevelZero';
+import SettingsLevelZero from '../fragments/SettingsLevelZero';
 
 export default function MenuItems({ level, setFragment }) {
     const getMenu = (level) => {
@@ -21,7 +21,7 @@ export default function MenuItems({ level, setFragment }) {
                             onClick={() => {
                                 setFragment({
                                     titolo: 'Dashboard',
-                                    component: <DashboardLevelOne />,
+                                    component: <DashboardLevelZero />,
                                 });
                             }}
                         >
@@ -49,7 +49,7 @@ export default function MenuItems({ level, setFragment }) {
                             onClick={() => {
                                 setFragment({
                                     titolo: 'Impostazioni Profilo',
-                                    component: <SettingsLevelOne />,
+                                    component: <SettingsLevelZero />,
                                 });
                             }}
                         >

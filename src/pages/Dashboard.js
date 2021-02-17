@@ -16,7 +16,7 @@ import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import Button from '@material-ui/core/Button';
 import MenuItems from '../components/MenuItems';
 import Copyright from '../components/Copyright';
-import DashboardLevelOne from '../fragments/DashboardLevelOne';
+import DashboardLevelZero from '../fragments/DashboardLevelZero';
 import { useAuth } from '../ProvideAuth';
 import { CircularProgress } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
@@ -124,7 +124,7 @@ export default function Dashboard(props) {
     const defaultComponent = () => {
         switch (auth.user['livello']) {
             case 0:
-                return <DashboardLevelOne />;
+                return <DashboardLevelZero />;
             case 1:
                 return <>Dashboard liv1</>;
             case 2:
