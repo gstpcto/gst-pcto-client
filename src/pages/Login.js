@@ -16,122 +16,96 @@ import { CircularProgress } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    padding: '25px',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.primary.main,
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-  errorMessage: {
-    color: "#e53935",
-  }
+    paper: {
+        marginTop: theme.spacing(8),
+        padding: '25px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    avatar: {
+        margin: theme.spacing(1),
+        backgroundColor: theme.palette.primary.main,
+    },
+    form: {
+        width: '100%', // Fix IE 11 issue.
+        marginTop: theme.spacing(1),
+    },
+    submit: {
+        margin: theme.spacing(3, 0, 2),
+    },
+    errorMessage: {
+        color: '#e53935',
+    },
 }));
 
 export default function Login(props) {
-  const classes = useStyles();
-  const history = useHistory();
-  const auth = useAuth();
-  const [loading, setLoading] = useState(false);
-  const [loginUsername, setLoginUsername] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+    const classes = useStyles();
+    const history = useHistory();
+    const auth = useAuth();
+    
+    const [loading, setLoading] = useState(false);
+    const [loginValues, setLoginValues] = useState({
+        email: '',
+        password: '',
+    });
+    const [errorMessage, setErrorMessage] = useState('');
 
-  const handleLogin = async () => {
-    setLoading(true);
-    await auth.login({ username: loginUsername, password: loginPassword });
+    const handleTextChange = (event) => {
+        setLoginValues((prevState) => ({
+            ...prevState,
+            [event.target.id]: event.target.value,
+        }));
+    };
 
-    setLoading(false);
-    if (auth.isAuthenticated()) {
-      history.push('/dashboard');
-    } else {
-      setErrorMessage("Accesso fallito (come te)");
-    }
-  };
+    const handleLogin = async () => {
+        setLoading(true);
+        await auth.login({ username: loginValues['email'], password: loginValues['password'] });
 
-  const handleKeyPress = (e) => {
-    //e.preventDefault();
-    //console.log(e);
-    if (e.key === "Enter") handleLogin()
-  }
+        setLoading(false);
+        if (auth.isAuthenticated()) {
+            history.push('/dashboard');
+        } else {
+            setErrorMessage('Accesso fallito (come te)');
+        }
+    };
 
-  return (
-    loading ?
+    const handleKeyPress = (e) => {
+        //e.preventDefault();
+        //console.log(e);
+        if (e.key === 'Enter') handleLogin();
+    };
 
-      <Container component="main" maxWidth="xs">
-        <Container className={classes.paper}>
-          <CircularProgress />
+    return loading ? (
+        <Container component="main" maxWidth="xs">
+            <Container className={classes.paper}>
+                <CircularProgress />
+            </Container>
         </Container>
-      </Container>
-
-      :
-
-      <Container component="main" maxWidth="xs">
-        <EventListener
-          target="window"
-          onKeyPress={handleKeyPress} />
-        <Paper className={classes.paper}>
-          <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Accedi al portale
-        </Typography>
-          <Typography className={classes.errorMessage} component="h2" variant="h6">
-            {errorMessage}
-          </Typography>
-          <form className={classes.form} noValidate>
-            <TextField onChange={(e) => {
-              setLoginUsername(e.target.value);
-            }}
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Indirizzo Email"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField onChange={(e) => {
-              setLoginPassword(e.target.value);
-            }}
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-              onClick={handleLogin}
-            >
-              Accedi
-          </Button>
-          </form>
-        </Paper>
-        <Box mt={8}>
-          <Copyright />
-        </Box>
-      </Container>
-  );
+    ) : (
+        <Container component="main" maxWidth="xs">
+            <EventListener target="window" onKeyPress={handleKeyPress} />
+            <Paper className={classes.paper}>
+                <Avatar className={classes.avatar}>
+                    <LockOutlinedIcon />
+                </Avatar>
+                <Typography component="h1" variant="h5">
+                    Accedi al portale
+                </Typography>
+                <Typography className={classes.errorMessage} component="h2" variant="h6">
+                    {errorMessage}
+                </Typography>
+                <form className={classes.form} noValidate>
+                    <TextField onChange={handleTextChange} variant="outlined" margin="normal" required fullWidth id="email" label="Indirizzo Email" name="email" autoComplete="email" autoFocus />
+                    <TextField onChange={handleTextChange} variant="outlined" margin="normal" required fullWidth name="password" label="Password" type="password" id="password" autoComplete="current-password" />
+                    <Button fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleLogin}>
+                        Accedi
+                    </Button>
+                </form>
+            </Paper>
+            <Box mt={8}>
+                <Copyright />
+            </Box>
+        </Container>
+    );
 }

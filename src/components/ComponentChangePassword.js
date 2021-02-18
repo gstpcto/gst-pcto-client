@@ -25,11 +25,44 @@ const useStyles = makeStyles((theme) => ({
 export default function ComponentChangePassword() {
     const classes = useStyles();
 
-    const [showPassword, setShowPassword] = useState(false);
-    const [password, setPassword] = useState('');
+    const [showOldPassword, setShowOldPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [newPasswordError, setNewPasswordError] = useState(false);
+    const [oldPasswordError, setOldPasswordError] = useState(false);
+    const [password, setPassword] = useState({
+        oldPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+    });
 
-    const handleClickShowPassword = () => {
-        setShowPassword(!showPassword);
+    const handleTextChange = (event) => {
+        setPassword((prevState) => ({
+            ...prevState,
+            [event.target.id]: event.target.value,
+        }));
+    };
+
+    const submitHandler = () => {
+        console.log('hai clicato il boton pass', password);
+        if (password.newPassword !== password.confirmPassword) {
+            setNewPasswordError(true);
+        }
+
+        // controllo cambio password da effettuare server side e togglare a true oldPasswordError
+
+        setPassword({
+            oldPassword: '',
+            newPassword: '',
+            confirmPassword: '',
+        });
+    };
+
+    const handleClickShowOldPassword = () => {
+        setShowOldPassword(!showOldPassword);
+    };
+
+    const handleClickShowNewPassword = () => {
+        setShowNewPassword(!showNewPassword);
     };
 
     const handleMouseDownPassword = (event) => {
@@ -39,64 +72,48 @@ export default function ComponentChangePassword() {
     return (
         <Paper className={classes.paperContainer}>
             <Box className={classes.boxContainer}>
-                <FormControl fullWidth variant="outlined" className={classes.formControl}>
+                <FormControl fullWidth variant="outlined" error={oldPasswordError} className={classes.formControl}>
                     <InputLabel>Vecchia Password</InputLabel>
                     <OutlinedInput
-                        type={showPassword ? 'text' : 'password'}
-                        value={password}
-                        onChange={() => {
-                            setPassword('password');
-                        }}
+                        id="oldPassword"
+                        type={showOldPassword ? 'text' : 'password'}
+                        onChange={handleTextChange}
+                        value={password.oldPassword}
                         endAdornment={
                             <InputAdornment position="end">
-                                <IconButton onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} edge="end">
-                                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                                <IconButton onClick={handleClickShowOldPassword} onMouseDown={handleMouseDownPassword} edge="end">
+                                    {showOldPassword ? <Visibility /> : <VisibilityOff />}
                                 </IconButton>
                             </InputAdornment>
                         }
                         label="Vecchia Password"
                     />
                 </FormControl>
-                <FormControl fullWidth variant="outlined" className={classes.formControl}>
+                <FormControl fullWidth variant="outlined" error={newPasswordError} className={classes.formControl}>
                     <InputLabel>Nuova Password</InputLabel>
                     <OutlinedInput
-                        type={showPassword ? 'text' : 'password'}
-                        value={password}
-                        onChange={() => {
-                            setPassword('password');
-                        }}
+                        id="newPassword"
+                        type={showNewPassword ? 'text' : 'password'}
+                        onChange={handleTextChange}
+                        value={password.newPassword}
                         endAdornment={
                             <InputAdornment position="end">
-                                <IconButton onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} edge="end">
-                                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                                <IconButton onClick={handleClickShowNewPassword} onMouseDown={handleMouseDownPassword} edge="end">
+                                    {showNewPassword ? <Visibility /> : <VisibilityOff />}
                                 </IconButton>
                             </InputAdornment>
                         }
                         label="Nuova Password"
                     />
                 </FormControl>
-                <FormControl fullWidth variant="outlined" className={classes.formControl}>
+                <FormControl fullWidth variant="outlined" error={newPasswordError} className={classes.formControl}>
                     <InputLabel>Conferma Password</InputLabel>
-                    <OutlinedInput
-                        type={showPassword ? 'text' : 'password'}
-                        value={password}
-                        onChange={() => {
-                            setPassword('password');
-                        }}
-                        endAdornment={
-                            <InputAdornment position="end">
-                                <IconButton onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} edge="end">
-                                    {showPassword ? <Visibility /> : <VisibilityOff />}
-                                </IconButton>
-                            </InputAdornment>
-                        }
-                        label="Conferma Password"
-                    />
+                    <OutlinedInput id="confirmPassword" type={showNewPassword ? 'text' : 'password'} onChange={handleTextChange} value={password.confirmPassword} label="Conferma Password" />
                 </FormControl>
             </Box>
 
             <Box className={classes.boxContainer}>
-                <Button variant="contained" color="secondary" fullWidth>
+                <Button variant="contained" color="secondary" fullWidth onClick={submitHandler}>
                     Cambia Password
                 </Button>
             </Box>
