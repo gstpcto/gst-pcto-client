@@ -1,15 +1,23 @@
 import React from 'react';
+
+// Material-UI Components
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import List from '@material-ui/core/List';
+
+// Material-UI Icons
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import SettingsIcon from '@material-ui/icons/Settings';
 import DescriptionIcon from '@material-ui/icons/Description';
-import List from '@material-ui/core/List';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
+import TableChartIcon from '@material-ui/icons/TableChart';
+
+// Fragments
 import DashboardLevelZero from '../fragments/DashboardLevelZero';
 import SettingsLevelZero from '../fragments/SettingsLevelZero';
 import DashboardLevelOne from '../fragments/DashboardLevelOne';
+import TabellaLevelOne from '../fragments/TabellaLevelOne';
 
 export default function MenuItems({ level, setFragment }) {
     const getMenu = (level) => {
@@ -78,6 +86,20 @@ export default function MenuItems({ level, setFragment }) {
                                 <DashboardIcon />
                             </ListItemIcon>
                             <ListItemText primary="Dashboard" />
+                        </ListItem>
+                        <ListItem
+                            button
+                            onClick={() => {
+                                setFragment({
+                                    titolo: 'Tabella Classe',
+                                    component: <TabellaLevelOne />,
+                                });
+                            }}
+                        >
+                            <ListItemIcon>
+                                <TableChartIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Tabella Classe" />
                         </ListItem>
                     </>
                 );
