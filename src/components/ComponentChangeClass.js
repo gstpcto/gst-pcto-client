@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FormControl, InputLabel, Select, MenuItem, Button, Paper, Box } from '@material-ui/core';
+import { FormControl, InputLabel, Select, MenuItem, Button, Paper, Box, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { baseRoute } from '../ProvideAuth';
 import axios from 'axios';
@@ -68,6 +68,9 @@ export default function ComponentChangeClass() {
     return (
         <Paper className={classes.paperContainer}>
             <Box className={classes.boxContainer}>
+                <Typography variant="h6" component="h1">
+                    Cambia Classe
+                </Typography>
                 <FormControl fullWidth variant="outlined" className={classes.formControl}>
                     <InputLabel>Classe</InputLabel>
                     <Select label="Classe" onChange={handleClasseChange} value={classe}>

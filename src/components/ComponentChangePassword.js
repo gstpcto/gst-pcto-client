@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Paper, Box, FormControl, InputAdornment, OutlinedInput, InputLabel, IconButton } from '@material-ui/core';
+import { Button, Paper, Box, FormControl, InputAdornment, OutlinedInput, InputLabel, IconButton, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
@@ -72,6 +72,9 @@ export default function ComponentChangePassword() {
     return (
         <Paper className={classes.paperContainer}>
             <Box className={classes.boxContainer}>
+                <Typography variant="h6" component="h1">
+                    Cambia Password
+                </Typography>
                 <FormControl fullWidth variant="outlined" error={oldPasswordError} className={classes.formControl}>
                     <InputLabel>Vecchia Password</InputLabel>
                     <OutlinedInput

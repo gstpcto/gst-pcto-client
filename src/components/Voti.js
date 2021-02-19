@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { baseRoute } from '../ProvideAuth';
 import axios from 'axios';
-import { Box } from '@material-ui/core';
+import { Box, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { CircularProgress } from '@material-ui/core';
 import ComponentVoti from './ComponentVoti';
@@ -15,7 +15,6 @@ const useStyles = makeStyles((theme) => ({
         height: 240,
     },
     boxContainer: {
-        paddingTop: theme.spacing(2),
         paddingBottom: theme.spacing(2),
         paddingLeft: 0,
         paddingRight: 0,
@@ -59,12 +58,15 @@ export default function VotiWrapper() {
     return isLoading ? (
         <CircularProgress />
     ) : (
-        <Box className={classes.boxContainer} mx={1}>
-            {data.map(({ Nome, Data, Descrizione, Valutazione }, index) => {
-                return (
-                        <ComponentVoti key={index} Nome={Nome} Data={Data.split('T')[0]} Descrizione={Descrizione} Valutazione={Valutazione} />
-                );
-            })}
-        </Box>
+        <>
+            <Typography variant="h6" component="h1">
+                Voti
+            </Typography>
+            <Box className={classes.boxContainer} mx={1}>
+                {data.map(({ Nome, Data, Descrizione, Valutazione }, index) => {
+                    return <ComponentVoti key={index} Nome={Nome} Data={Data.split('T')[0]} Descrizione={Descrizione} Valutazione={Valutazione} />;
+                })}
+            </Box>
+        </>
     );
 }

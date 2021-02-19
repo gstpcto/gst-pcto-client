@@ -6,12 +6,12 @@ import ComponentChangePassword from '../components/ComponentChangePassword';
 export default function SettingsLevelZero() {
     return (
         <>
-            <Grid item xs={12} lg={6}>
+            <Grid item xs={12} md={6}>
                 <Box>
                     <ComponentChangeClass />
                 </Box>
             </Grid>
-            <Grid item xs={12} lg={6}>
+            <Grid item xs={12} md={6}>
                 <Box>
                     <ComponentChangePassword />
                 </Box>

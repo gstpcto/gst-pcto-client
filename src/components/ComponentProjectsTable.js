@@ -5,6 +5,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import { baseRoute } from '../ProvideAuth';
 import { CircularProgress } from '@material-ui/core';
@@ -40,23 +41,44 @@ export default function ComponentProjectsTable() {
     return isLoading ? (
         <CircularProgress />
     ) : (
-        <TableContainer component={Paper}>
-            <Table size="small">
-                <TableHead>
-                    <TableRow>
-                        <TableCell scope="col" component="th">
-                            Progetti
-                        </TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {data.map(({ Descrizione, Durata, Ente, ID, LinkValutazioni, Nome, Periodo, Valutazione }, index) => (
-                        <TableRow key={index}>
-                            <TableCell scope="row">{Nome}</TableCell>
+        <>
+            <Typography variant="h6" component="h1">
+                Progetti
+            </Typography>
+            <TableContainer component={Paper}>
+                <Table size="small">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell fontWeight="fontWeightBold" scope="col" component="th">
+                                Progetto
+                            </TableCell>
+                            <TableCell fontWeight="fontWeightBold" scope="col" component="th">
+                                Descrizione
+                            </TableCell>
+                            <TableCell fontWeight="fontWeightBold" scope="col" component="th">
+                                Ente
+                            </TableCell>
+                            <TableCell fontWeight="fontWeightBold" scope="col" component="th">
+                                Durata
+                            </TableCell>
+                            <TableCell fontWeight="fontWeightBold" scope="col" component="th">
+                                Periodo
+                            </TableCell>
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                        {data.map(({ Descrizione, Durata, Ente, ID, LinkValutazioni, Nome, Periodo, Valutazione }, index) => (
+                            <TableRow key={index}>
+                                <TableCell scope="row">{Nome}</TableCell>
+                                <TableCell scope="row">{Descrizione}</TableCell>
+                                <TableCell scope="row">{Ente}</TableCell>
+                                <TableCell scope="row">{Durata}</TableCell>
+                                <TableCell scope="row">{Periodo}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </>
     );
 }
