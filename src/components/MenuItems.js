@@ -12,12 +12,14 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import DescriptionIcon from '@material-ui/icons/Description';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
 import TableChartIcon from '@material-ui/icons/TableChart';
+import WidgetsIcon from '@material-ui/icons/Widgets';
 
 // Fragments
 import DashboardLevelZero from '../fragments/DashboardLevelZero';
 import SettingsLevelZero from '../fragments/SettingsLevelZero';
 import DashboardLevelOne from '../fragments/DashboardLevelOne';
 import TabellaLevelOne from '../fragments/TabellaLevelOne';
+import ProjectsLevelOne from '../fragments/ProjectsLevelOne';
 
 export default function MenuItems({ level, setFragment }) {
     const getMenu = (level) => {
@@ -100,6 +102,20 @@ export default function MenuItems({ level, setFragment }) {
                                 <TableChartIcon />
                             </ListItemIcon>
                             <ListItemText primary="Tabella Classe" />
+                        </ListItem>
+                        <ListItem
+                            button
+                            onClick={() => {
+                                setFragment({
+                                    titolo: 'Progetti',
+                                    component: <ProjectsLevelOne />,
+                                });
+                            }}
+                        >
+                            <ListItemIcon>
+                                <WidgetsIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Progetti" />
                         </ListItem>
                     </>
                 );

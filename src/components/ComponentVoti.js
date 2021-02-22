@@ -74,7 +74,6 @@ export default function ComponentVoti({ Nome, Data, Descrizione, Valutazione }) 
                         <Typography variant="subtitle1" color="textSecondary">
                             {Data}
                         </Typography>
-                        <Typography variant="subtitle1" paragraph></Typography>
                     </CardContent>
                 </div>
             </Card>
