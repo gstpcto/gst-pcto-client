@@ -42,7 +42,7 @@ export default function VotiWrapper() {
         axios
             .get(`${baseRoute}/voti/voti`, { params: { token: auth.token } })
             .then(function (response) {
-                console.log(response);
+                console.log("voti", response);
                 setData(response.data['data']);
             })
             .catch(function (error) {
@@ -63,8 +63,8 @@ export default function VotiWrapper() {
                 Voti
             </Typography>
             <Box className={classes.boxContainer} mx={1}>
-                {data.map(({ Nome, Data, Descrizione, Valutazione }, index) => {
-                    return <ComponentVoti key={index} Nome={Nome} Data={Data.split('T')[0]} Descrizione={Descrizione} Valutazione={Valutazione} />;
+                {data.map(({ nome, data, descrizione, valutazione }, index) => {
+                    return <ComponentVoti key={index} Nome={nome} Data={data.split('T')[0]} Descrizione={descrizione} Valutazione={valutazione} />;
                 })}
             </Box>
         </>

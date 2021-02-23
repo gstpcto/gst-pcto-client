@@ -25,7 +25,7 @@ export default function ComponentProjectsTable() {
         axios
             .get(`${baseRoute}/progetti/myProjects`, { params: { token: auth.token } })
             .then(function (response) {
-                console.log(response);
+                console.log("project table ",response);
                 setData(response.data['data']);
             })
             .catch(function (error) {
@@ -59,21 +59,21 @@ export default function ComponentProjectsTable() {
                                 Ente
                             </TableCell>
                             <TableCell fontWeight="fontWeightBold" scope="col" component="th">
-                                Durata
+                                inizio
                             </TableCell>
                             <TableCell fontWeight="fontWeightBold" scope="col" component="th">
-                                Periodo
+                                fine
                             </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {data.map(({ Descrizione, Durata, Ente, ID, LinkValutazioni, Nome, Periodo, Valutazione }, index) => (
+                        {data.map(({ descrizione, ente, id, linkValutazioni, nome, startDate, endDate, valutazione }, index) => (
                             <TableRow key={index}>
-                                <TableCell scope="row">{Nome}</TableCell>
-                                <TableCell scope="row">{Descrizione}</TableCell>
-                                <TableCell scope="row">{Ente}</TableCell>
-                                <TableCell scope="row">{Durata}</TableCell>
-                                <TableCell scope="row">{Periodo}</TableCell>
+                                <TableCell scope="row">{nome}</TableCell>
+                                <TableCell scope="row">{descrizione}</TableCell>
+                                <TableCell scope="row">{ente}</TableCell>
+                                <TableCell scope="row">{startDate.split('T')[0]}</TableCell>
+                                <TableCell scope="row">{endDate.split('T')[0]}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

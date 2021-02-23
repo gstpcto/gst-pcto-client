@@ -72,3 +72,17 @@ function useProvideAuth() {
         checkLogin
     };
 }
+
+
+export function getCurrentYear() {
+    var dateObj = new Date();
+    var year = dateObj.getUTCFullYear();
+
+    const changeYear = new Date(`9/15/${year}`)
+
+    const now = new Date()
+
+    if (now < changeYear) return (parseInt(year) - 1) + "/" + year.toString().substring(2, 4);
+    else return year + "/" + ((parseInt(year) + 1).toString().substring(2, 5))
+
+}
