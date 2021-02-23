@@ -47,7 +47,7 @@ export default function TabellaVotiDocenteClasse() {
                         <TableCell scope="col" component="th"></TableCell>
                         {data.map(({ infoProgetto, ...rest }, index) => (
                             <TableCell key={index} scope="col" component="th">
-                                {infoProgetto['Nome']}
+                                {infoProgetto['nome']}
                             </TableCell>
                         ))}
                     </TableRow>

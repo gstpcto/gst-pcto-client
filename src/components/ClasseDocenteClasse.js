@@ -24,7 +24,7 @@ export default function ClasseDocenteClasse() {
         axios
             .get(`${baseRoute}/progetti/classiAlunni`, { params: { token: auth.token } })
             .then(function (response) {
-                console.log(response);
+                console.log("cos è sta roba", response);
                 setData(response.data['progetti'][0]['alunni']);
             })
             .catch(function (error) {

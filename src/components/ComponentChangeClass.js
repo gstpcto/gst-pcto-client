@@ -113,6 +113,11 @@ export default function ComponentChangeClass() {
                         <MenuItem value={'C'}>C</MenuItem>
                         <MenuItem value={'D'}>D</MenuItem>
                         <MenuItem value={'E'}>E</MenuItem>
+                        <MenuItem value={'F'}>F</MenuItem>
+                        <MenuItem value={'G'}>G</MenuItem>
+                        <MenuItem value={'H'}>H</MenuItem>
+                        <MenuItem value={'I'}>I</MenuItem>
+                        <MenuItem value={'L'}>L</MenuItem>
                     </Select>
                 </FormControl>
                 <FormControl fullWidth variant="outlined" className={classes.formControl}>
