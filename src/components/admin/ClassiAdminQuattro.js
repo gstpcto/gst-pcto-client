@@ -1,9 +1,16 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios';
-import {baseRoute, useAuth} from '../../ProvideAuth'
+import { baseRoute, useAuth } from '../../ProvideAuth'
 import Grid from '@material-ui/core/Grid'
 import { CircularProgress } from '@material-ui/core';
-import {DataGrid, GridToolbar} from '@material-ui/data-grid'
+import Paper from '@material-ui/core/Paper'
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Button from '@material-ui/core/Button'
 
 export default function Classi() {
     return (
@@ -15,21 +22,6 @@ export default function Classi() {
     );
 }
 
-
-const columns = [
-    { field: 'id', headerName: 'ID', width: 130 },
-    { field: 'classe', headerName: 'Classe', width: 150, type: "number" },
-    { field: 'sezione', headerName: 'Sezione', width: 150 },
-    {
-        field: 'indirizzo',
-        headerName: 'Indirizzo',
-        width: 150,
-    },
-    {
-        valueGetter: (params) =>
-            `${params.getValue('classe') || ''} ${params.getValue('sezione') || ''}`,
-    },
-];
 
 
 function TableBella() {
@@ -47,7 +39,19 @@ function TableBella() {
             .get(`${baseRoute}/classi/all`)
             .then(function (response) {
                 console.log(response);
-                setData(response.data['data']);
+                const temp = [...response.data['data'].map(d => {
+                    return {
+                        id: d.id,
+                        classe: d.classe,
+                        sezione: d.sezione,
+                        indirizzo: d.indirizzo,
+                        cancella: <Button variant="contained" color="secondary">
+                                        CANCELLA
+                                    </Button>
+                    }
+                })]
+                console.log("temp", temp);
+                setData(temp);
             })
             .catch(function (error) {
                 console.log(error);
@@ -65,25 +69,39 @@ function TableBella() {
     return isLoading ? (
         <CircularProgress />
     ) : (
-            <div style={{height: "70vh"}}>
-                <DataGrid rows={data} columns={columns} pageSize={25}  checkboxSelection 
-                    components={{
-                        Toolbar: GridToolbar,
-                    }}
-                    localeText={{
-                        toolbarDensity: 'Size',
-                        toolbarDensityLabel: 'Size',
-                        toolbarDensityCompact: 'Small',
-                        toolbarDensityStandard: 'Medium',
-                        toolbarDensityComfortable: 'Large',
-                    }}
-                    onRowSelected={
-                        (newSelection) => {
-                            setSelection(newSelection.data);
-                            console.log(select);
-                        }
-                    }
-                />
-            </div>
+            <TableContainer component={Paper}>
+                <Table size="small">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell scope="col" component="th">
+                                ID
+                            </TableCell>
+                            <TableCell scope="col" component="th">
+                                classe
+                            </TableCell>
+                            <TableCell scope="col" component="th">
+                                Sezione
+                            </TableCell>
+                            <TableCell scope="col" component="th">
+                                Indirizzo
+                            </TableCell>
+                            <TableCell scope="col" component="th">
+                                Cancella Classe
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {data.map(({ id, classe, sezione, indirizzo, cancella }) =>
+                            <TableRow key={id}>
+                                <TableCell scope="row"  >{id}</TableCell>
+                                <TableCell scope="row"  >{classe}</TableCell>
+                                <TableCell scope="row"  >{sezione}</TableCell>
+                                <TableCell scope="row"  >{indirizzo}</TableCell>
+                                <TableCell scope="row"  >{cancella}</TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </TableContainer>
         );
 }
