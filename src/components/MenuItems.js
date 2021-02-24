@@ -21,7 +21,7 @@ import DashboardLevelOne from '../fragments/DashboardLevelOne';
 import TabellaLevelOne from '../fragments/TabellaLevelOne';
 import ProjectsLevelOne from '../fragments/ProjectsLevelOne';
 import DashboardLevelFour from '../fragments/DashboardLevelFour';
-import Classi from '../components/admin/classiAdmin'  
+import Classi from './admin/ClassiAdminQuattro'  
 
 
 export default function MenuItems({ level, setFragment }) {
