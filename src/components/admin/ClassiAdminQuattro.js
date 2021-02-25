@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
-import { FormControl, InputLabel, Select, MenuItem, Typography } from '@material-ui/core';
+import { FormControl, InputLabel, MenuItem, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { baseRoute, useAuth } from '../../ProvideAuth'
 import Grid from '@material-ui/core/Grid'
@@ -14,7 +14,10 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button'
-import { useForm } from 'react-hook-form'
+import { MuiPickersUtilsProvider} from '@material-ui/pickers'
+import {Form, Field} from 'react-final-form'
+import {Select} from 'final-form-material-ui'
+
 
 const useStyles = makeStyles((theme) => ({
     modifyButton:{
@@ -28,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
     formControl: {
         marginTop: theme.spacing(1),
         marginBottom: theme.spacing(1),
+        width: "100%"
     },
     paperContainer: {
         padding: theme.spacing(2),
@@ -62,7 +66,7 @@ function TableBella() {
     const [data, setData] = useState([]);
     const [reloader, setReloader] = useState(null);
 
-    const { register, handleSubmit }= useForm();
+    
 
 
     const fetchData = async () =>{
@@ -98,6 +102,7 @@ function TableBella() {
 
 
     const onSubmit = async data => {
+        console.log("form submitted");
         console.log(data);
     }
 
@@ -132,57 +137,51 @@ function TableBella() {
             <>
                 <Grid item xs={12} md={6}>
                     <Box>
-                        <Paper className={classes.paperContainer}>
-                            <Box className={classes.boxContainer}>
-                                <Typography variant="h6" component="h1">
-                                    Crea Nuova Classe
-                                </Typography>
-                                <FormControl fullWidth variant="outlined" className={classes.formControl}>
-                                    <InputLabel>Classe</InputLabel>
-                                    <Select label="Classe" value={3}>
-                                        <MenuItem value={3}>3ª</MenuItem>
-                                        <MenuItem value={4}>4ª</MenuItem>
-                                        <MenuItem value={5}>5ª</MenuItem>
-                                    </Select>
-                                </FormControl>
-                                <FormControl fullWidth variant="outlined" className={classes.formControl}>
-                                    <InputLabel>Sezione</InputLabel>
-                                    <Select label="Sezione" name="sezione" value="A" ref={register} >
-                                        <MenuItem value={'A'}>A</MenuItem>
-                                        <MenuItem value={'B'}>B</MenuItem>
-                                        <MenuItem value={'C'}>C</MenuItem>
-                                        <MenuItem value={'D'}>D</MenuItem>
-                                        <MenuItem value={'E'}>E</MenuItem>
-                                        <MenuItem value={'F'}>F</MenuItem>
-                                        <MenuItem value={'G'}>G</MenuItem>
-                                        <MenuItem value={'H'}>H</MenuItem>
-                                        <MenuItem value={'I'}>I</MenuItem>
-                                        <MenuItem value={'L'}>L</MenuItem>
-                                    </Select>
-                                </FormControl>
-                                <FormControl fullWidth variant="outlined" className={classes.formControl}>
-                                    <InputLabel>Indirizzo</InputLabel>
-                                    <Select label="Indirizzo" value="SA">
-                                        <MenuItem value={'SA'}>Scienze Applicate</MenuItem>
-                                        <MenuItem value={'INF'}>Informatico</MenuItem>
-                                        <MenuItem value={'REL'}>Relazioni Internazionali</MenuItem>
-                                        <MenuItem value={'GR'}>Grafico</MenuItem>
-                                    </Select>
-                                </FormControl>
-                                
-                            </Box>
+                        <Form 
+                            onSubmit={onSubmit}
+                            initialValues={{classe: 3}}
+                            render={({handleSubmit, reset, submitting, pristine, values}) => (
+                                <form onSubmit={handleSubmit} noValidate>
+                                    <Paper className={classes.paperContainer}>
+                                        <Grid container alignItems="flex-start" spacing={2}>
+                                            <Typography variant="h6" component="h1">
+                                                Crea Nuova Classe
+                                            </Typography>
+                                            <Grid item xs={12}>
+                                                <FormControl className={classes.formControl}>
+                                                    <Field
+                                                        fullWidth
+                                                        name="classe"
+                                                        component={Select}
+                                                        label="Classe"
+                                                        formControlProps={{ fullWidth: true }}
+                                                    >
+                                                        <MenuItem value={3}>3ª</MenuItem>
+                                                        <MenuItem value={4}>4ª</MenuItem>
+                                                        <MenuItem value={5}>5ª</MenuItem>
+                                                    </Field>
+                                                </FormControl>
+                                            </Grid>
+                                        </Grid>
+                                            
+                                        
 
-                            <Box className={classes.boxContainer}>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={handleSubmit(onSubmit)}
-                                    fullWidth
-                                >
-                                    Cambia Classe
-                </Button>
-                            </Box>
-                        </Paper>
+                                        <Box className={classes.boxContainer}>
+                                            <Button
+                                                variant="contained"
+                                                color="primary"
+                                                type="submit"
+                                                disabled={submitting}
+                                            >
+                                                Submit
+                                        </Button>
+                                        </Box>
+                                        
+                                    </Paper>
+                                </form>
+                            )
+                            }
+                        />
                     </Box>
                 </Grid>
             {isError}
@@ -227,3 +226,65 @@ function TableBella() {
             </>
         );
 }
+
+
+/*
+<Paper className={classes.paperContainer}>
+                            <Box className={classes.boxContainer}>
+                                <Typography variant="h6" component="h1">
+                                    Crea Nuova Classe
+                                </Typography>
+
+                                <FormControl fullWidth variant="outlined" className={classes.formControl}>
+                                    <InputLabel>Classe</InputLabel>
+                                        <Select label="Classe" defaultValue={3}
+                                            id="classe-select"
+
+
+                                        >
+                                            <MenuItem value={3}>3ª</MenuItem>
+                                            <MenuItem value={4}>4ª</MenuItem>
+                                            <MenuItem value={5}>5ª</MenuItem>
+                                        </Select>
+
+                                </FormControl>
+                                <FormControl fullWidth variant="outlined" className={classes.formControl}>
+                                    <InputLabel>Sezione</InputLabel>
+                                    <Select label="Sezione" name="sezione" defaultValue={'A'} >
+                                        <MenuItem value={'A'}>A</MenuItem>
+                                        <MenuItem value={'B'}>B</MenuItem>
+                                        <MenuItem value={'C'}>C</MenuItem>
+                                        <MenuItem value={'D'}>D</MenuItem>
+                                        <MenuItem value={'E'}>E</MenuItem>
+                                        <MenuItem value={'F'}>F</MenuItem>
+                                        <MenuItem value={'G'}>G</MenuItem>
+                                        <MenuItem value={'H'}>H</MenuItem>
+                                        <MenuItem value={'I'}>I</MenuItem>
+                                        <MenuItem value={'L'}>L</MenuItem>
+                                    </Select>
+                                </FormControl>
+                                <FormControl fullWidth variant="outlined" className={classes.formControl}>
+                                    <InputLabel>Indirizzo</InputLabel>
+                                    <Select label="Indirizzo" defaultValue={'SA'}>
+                                        <MenuItem value={'SA'}>Scienze Applicate</MenuItem>
+                                        <MenuItem value={'INF'}>Informatico</MenuItem>
+                                        <MenuItem value={'REL'}>Relazioni Internazionali</MenuItem>
+                                        <MenuItem value={'GR'}>Grafico</MenuItem>
+                                    </Select>
+                                </FormControl>
+
+                            </Box>
+
+                            <Box className={classes.boxContainer}>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    type="submit"
+
+                                    fullWidth
+                                >
+                                    Cambia Classe
+                                </Button>
+                            </Box>
+                        </Paper>
+                        */
