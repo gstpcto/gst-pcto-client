@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
-import { FormControl, InputLabel, MenuItem, Typography } from '@material-ui/core';
+import { FormControl, MenuItem, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { baseRoute, useAuth } from '../../ProvideAuth'
 import Grid from '@material-ui/core/Grid'
@@ -69,9 +69,11 @@ function TableBella() {
     const [isLoading, setLoading] = useState(true);
     // eslint-disable-next-line
     const [isError, setError] = useState(false);
+    const [cid, setCid] = useState(null)
     const [data, setData] = useState([]);
     const [reloader, setReloader] = useState(null);
     const [open, setOpen] = useState(false);
+    const [openM, setOpenM] = useState(false);
 
     const handleOpen = () => {
         setOpen(true);
@@ -80,6 +82,15 @@ function TableBella() {
     const handleClose = () => {
         setOpen(false);
     };
+    
+    const handleOpenM = () => {
+        setOpenM(true);
+    };
+
+    const handleCloseM = () => {
+        setOpenM(false);
+    };
+
     
 
 
@@ -94,10 +105,14 @@ function TableBella() {
                         classe: d.classe,
                         sezione: d.sezione,
                         indirizzo: d.indirizzo,
-                        modifica: <Button variant="contained" className={`${classes.modifyButton} ${classes.modifyButtonHover}`} onClick={() => { deleteFromTable(d.id) }}>
+                        modifica: <Button variant="contained" className={`${classes.modifyButton} ${classes.modifyButtonHover}`} onClick={() => {
+                            console.log(d.id);
+                            setCid(d.id)
+                            handleOpenM();
+                        }}>
                             MODIFICA
                                     </Button>,
-                        cancella: <Button variant="contained" color="secondary" onClick={() => { deleteFromTable(d.id) }}>
+                        cancella: <Button variant="contained" color="secondary" onClick={() => { deleteFromTable(d.id) }} >
                             CANCELLA
                                     </Button>
                     }
@@ -119,6 +134,7 @@ function TableBella() {
 
     useEffect(() => {
         setOpen(false)
+        setOpenM(false)
         setError(false);
         setLoading(true);
         fetchData()
@@ -153,7 +169,7 @@ function TableBella() {
                 >
                     Nuova Classe
                 </Button>
-                <Modal
+                <Modal //add classe modal
                     open={open}
                     onClose={handleClose}
                     aria-labelledby="nuova classe"
@@ -162,6 +178,15 @@ function TableBella() {
 
                     <AddClassForm updater={setReloader} />
 
+                </Modal>
+
+                <Modal
+                    open={openM}
+                    onClose={handleCloseM}
+                    aria-labelledby="nuova classe"
+                    aria-describedby="puoi aggiungere una nuova classe"
+                >
+                    <ModifyClassForm cid={cid} updater={setReloader}/>
                 </Modal>
             {isError}
             <TableContainer component={Paper}>
@@ -297,4 +322,112 @@ const AddClassForm = ({updater}) =>{
             />
         </Box>
     </Grid>);
+}
+
+
+
+const ModifyClassForm = ({cid, updater}) =>{
+    console.log(cid);
+    const auth = useAuth();
+    const classes = useStyles();
+    const [classe, setClasse] = useState(null);
+    const [isLoading, setLoading] = useState(true)
+
+    const onSubmit = async data => {
+        console.log("form submitted");
+        console.log(data);
+        const pipo = { classe: parseInt(data.classe), sezione: data.sezione, indirizzo: data.indirizzo, id: classe.id}
+        axios.put(`${baseRoute}/classi/classe`,{token: auth.token, data: pipo}).
+        then((res)=>{
+            console.log("update", res);
+            updater(Math.random())
+        })
+    }
+
+    useEffect(async ()=>{
+        await axios.get(`${baseRoute}/classi/${cid}`).then(res =>{
+            console.log(res);
+            setClasse(res.data.data);
+        }).then(()=> setLoading(false))
+    }, [])
+
+
+    return isLoading? <CircularProgress />:  (
+        <Grid item md={6}>
+            <Box>
+                <Form
+                    onSubmit={onSubmit}
+                    initialValues={{ classe: classe.classe, indirizzo: classe.indirizzo, sezione: classe.sezione }}
+                    render={({ handleSubmit, reset, submitting, pristine, values }) => (
+                        <form onSubmit={handleSubmit} noValidate>
+                            <Paper className={classes.paperContainer}>
+                                <Grid container alignItems="flex-start" spacing={2}>
+                                    <Typography variant="h6" component="h1">
+                                        Modifica classe
+                                            </Typography>
+                                    <Grid item xs={12}>
+                                        <FormControl className={classes.formControl}>
+                                            <Field
+                                                fullWidth
+                                                required
+                                                name="classe"
+                                                component={TextField}
+                                                type="text"
+                                                label="Classe"
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <FormControl className={classes.formControl}>
+                                            <Field
+                                                fullWidth
+                                                required
+                                                name="sezione"
+                                                component={TextField}
+                                                type="text"
+                                                label="Sezione"
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <FormControl className={classes.formControl}>
+                                            <Field
+                                                fullWidth
+                                                name="indirizzo"
+                                                component={Select}
+                                                label="Indirizzo"
+                                                formControlProps={{ fullWidth: true }}
+                                            >
+                                                <MenuItem value={'SA'}>Scienze Applicate</MenuItem>
+                                                <MenuItem value={'INF'}>Informatico</MenuItem>
+                                                <MenuItem value={'REL'}>Relazioni Internazionali</MenuItem>
+                                                <MenuItem value={'GR'}>Grafico</MenuItem>
+                                            </Field>
+                                        </FormControl>
+                                    </Grid>
+
+
+
+                                </Grid>
+
+
+
+                                <Box className={classes.boxContainer}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        type="submit"
+                                        disabled={submitting}
+                                    >
+                                        Submit
+                                </Button>
+                                </Box>
+
+                            </Paper>
+                        </form>
+                    )
+                    }
+                />
+            </Box>
+        </Grid>);
 }
