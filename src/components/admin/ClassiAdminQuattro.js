@@ -14,9 +14,10 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button'
-import { MuiPickersUtilsProvider} from '@material-ui/pickers'
+import Modal from '@material-ui/core/Modal'
 import {Form, Field} from 'react-final-form'
-import {Select} from 'final-form-material-ui'
+import {Select, TextField} from 'final-form-material-ui'
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -44,6 +45,11 @@ const useStyles = makeStyles((theme) => ({
     boxContainer: {
         width: '100%',
     },
+    modal:{
+        position: 'fixed',
+        top: "50%",
+        left: "50%"
+    }
 }));
 
 
@@ -65,7 +71,15 @@ function TableBella() {
     const [isError, setError] = useState(false);
     const [data, setData] = useState([]);
     const [reloader, setReloader] = useState(null);
+    const [open, setOpen] = useState(false);
 
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
     
 
 
@@ -101,13 +115,10 @@ function TableBella() {
     }
 
 
-    const onSubmit = async data => {
-        console.log("form submitted");
-        console.log(data);
-    }
-
+    
 
     useEffect(() => {
+        setOpen(false)
         setError(false);
         setLoading(true);
         fetchData()
@@ -135,55 +146,23 @@ function TableBella() {
         <CircularProgress />
     ) : (
             <>
-                <Grid item xs={12} md={6}>
-                    <Box>
-                        <Form 
-                            onSubmit={onSubmit}
-                            initialValues={{classe: 3}}
-                            render={({handleSubmit, reset, submitting, pristine, values}) => (
-                                <form onSubmit={handleSubmit} noValidate>
-                                    <Paper className={classes.paperContainer}>
-                                        <Grid container alignItems="flex-start" spacing={2}>
-                                            <Typography variant="h6" component="h1">
-                                                Crea Nuova Classe
-                                            </Typography>
-                                            <Grid item xs={12}>
-                                                <FormControl className={classes.formControl}>
-                                                    <Field
-                                                        fullWidth
-                                                        name="classe"
-                                                        component={Select}
-                                                        label="Classe"
-                                                        formControlProps={{ fullWidth: true }}
-                                                    >
-                                                        <MenuItem value={3}>3ª</MenuItem>
-                                                        <MenuItem value={4}>4ª</MenuItem>
-                                                        <MenuItem value={5}>5ª</MenuItem>
-                                                    </Field>
-                                                </FormControl>
-                                            </Grid>
-                                        </Grid>
-                                            
-                                        
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleOpen}
+                >
+                    Nuova Classe
+                </Button>
+                <Modal
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="nuova classe"
+                    aria-describedby="puoi aggiungere una nuova classe"
+                >   
 
-                                        <Box className={classes.boxContainer}>
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                type="submit"
-                                                disabled={submitting}
-                                            >
-                                                Submit
-                                        </Button>
-                                        </Box>
-                                        
-                                    </Paper>
-                                </form>
-                            )
-                            }
-                        />
-                    </Box>
-                </Grid>
+                    <AddClassForm updater={setReloader} />
+
+                </Modal>
             {isError}
             <TableContainer component={Paper}>
                 <Table size="small">
@@ -228,63 +207,94 @@ function TableBella() {
 }
 
 
-/*
-<Paper className={classes.paperContainer}>
-                            <Box className={classes.boxContainer}>
+
+const AddClassForm = ({updater}) =>{
+    const auth = useAuth();
+    const classes = useStyles();
+    const onSubmit = async data => {
+        console.log("form submitted");
+        console.log(data);
+        await axios.post(`${baseRoute}/classi/create`, {token: auth.token, data} )
+        .then(res => {console.log(res); updater(Math.random())})
+    }
+
+
+    return (
+    <Grid item md={6}>
+        <Box>
+            <Form
+                onSubmit={onSubmit}
+                initialValues={{ classe: 3, indirizzo: "SA", sezione: "A" }}
+                render={({ handleSubmit, reset, submitting, pristine, values }) => (
+                    <form onSubmit={handleSubmit} noValidate>
+                        <Paper className={classes.paperContainer}>
+                            <Grid container alignItems="flex-start" spacing={2}>
                                 <Typography variant="h6" component="h1">
                                     Crea Nuova Classe
-                                </Typography>
-
-                                <FormControl fullWidth variant="outlined" className={classes.formControl}>
-                                    <InputLabel>Classe</InputLabel>
-                                        <Select label="Classe" defaultValue={3}
-                                            id="classe-select"
-
-
+                                            </Typography>
+                                <Grid item xs={12}>
+                                    <FormControl className={classes.formControl}>
+                                        <Field
+                                            fullWidth
+                                            required
+                                            name="classe"
+                                            component={TextField}
+                                            type="text"
+                                            label="Classe"
+                                        />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <FormControl className={classes.formControl}>
+                                        <Field
+                                            fullWidth
+                                            required
+                                            name="sezione"
+                                            component={TextField}
+                                            type="text"
+                                            label="Sezione"
+                                        />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <FormControl className={classes.formControl}>
+                                        <Field
+                                            fullWidth
+                                            name="indirizzo"
+                                            component={Select}
+                                            label="Indirizzo"
+                                            formControlProps={{ fullWidth: true }}
                                         >
-                                            <MenuItem value={3}>3ª</MenuItem>
-                                            <MenuItem value={4}>4ª</MenuItem>
-                                            <MenuItem value={5}>5ª</MenuItem>
-                                        </Select>
+                                            <MenuItem value={'SA'}>Scienze Applicate</MenuItem>
+                                            <MenuItem value={'INF'}>Informatico</MenuItem>
+                                            <MenuItem value={'REL'}>Relazioni Internazionali</MenuItem>
+                                            <MenuItem value={'GR'}>Grafico</MenuItem>
+                                        </Field>
+                                    </FormControl>
+                                </Grid>
 
-                                </FormControl>
-                                <FormControl fullWidth variant="outlined" className={classes.formControl}>
-                                    <InputLabel>Sezione</InputLabel>
-                                    <Select label="Sezione" name="sezione" defaultValue={'A'} >
-                                        <MenuItem value={'A'}>A</MenuItem>
-                                        <MenuItem value={'B'}>B</MenuItem>
-                                        <MenuItem value={'C'}>C</MenuItem>
-                                        <MenuItem value={'D'}>D</MenuItem>
-                                        <MenuItem value={'E'}>E</MenuItem>
-                                        <MenuItem value={'F'}>F</MenuItem>
-                                        <MenuItem value={'G'}>G</MenuItem>
-                                        <MenuItem value={'H'}>H</MenuItem>
-                                        <MenuItem value={'I'}>I</MenuItem>
-                                        <MenuItem value={'L'}>L</MenuItem>
-                                    </Select>
-                                </FormControl>
-                                <FormControl fullWidth variant="outlined" className={classes.formControl}>
-                                    <InputLabel>Indirizzo</InputLabel>
-                                    <Select label="Indirizzo" defaultValue={'SA'}>
-                                        <MenuItem value={'SA'}>Scienze Applicate</MenuItem>
-                                        <MenuItem value={'INF'}>Informatico</MenuItem>
-                                        <MenuItem value={'REL'}>Relazioni Internazionali</MenuItem>
-                                        <MenuItem value={'GR'}>Grafico</MenuItem>
-                                    </Select>
-                                </FormControl>
 
-                            </Box>
+
+                            </Grid>
+
+
 
                             <Box className={classes.boxContainer}>
                                 <Button
                                     variant="contained"
                                     color="primary"
                                     type="submit"
-
-                                    fullWidth
+                                    disabled={submitting}
                                 >
-                                    Cambia Classe
+                                    Submit
                                 </Button>
                             </Box>
+
                         </Paper>
-                        */
+                    </form>
+                )
+                }
+            />
+        </Box>
+    </Grid>);
+}
