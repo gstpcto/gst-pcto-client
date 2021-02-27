@@ -21,18 +21,18 @@ import {Select, TextField} from 'final-form-material-ui'
 
 
 const useStyles = makeStyles((theme) => ({
-    modifyButton:{
-        backgroundColor: "#00e676"
+    modifyButton: {
+        backgroundColor: '#00e676',
     },
-    modifyButtonHover:{
-        '&:hover':{
-            backgroundColor: "#00c853"
-        }
+    modifyButtonHover: {
+        '&:hover': {
+            backgroundColor: '#00c853',
+        },
     },
     formControl: {
         marginTop: theme.spacing(1),
         marginBottom: theme.spacing(1),
-        width: "100%"
+        width: '100%',
     },
     paperContainer: {
         padding: theme.spacing(2),
@@ -45,11 +45,14 @@ const useStyles = makeStyles((theme) => ({
     boxContainer: {
         width: '100%',
     },
-    modal:{
-        position: 'fixed',
-        top: "50%",
-        left: "50%"
-    }
+    modal: {
+        width: '100vw',
+        height: '100vh',
+        display: "flex",
+        justifyContent: "center",
+        alignItems:"center",
+        padding: theme.spacing(2),
+    },
 }));
 
 
@@ -174,6 +177,7 @@ function TableBella() {
                     onClose={handleClose}
                     aria-labelledby="nuova classe"
                     aria-describedby="puoi aggiungere una nuova classe"
+                    className={classes.modal}
                 >   
 
                     <AddClassForm updater={setReloader} />
@@ -185,6 +189,7 @@ function TableBella() {
                     onClose={handleCloseM}
                     aria-labelledby="nuova classe"
                     aria-describedby="puoi aggiungere una nuova classe"
+                    className={classes.modal}
                 >
                     <ModifyClassForm cid={cid} updater={setReloader}/>
                 </Modal>
