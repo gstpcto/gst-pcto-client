@@ -17,16 +17,18 @@ import Button from '@material-ui/core/Button'
 import Modal from '@material-ui/core/Modal'
 import {Form, Field} from 'react-final-form'
 import {Select, TextField} from 'final-form-material-ui'
-
+import {green} from '@material-ui/core/colors'
 
 
 const useStyles = makeStyles((theme) => ({
     modifyButton: {
-        backgroundColor: '#00e676',
+        backgroundColor: green[500],
+        color: 'white',
     },
     modifyButtonHover: {
         '&:hover': {
-            backgroundColor: '#00c853',
+            backgroundColor: green[800],
+            color: 'white',
         },
     },
     formControl: {
