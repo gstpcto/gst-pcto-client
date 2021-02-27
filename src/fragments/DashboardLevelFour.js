@@ -10,7 +10,6 @@ export default function DashboardLevelOne() {
                 <Box fontWeight="fontWeightBold">
                     <Typography component="h1" variant="h6" color="inherit">
                         Bentornato, {auth.user['nome'] + ' ' + auth.user['cognome']}! Il capo assouluto
-
                     </Typography>
                 </Box>
             </Grid>

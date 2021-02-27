@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box } from '@material-ui/core';
 import { baseRoute } from '../ProvideAuth';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, Grid } from '@material-ui/core';
 import axios from 'axios';
 import { useAuth } from '../ProvideAuth';
 import ComponentProject from './ComponentProject';
@@ -35,11 +35,11 @@ export default function ProgettiWrapper() {
     return isLoading ? (
         <CircularProgress />
     ) : (
-        <Box>
-            {data.map(({ infoProgetto }, index) => {
-                const { nome, descrizione, id, linkValutazioni, annoScolastico } = infoProgetto;
-                return <ComponentProject key={index} props={infoProgetto} Nome={nome} Descrizione={descrizione} ID={id} LinkValutazioni={linkValutazioni} Periodo={annoScolastico} />;
-            })}
-        </Box>
+        <>
+                {data.map(({ infoProgetto }, index) => {
+                    const { nome, descrizione, id, linkValutazioni, annoScolastico } = infoProgetto;
+                    return <ComponentProject key={index} props={infoProgetto} Nome={nome} Descrizione={descrizione} ID={id} LinkValutazioni={linkValutazioni} Periodo={annoScolastico} />;
+                })}
+        </>
     );
 }
