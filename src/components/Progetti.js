@@ -37,8 +37,8 @@ export default function ProgettiWrapper() {
     ) : (
         <Box>
             {data.map(({ infoProgetto }, index) => {
-                const { Nome, Descrizione, ID, LinkValutazioni, Periodo } = infoProgetto;
-                return <ComponentProject key={index} props={infoProgetto} Nome={Nome} Descrizione={Descrizione} ID={ID} LinkValutazioni={LinkValutazioni} Periodo={Periodo} />;
+                const { nome, descrizione, id, linkValutazioni, annoScolastico } = infoProgetto;
+                return <ComponentProject key={index} props={infoProgetto} Nome={nome} Descrizione={descrizione} ID={id} LinkValutazioni={linkValutazioni} Periodo={annoScolastico} />;
             })}
         </Box>
     );

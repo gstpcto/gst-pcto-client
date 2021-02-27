@@ -20,6 +20,9 @@ import SettingsLevelZero from '../fragments/SettingsLevelZero';
 import DashboardLevelOne from '../fragments/DashboardLevelOne';
 import TabellaLevelOne from '../fragments/TabellaLevelOne';
 import ProjectsLevelOne from '../fragments/ProjectsLevelOne';
+import DashboardLevelFour from '../fragments/DashboardLevelFour';
+import Classi from './admin/ClassiAdminQuattro'  
+
 
 export default function MenuItems({ level, setFragment }) {
     const getMenu = (level) => {
@@ -147,11 +150,47 @@ export default function MenuItems({ level, setFragment }) {
             case 4:
                 return (
                     <>
-                        <ListItem button>
+                        <ListItem
+                            button
+                            onClick={() => {
+                                setFragment({
+                                    titolo: 'Dashboard',
+                                    component: <DashboardLevelFour />,
+                                });
+                            }}
+                        >
                             <ListItemIcon>
                                 <DashboardIcon />
                             </ListItemIcon>
-                            <ListItemText primary="Dashboard" /> {/* Voti */}
+                            <ListItemText primary="Dashboard" />
+                        </ListItem>
+                        <ListItem
+                            button
+                            onClick={() => {
+                                setFragment({
+                                    titolo: 'Classi',
+                                    component: <Classi />,
+                                });
+                            }}
+                        >
+                            <ListItemIcon>
+                                <TableChartIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Classi" />
+                        </ListItem>
+                        <ListItem
+                            button
+                            onClick={() => {
+                                setFragment({
+                                    titolo: 'Progetti',
+                                    component: <ProjectsLevelOne />,
+                                });
+                            }}
+                        >
+                            <ListItemIcon>
+                                <WidgetsIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Progetti" />
                         </ListItem>
                     </>
                 );

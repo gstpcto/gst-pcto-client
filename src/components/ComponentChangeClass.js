@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FormControl, InputLabel, Select, MenuItem, Button, Paper, Box, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { baseRoute } from '../ProvideAuth';
+import { baseRoute, getCurrentYear, useAuth } from '../ProvideAuth';
 import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
@@ -20,24 +20,48 @@ const useStyles = makeStyles((theme) => ({
     boxContainer: {
         width: '100%',
     },
+    error: {
+        color: "red",
+    },
+    success: {
+        color: "green"
+    }
 }));
 
 export default function ComponentChangeClass() {
-    const classes = useStyles();
-
+    const  classes = useStyles();
+    const auth = useAuth();
+    const y = getCurrentYear()
     const [classe, setClasse] = useState(4);
+    const [sezione, setSezione] = useState('D');
+    const [indirizzo, setIndirizzo] = useState('INF');
+    const [error, setError] = useState("");
+    const [response, setResponse] = useState("")
+    
+
+    useEffect(() => {
+        console.log(auth.token);
+        axios.get(`${baseRoute}/studenti/${auth.user['id']}`, { params: { token: auth.token} }).then(r=>{
+            console.log("dati", r.data);
+            const {classe: c, indirizzo: i, sezione: s} = r.data.data;
+            //console.log(typeof c, typeof s, typeof i);
+            setClasse(c);
+            setSezione(s);
+            setIndirizzo(i)
+        })
+    }, [auth])
+
+
 
     const handleClasseChange = (e) => {
         setClasse(e.target.value);
     };
 
-    const [sezione, setSezione] = useState('D');
 
     const handleSezioneChange = (e) => {
         setSezione(e.target.value);
     };
 
-    const [indirizzo, setIndirizzo] = useState('INF');
 
     const handleIndirizzoChange = (e) => {
         setIndirizzo(e.target.value);
@@ -54,11 +78,13 @@ export default function ComponentChangeClass() {
                     classe: classe,
                     sezione: sezione,
                     indirizzo: indirizzo,
-                    as: '2020/21',
+                    as: getCurrentYear(),
                 },
             })
             .then(function (response) {
                 console.log(response);
+                if(response.data.status==="rejected") setError(response.data.cause)
+                else setResponse("classe aggiornata con successo")
             })
             .catch(function (error) {
                 console.log(error);
@@ -69,7 +95,7 @@ export default function ComponentChangeClass() {
         <Paper className={classes.paperContainer}>
             <Box className={classes.boxContainer}>
                 <Typography variant="h6" component="h1">
-                    Cambia Classe
+                    Cambia Classe - {y}
                 </Typography>
                 <FormControl fullWidth variant="outlined" className={classes.formControl}>
                     <InputLabel>Classe</InputLabel>
@@ -87,6 +113,11 @@ export default function ComponentChangeClass() {
                         <MenuItem value={'C'}>C</MenuItem>
                         <MenuItem value={'D'}>D</MenuItem>
                         <MenuItem value={'E'}>E</MenuItem>
+                        <MenuItem value={'F'}>F</MenuItem>
+                        <MenuItem value={'G'}>G</MenuItem>
+                        <MenuItem value={'H'}>H</MenuItem>
+                        <MenuItem value={'I'}>I</MenuItem>
+                        <MenuItem value={'L'}>L</MenuItem>
                     </Select>
                 </FormControl>
                 <FormControl fullWidth variant="outlined" className={classes.formControl}>
@@ -98,6 +129,12 @@ export default function ComponentChangeClass() {
                         <MenuItem value={'GR'}>Grafico</MenuItem>
                     </Select>
                 </FormControl>
+                <Typography variant="h7" component="h9" className={classes.error} >
+                    {error}
+                </Typography>
+                <Typography variant="h7" component="h9" className={classes.success} >
+                    {response}
+                </Typography>
             </Box>
 
             <Box className={classes.boxContainer}>
