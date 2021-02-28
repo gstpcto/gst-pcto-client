@@ -66,10 +66,12 @@ function TableBella() {
     // eslint-disable-next-line
     const [isError, setError] = useState(false);
     const [cid, setCid] = useState(null);
+
     const [data, setData] = useState([]);
     const [reloader, setReloader] = useState(null);
     const [open, setOpen] = useState(false);
     const [openM, setOpenM] = useState(false);
+    const [openModalConfirm, setOpenModalConfirm] = useState(false);
 
     const handleOpen = () => {
         setOpen(true);
@@ -86,6 +88,13 @@ function TableBella() {
     const handleCloseM = () => {
         setOpenM(false);
     };
+
+    const handleOpenConfirm = () => {
+        setOpenModalConfirm(true)
+    }
+    const handleCloseConfirm = () => {
+        setOpenModalConfirm(false)
+    }
 
     const fetchData = async () => {
         axios
@@ -117,7 +126,10 @@ function TableBella() {
                                     variant="contained"
                                     color="secondary"
                                     onClick={() => {
-                                        deleteFromTable(d.id);
+                                        console.log(d.id);
+                                        setCid(d.id);
+                                        handleOpenConfirm();
+
                                     }}
                                 >
                                     CANCELLA
@@ -141,90 +153,83 @@ function TableBella() {
     useEffect(() => {
         setOpen(false);
         setOpenM(false);
+        setOpenModalConfirm(false)
         setError(false);
         setLoading(true);
         fetchData();
         // eslint-disable-next-line
     }, [reloader]);
 
-    const deleteFromTable = (id) => {
-        console.log(auth.token, id);
-        axios
-            .delete(`${baseRoute}/classi/delete`, {
-                data: {
-                    token: auth.token,
-                    idclasse: id,
-                },
-            })
-            .then((res) => {
-                console.log(res);
-                if (res.data.status === 'rejected') {
-                    setError(res.data.cause);
-                } else setReloader(Math.random());
-            });
-    };
+
 
     return isLoading ? (
         <CircularProgress />
     ) : (
-        <>
-            <Button variant="contained" color="primary" onClick={handleOpen}>
-                Nuova Classe
+            <>
+                <Button variant="contained" color="primary" onClick={handleOpen}>
+                    Nuova Classe
             </Button>
-            <Modal //add classe modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="nuova classe"
-                aria-describedby="puoi aggiungere una nuova classe"
-                className={classes.modal}
-            >
-                <AddClassForm updater={setReloader} />
-            </Modal>
+                <Modal //add classe modal
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="nuova classe"
+                    aria-describedby="puoi aggiungere una nuova classe"
+                    className={classes.modal}
+                >
+                    <AddClassForm updater={setReloader} />
+                </Modal>
 
-            <Modal open={openM} onClose={handleCloseM} aria-labelledby="nuova classe" aria-describedby="puoi aggiungere una nuova classe" className={classes.modal}>
-                <ModifyClassForm cid={cid} updater={setReloader} />
-            </Modal>
-            {isError}
-            <TableContainer component={Paper}>
-                <Table size="small">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell scope="col" component="th">
-                                ID
+                <Modal open={openM} onClose={handleCloseM} aria-labelledby="nuova classe" aria-describedby="puoi aggiungere una nuova classe" className={classes.modal}>
+                    <ModifyClassForm cid={cid} updater={setReloader} />
+                </Modal>
+
+                <Modal open={openModalConfirm} onClose={handleCloseConfirm} aria-labelledby="cancella classe" aria-describedby="conferma cancella classe" className={classes.modal}>
+
+                    <ConfirmDeleteForm cid={cid} updater={setReloader} />
+                </Modal>
+
+
+                {isError}
+                <TableContainer component={Paper}>
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell scope="col" component="th">
+                                    ID
                             </TableCell>
-                            <TableCell scope="col" component="th">
-                                classe
+                                <TableCell scope="col" component="th">
+                                    classe
                             </TableCell>
-                            <TableCell scope="col" component="th">
-                                Sezione
+                                <TableCell scope="col" component="th">
+                                    Sezione
                             </TableCell>
-                            <TableCell scope="col" component="th">
-                                Indirizzo
+                                <TableCell scope="col" component="th">
+                                    Indirizzo
                             </TableCell>
-                            <TableCell scope="col" component="th">
-                                Modifica Classe
+                                <TableCell scope="col" component="th">
+                                    Modifica Classe
                             </TableCell>
-                            <TableCell scope="col" component="th">
-                                Cancella Classe
+                                <TableCell scope="col" component="th">
+                                    Cancella Classe
                             </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {data.map(({ id, classe, sezione, indirizzo, modifica, cancella }) => (
-                            <TableRow key={id}>
-                                <TableCell scope="row">{id}</TableCell>
-                                <TableCell scope="row">{classe}</TableCell>
-                                <TableCell scope="row">{sezione}</TableCell>
-                                <TableCell scope="row">{indirizzo}</TableCell>
-                                <TableCell scope="row">{modifica}</TableCell>
-                                <TableCell scope="row">{cancella}</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </>
-    );
+                        </TableHead>
+                        <TableBody>
+                            {data.map(({ id, classe, sezione, indirizzo, modifica, cancella }) => (
+                                <TableRow key={id}>
+                                    <TableCell scope="row">{id}</TableCell>
+                                    <TableCell scope="row">{classe}</TableCell>
+                                    <TableCell scope="row">{sezione}</TableCell>
+                                    <TableCell scope="row">{indirizzo}</TableCell>
+                                    <TableCell scope="row">{modifica}</TableCell>
+                                    <TableCell scope="row">{cancella}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </>
+        );
 }
 
 const AddClassForm = ({ updater }) => {
@@ -301,43 +306,90 @@ const ModifyClassForm = ({ cid, updater }) => {
                 setClasse(res.data.data);
             })
             .then(() => setLoading(false));
-    }, []);
+    }, [cid]);
 
     return isLoading ? (
         <CircularProgress />
     ) : (
-        <Box>
-            <Form
-                onSubmit={onSubmit}
-                initialValues={{ classe: classe.classe, indirizzo: classe.indirizzo, sezione: classe.sezione }}
-                render={({ handleSubmit, reset, submitting, pristine, values }) => (
-                    <form onSubmit={handleSubmit} noValidate>
-                        <Paper className={classes.paperContainer}>
-                            <Typography variant="h6" component="h1">
-                                Modifica classe
+            <Box>
+                <Form
+                    onSubmit={onSubmit}
+                    initialValues={{ classe: classe.classe, indirizzo: classe.indirizzo, sezione: classe.sezione }}
+                    render={({ handleSubmit, reset, submitting, pristine, values }) => (
+                        <form onSubmit={handleSubmit} noValidate>
+                            <Paper className={classes.paperContainer}>
+                                <Typography variant="h6" component="h1">
+                                    Modifica classe
                             </Typography>
-                            <FormControl className={classes.formControl}>
-                                <Field fullWidth required name="classe" component={TextField} type="text" label="Classe" />
-                            </FormControl>
-                            <FormControl className={classes.formControl}>
-                                <Field fullWidth required name="sezione" component={TextField} type="text" label="Sezione" />
-                            </FormControl>
-                            <FormControl className={classes.formControl}>
-                                <Field fullWidth name="indirizzo" component={Select} label="Indirizzo" formControlProps={{ fullWidth: true }}>
-                                    <MenuItem value={'SA'}>Scienze Applicate</MenuItem>
-                                    <MenuItem value={'INF'}>Informatico</MenuItem>
-                                    <MenuItem value={'REL'}>Relazioni Internazionali</MenuItem>
-                                    <MenuItem value={'GR'}>Grafico</MenuItem>
-                                </Field>
-                            </FormControl>
+                                <FormControl className={classes.formControl}>
+                                    <Field fullWidth required name="classe" component={TextField} type="text" label="Classe" />
+                                </FormControl>
+                                <FormControl className={classes.formControl}>
+                                    <Field fullWidth required name="sezione" component={TextField} type="text" label="Sezione" />
+                                </FormControl>
+                                <FormControl className={classes.formControl}>
+                                    <Field fullWidth name="indirizzo" component={Select} label="Indirizzo" formControlProps={{ fullWidth: true }}>
+                                        <MenuItem value={'SA'}>Scienze Applicate</MenuItem>
+                                        <MenuItem value={'INF'}>Informatico</MenuItem>
+                                        <MenuItem value={'REL'}>Relazioni Internazionali</MenuItem>
+                                        <MenuItem value={'GR'}>Grafico</MenuItem>
+                                    </Field>
+                                </FormControl>
 
-                            <Button variant="contained" color="primary" type="submit" disabled={submitting}>
-                                Submit
+                                <Button variant="contained" color="primary" type="submit" disabled={submitting}>
+                                    Submit
                             </Button>
-                        </Paper>
-                    </form>
-                )}
-            />
+                            </Paper>
+                        </form>
+                    )}
+                />
+            </Box>
+        );
+};
+
+
+
+const ConfirmDeleteForm = ({ cid, updater }) => {
+    console.log(cid);
+    const auth = useAuth();
+    const classes = useStyles();
+
+    const deleteFromTable = (id) => {
+        console.log(auth.token, id);
+        axios
+            .delete(`${baseRoute}/classi/delete`, {
+                data: {
+                    token: auth.token,
+                    idclasse: id,
+                },
+            })
+            .then((res) => {
+                console.log(res);
+                if (res.data.status === 'rejected') {
+                    //setError(res.data.cause);
+                    console.error(res.data.cause);
+                } else updater(Math.random());
+            });
+    };
+
+
+
+    return (
+        <Box>
+            <Paper className={classes.paperContainer}>
+                <Typography variant="h6" component="h1">
+                    Sei sicuro di voler cancellare questa classe?
+                </Typography>
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => {
+                        deleteFromTable(cid)
+                    }}
+                >
+                    CANCELLA
+                </Button>
+            </Paper>
         </Box>
     );
-};
+}
