@@ -3,6 +3,8 @@ import { Button, Paper, Box, FormControl, InputAdornment, OutlinedInput, InputLa
 import { makeStyles } from '@material-ui/core/styles';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import axios from 'axios';
+import { baseRoute, useAuth } from '../ProvideAuth';
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -24,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ComponentChangePassword() {
     const classes = useStyles();
-
+    const auth = useAuth()
     const [showOldPassword, setShowOldPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [newPasswordError, setNewPasswordError] = useState(false);
@@ -42,19 +44,36 @@ export default function ComponentChangePassword() {
         }));
     };
 
-    const submitHandler = () => {
+    const submitHandler = async () => {
         console.log('hai clicato il boton pass', password);
         if (password.newPassword !== password.confirmPassword) {
             setNewPasswordError(true);
+        }else{
+            if (password.oldPassword === "" || password.newPassword === "") {
+                if (password.oldPassword === "") setOldPasswordError(true);
+                if (password.newPassword === "") setNewPasswordError(true)
+            }else{
+                await axios.put(`${baseRoute}/resetPassword`, {
+                    token: auth.token,
+                    oldPass: password.oldPassword,
+                    newPass: password.newPassword
+                }).then(res => {
+                    console.log(res);
+                }).then(()=>{
+                    setNewPasswordError(false);
+                    setOldPasswordError(false);
+                })
+            }
         }
 
-        // controllo cambio password da effettuare server side e togglare a true oldPasswordError
 
+        
         setPassword({
             oldPassword: '',
             newPassword: '',
             confirmPassword: '',
         });
+
     };
 
     const handleClickShowOldPassword = () => {
