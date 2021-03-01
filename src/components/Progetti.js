@@ -19,7 +19,7 @@ export default function ProgettiWrapper() {
         axios
             .get(`${baseRoute}/progetti/classiAlunni`, { params: { token: auth.token } })
             .then(function (response) {
-                console.log(response);
+                console.log("progetti", response);
                 setData(response.data['progetti']);
             })
             .catch(function (error) {
@@ -38,7 +38,7 @@ export default function ProgettiWrapper() {
         <>
                 {data.map(({ infoProgetto }, index) => {
                     const { nome, descrizione, id, linkValutazioni, annoScolastico } = infoProgetto;
-                    return <ComponentProject key={index} props={infoProgetto} Nome={nome} Descrizione={descrizione} ID={id} LinkValutazioni={linkValutazioni} Periodo={annoScolastico} />;
+                    return <ComponentProject key={index} props={infoProgetto} nome={nome} descrizione={descrizione} id={id} linkValutazioni={linkValutazioni} annoScolastico={annoScolastico} />;
                 })}
         </>
     );

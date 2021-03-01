@@ -42,8 +42,9 @@ const useStyles = makeStyles({
         width: '90%',
     },
 });
-
-export default function ComponentProject({ Nome, Descrizione, ID, LinkValutazioni, Periodo }) {
+//TODO: add the powerful modal here
+export default function ComponentProject({ nome, descrizione, id, linkValutazioni, annoScolastico }) {
+    console.log("progetto", annoScolastico);
     const classes = useStyles();
     
     const fixedSizeCardDetails = clsx(classes.card, classes.maxWidth);
@@ -56,12 +57,12 @@ export default function ComponentProject({ Nome, Descrizione, ID, LinkValutazion
                     <Card className={cardRoot}>
                         <div className={fixedSizeCardDetails}>
                             <CardContent className={classes.textWrap}>
-                                <Typography variant="h6">{Nome}</Typography>
+                                <Typography variant="h6">{nome}</Typography>
                                 <Typography variant="subtitle1" color="textSecondary">
-                                    {Descrizione}
+                                    {descrizione}
                                 </Typography>
                                 <Typography variant="subtitle1" color="textSecondary">
-                                    {Periodo}
+                                    {annoScolastico}
                                 </Typography>
                             </CardContent>
                         </div>

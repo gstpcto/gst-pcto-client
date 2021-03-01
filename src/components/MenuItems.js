@@ -13,6 +13,7 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
 import TableChartIcon from '@material-ui/icons/TableChart';
 import WidgetsIcon from '@material-ui/icons/Widgets';
+import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 
 // Fragments
 import DashboardLevelZero from '../fragments/DashboardLevelZero';
@@ -21,7 +22,8 @@ import DashboardLevelOne from '../fragments/DashboardLevelOne';
 import TabellaLevelOne from '../fragments/TabellaLevelOne';
 import ProjectsLevelOne from '../fragments/ProjectsLevelOne';
 import DashboardLevelFour from '../fragments/DashboardLevelFour';
-import Classi from './admin/ClassiAdminQuattro'  
+import Classi from './admin/ClassiAdminQuattro'
+import Studenti from './admin/StudentiAdminQuattro'
 
 
 export default function MenuItems({ level, setFragment }) {
@@ -150,6 +152,7 @@ export default function MenuItems({ level, setFragment }) {
             case 4:
                 return (
                     <>
+                        {/* dashboard */}
                         <ListItem
                             button
                             onClick={() => {
@@ -164,6 +167,8 @@ export default function MenuItems({ level, setFragment }) {
                             </ListItemIcon>
                             <ListItemText primary="Dashboard" />
                         </ListItem>
+
+                        {/* classi */}
                         <ListItem
                             button
                             onClick={() => {
@@ -178,6 +183,23 @@ export default function MenuItems({ level, setFragment }) {
                             </ListItemIcon>
                             <ListItemText primary="Classi" />
                         </ListItem>
+                        
+                        {/* studenti */}
+                        <ListItem
+                            button
+                            onClick={() => {
+                                setFragment({
+                                    titolo: 'Studenti',
+                                    component: <Studenti />,
+                                });
+                            }}
+                        >
+                            <ListItemIcon>
+                                <PeopleAltIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Studenti" />
+                        </ListItem>
+
                         <ListItem
                             button
                             onClick={() => {

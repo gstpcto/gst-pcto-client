@@ -60,7 +60,6 @@ export default function Classi() {
 }
 
 function TableBella() {
-    const auth = useAuth();
     const classes = useStyles();
     const [isLoading, setLoading] = useState(true);
     // eslint-disable-next-line
@@ -232,7 +231,7 @@ function TableBella() {
         );
 }
 
-const AddClassForm = ({ updater }) => {
+export const AddClassForm = ({ updater }) => {
     const auth = useAuth();
     const classes = useStyles();
     const onSubmit = async (data) => {
@@ -281,7 +280,7 @@ const AddClassForm = ({ updater }) => {
     );
 };
 
-const ModifyClassForm = ({ cid, updater }) => {
+export const ModifyClassForm = ({ cid, updater }) => {
     console.log(cid);
     const auth = useAuth();
     const classes = useStyles();
