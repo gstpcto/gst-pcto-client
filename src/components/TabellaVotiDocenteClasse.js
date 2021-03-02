@@ -10,31 +10,29 @@ import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import Box from '@material-ui/core/Box';
 import { baseRoute } from '../ProvideAuth';
-import { CircularProgress, Typography, FormControl, InputLabel, Select, MenuItem, IconButton } from '@material-ui/core';
+import { CircularProgress, Typography, FormControl, InputLabel, MenuItem } from '@material-ui/core';
+import { Select } from 'final-form-material-ui';
 import axios from 'axios';
 import { useAuth } from '../ProvideAuth';
 import { makeStyles } from '@material-ui/core/styles';
-import CloseIcon from '@material-ui/icons/Close';
+import { Form, Field } from 'react-final-form';
 
 const useStyles = makeStyles((theme) => ({
+    modal: {
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: theme.spacing(2),
+    },
     formControl: {
         marginTop: theme.spacing(1),
         marginBottom: theme.spacing(1),
+        width: '100%',
     },
-    modalContainer: {
-        height: '100vh',
-        width: '100vw',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    modalPaper: {
-        backgroundColor: theme.palette.background.paper,
-        border: '1px solid #E0E0E0',
-        borderRadius: theme.shape.borderRadius,
-        boxShadow: theme.shadows[5],
+    paperContainer: {
         padding: theme.spacing(2),
-        margin: theme.spacing(1),
     },
 }));
 
@@ -47,6 +45,7 @@ export default function TabellaVotiDocenteClasse() {
     const [isError, setError] = useState(false);
     const [data, setData] = useState([]);
     const [open, setOpen] = useState(false);
+
     const [infoVoto, setInfoVoto] = useState({
         iduser: '',
         nome: '',
@@ -95,21 +94,13 @@ export default function TabellaVotiDocenteClasse() {
         // eslint-disable-next-line
     }, []);
 
-    /* const aggiungivoto = async () => {
-        axios
-            .post(`${baseRoute}/voti/voto`, { idstudente: infoVoto.iduser, idprogetto: , valutazione: voto, date: })
-            .then(function (response) {
-                console.log(response);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    } */
-
     return isLoading ? (
         <CircularProgress />
     ) : (
         <>
+            <Modal open={open} onClose={handleClose} className={classes.modal}>
+                <EditValutation infoVoto={infoVoto} />
+            </Modal>
             <TableContainer component={Paper}>
                 <Table size="small">
                     <TableHead>
@@ -124,7 +115,7 @@ export default function TabellaVotiDocenteClasse() {
                     </TableHead>
                     <TableBody>
                         {data.map(({ alunni }) =>
-                            alunni.map(({ iduser, nome, cognome, voto }, index) => (
+                            alunni.map(({ iduser, nome, cognome, voto, idprogetto }, index) => (
                                 <TableRow key={index}>
                                     <TableCell scope="row">{`${nome} ${cognome}`}</TableCell>
                                     <TableCell scope="row">
@@ -136,7 +127,7 @@ export default function TabellaVotiDocenteClasse() {
                                                 color="primary"
                                                 disableElevation
                                                 onClick={() => {
-                                                    handleOpen({ iduser, nome, cognome });
+                                                    handleOpen({ iduser, nome, cognome, idprogetto });
                                                 }}
                                             >
                                                 Aggiungi voto
@@ -149,20 +140,40 @@ export default function TabellaVotiDocenteClasse() {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Modal open={open} onClose={handleClose}>
-                <Box className={classes.modalContainer}>
-                    <Box className={classes.modalPaper}>
-                        <IconButton size="small" onClick={handleClose}>
-                            <CloseIcon />
-                        </IconButton>
-                        <Typography variant="h6" component="h1" color="initial">
-                            Aggiungi un voto allo studente
-                            {infoVoto.nome} {infoVoto.cognome}
-                        </Typography>
-                        <Box display="flex" justifyContent="center" flexDirection="column">
-                            <FormControl fullWidth variant="outlined" className={classes.formControl}>
-                                <InputLabel>Sezione</InputLabel>
-                                <Select label="Sezione" onChange={handleVotoChange} value={voto}>
+        </>
+    );
+}
+
+const EditValutation = ({ infoVoto }) => {
+    const classes = useStyles();
+
+    const onSubmit = async (data) => {
+        console.log('form submitted');
+        /* axios
+            .post(`${baseRoute}/voti/voto`, { idstudente: infoVoto.iduser, valutazione: voto })
+            .then(function (response) {
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        */
+    };
+
+    return (
+        <Box>
+            <Form
+                onSubmit={onSubmit}
+                initialValues={{ voto: 6 }}
+                render={({ handleSubmit, reset, submitting, pristine, values }) => (
+                    <form onSubmit={handleSubmit} noValidate>
+                        <Paper className={classes.paperContainer}>
+                            <Typography variant="h6" component="h1" color="initial">
+                                Aggiungi un voto allo studente
+                                {infoVoto.nome} {infoVoto.cognome}
+                            </Typography>
+                            <FormControl className={classes.formControl}>
+                                <Field fullWidth name="voto" component={Select} label="Voto" formControlProps={{ fullWidth: true }}>
                                     <MenuItem value={3}>3</MenuItem>
                                     <MenuItem value={3.5}>3.5</MenuItem>
                                     <MenuItem value={4}>3</MenuItem>
@@ -178,15 +189,16 @@ export default function TabellaVotiDocenteClasse() {
                                     <MenuItem value={9}>9</MenuItem>
                                     <MenuItem value={9.5}>9.5</MenuItem>
                                     <MenuItem value={10}>10</MenuItem>
-                                </Select>
+                                </Field>
                             </FormControl>
-                            <Button variant="contained" color="secondary" disableElevationcolor>
-                                Aggiungi voto
+
+                            <Button variant="contained" color="primary" type="submit" disabled={submitting}>
+                                Modifica Valutazione
                             </Button>
-                        </Box>
-                    </Box>
-                </Box>
-            </Modal>
-        </>
+                        </Paper>
+                    </form>
+                )}
+            />
+        </Box>
     );
-}
+};
