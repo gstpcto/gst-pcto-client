@@ -77,6 +77,7 @@ export default function Studenti() {
     const auth = useAuth();
     const classes = useStyles();
     const [reloader, setReloader] = useState(null);
+    const [uid, setUid] = useState(null);
     const [data, setData] = useState(null);
     const [isLoading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
@@ -108,6 +109,7 @@ export default function Studenti() {
                         className={`${classes.modifyButton} ${classes.modifyButtonHover}`}
                         onClick={() => {
                             console.log(obj.id);
+                            setUid(obj.id);
                             handleClickOpen()
                         }}
                     >
@@ -151,25 +153,15 @@ export default function Studenti() {
                     <CloseIcon />
                 </IconButton>
                 <Typography variant="h6" className={classes.title}>
-                    Sound
+                    Info Studente
                 </Typography>
                 <Button autoFocus color="inherit" onClick={handleClose}>
-                    save
+                    OK
                 </Button>
                 </Toolbar>
             </AppBar>
-            <List>
-                <ListItem button>
-                <ListItemText primary="Phone ringtone" secondary="Titania" />
-                </ListItem>
-                <Divider />
-                <ListItem button>
-                <ListItemText
-                    primary="Default notification ringtone"
-                    secondary="Tethys"
-                />
-                </ListItem>
-            </List>
+           
+            <StudenteDialogContent uid={uid} updater={setReloader} />
         </Dialog>
         
         <TableContainer component={Paper}>
@@ -207,11 +199,26 @@ export default function Studenti() {
 }
 
 
-const studenteDialog = ({}) =>{
+const StudenteDialogContent = ({uid, updater}) =>{
+    const [studente, setStudente] = useState(null);
+    const [isLoading, setLoading] = useState(true);
+    const auth = useAuth();
+    const classes = useStyles();
 
-    return (
-      <div>
-            
-      </div>
-    );
+
+    useEffect(()=>{
+      console.log(`${baseRoute}/studenti/${uid}`);
+      axios
+        .get(`${baseRoute}/studenti/${uid}`, { params: { token: auth.token } })
+        .then((res) => {
+          setStudente(res.data.data);
+        }).then(()=> {setLoading(false)})
+    }, [uid]);
+
+
+    return isLoading? <CircularProgress /> :
+      <Box>
+        {studente.nome}
+      </Box>
+    ;
 }
