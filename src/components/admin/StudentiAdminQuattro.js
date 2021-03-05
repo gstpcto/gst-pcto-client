@@ -226,6 +226,13 @@ const StudenteDialogContent = ({uid, updater, closer}) =>{
     const auth = useAuth();
     const classes = useStyles();
 
+    const onSubmit = async (data) => {
+      console.log('form submitted');
+      console.log(data);
+      axios.put(`${baseRoute}/studenti/updateAdmin`, {token: auth.token, idstudente: studente.id, data})
+      .then(r=>{console.log(r);})
+      .then(()=>updater(Math.random()))
+    };
 
     useEffect(()=>{
       console.log(`${baseRoute}/studenti/${uid}`);
@@ -234,15 +241,15 @@ const StudenteDialogContent = ({uid, updater, closer}) =>{
         .then((res) => {
           setStudente(res.data.data);
           console.log(res.data.data);
-        }).then(()=> {setLoading(false)})
-
-      axios
-        .get(`${baseRoute}/studenti/${uid}/storico`, { params: { token: auth.token } })
-        .then((res) => {
-          setStorico(res.data.data)
-          console.log(res.data.data);
-        })
-    }, [uid]);
+        }).then(()=>{
+          axios
+            .get(`${baseRoute}/studenti/${uid}/storico`, { params: { token: auth.token } })
+            .then((res) => {
+              setStorico(res.data.data)
+              console.log(res.data.data);
+            })
+        }).then(() => { setLoading(false) })
+    }, [uid, auth]);
 
 
     return isLoading? <CircularProgress /> :
@@ -267,8 +274,41 @@ const StudenteDialogContent = ({uid, updater, closer}) =>{
                 </Button>
           </Toolbar>
         </AppBar>
-      <Box>
-        
+        <Box mx={3}>
+          <Grid item xs={12}>
+            <Typography variant="h6" component="h1">
+              Informazioni utente
+            </Typography>
+            <Paper className={classes.paperContainer} >
+              <Form
+                onSubmit={onSubmit}
+                initialValues={{nome: studente.nome, cognome: studente.cognome, email: studente.email, codiceF: studente.codiceF, dataN: studente.dataN.split('T')[0]}}
+                render={({ handleSubmit, reset, submitting, pristine, values }) => (
+                  <form onSubmit={handleSubmit} noValidate>
+                    <FormControl className={classes.formControl} >
+                      <Field fullWidth name="nome" component={TextField} type="text" label="Nome" />
+                    </FormControl>
+                    <FormControl className={classes.formControl} >
+                      <Field fullWidth name="cognome" component={TextField} type="text" label="Cognome" />
+                    </FormControl>
+                    <FormControl className={classes.formControl} >
+                      <Field fullWidth name="email" component={TextField} type="text" label="Email" />
+                    </FormControl>
+                    <FormControl className={classes.formControl} >
+                      <Field fullWidth name="codiceF" component={TextField} type="text" label="Codice Fiscale" />
+                    </FormControl>
+                    <FormControl className={classes.formControl} >
+                      <Field fullWidth name="dataN" component={TextField} type="date" label="Data di Nascita" />
+                    </FormControl>
+
+                    <Button variant="contained" color="primary" type="submit" disabled={submitting}>
+                      Aggiorna Dati
+                  </Button>
+                  </form>
+                )}
+              />
+            </Paper>
+          </Grid>
 
       </Box> 
     </>
