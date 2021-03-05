@@ -66,6 +66,9 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2),
     flex: 1,
   },
+  form:{
+    display: "inline-flex",
+  },
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -78,9 +81,18 @@ export default function Studenti() {
     const classes = useStyles();
     const [reloader, setReloader] = useState(null);
     const [uid, setUid] = useState(null);
+    const [filter, setFilter] = useState("");
     const [data, setData] = useState(null);
     const [isLoading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
+    
+  const onSubmit = async ({filtro}) => {
+    console.log('form submitted');
+    console.log(filtro);
+    setFilter(filtro)
+  };
+    
+    
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -130,38 +142,35 @@ export default function Studenti() {
 
     useEffect(() => {
         fetchData();
-    }, [reloader]);
+    }, [reloader, filter]);
 
     return isLoading ? (
       <CircularProgress />
     ) : (
       <>
+
+          <Form md={12} xs={12}
+            onSubmit={onSubmit}
+            render={({ handleSubmit, reset, submitting, pristine, values }) => (
+              //TODO andre fixami lo stile per favore
+              <form onSubmit={handleSubmit} noValidate className={classes.form} onChange={handleSubmit}>
+                  <FormControl className={classes.formControl} xs={9} >
+                    <Field fullWidth name="filtro" component={TextField} type="text" label="Filtra studenti" />
+                  </FormControl>
+                  <Button variant="contained" color="primary" type="submit">
+                    Submit
+                  </Button>
+              </form>
+            )}
+          />
+
         <Dialog
-            fullScreen
-            open={open}
-            onClose={handleClose}
-            TransitionComponent={Transition}
-            >
-            <AppBar className={classes.appBar}>
-                <Toolbar>
-                <IconButton
-                    edge="start"
-                    color="inherit"
-                    onClick={handleClose}
-                    aria-label="close"
-                >
-                    <CloseIcon />
-                </IconButton>
-                <Typography variant="h6" className={classes.title}>
-                    Info Studente
-                </Typography>
-                <Button autoFocus color="inherit" onClick={handleClose}>
-                    OK
-                </Button>
-                </Toolbar>
-            </AppBar>
-           
-            <StudenteDialogContent uid={uid} updater={setReloader} />
+          fullScreen
+          open={open}
+          onClose={handleClose}
+          TransitionComponent={Transition}
+          >
+            <StudenteDialogContent uid={uid} updater={setReloader} closer={handleClose} />
         </Dialog>
         
         <TableContainer component={Paper}>
@@ -183,7 +192,18 @@ export default function Studenti() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.map(({ id, nome, email, modifica }) => (
+              {data.filter((item)=>{
+                if(filter===undefined) return true;
+                if (filter[0]==="#"){
+                  const temp = filter.substring(1);
+                  if(item.id==temp) return true;
+                  else return false;
+                }else{
+                  if (filter == null || filter == "") return true
+                  if (item.nome.includes(filter)) return true
+                  else return false;
+                }
+              }).map(({ id, nome, email, modifica }) => (
                 <TableRow key={id}>
                   <TableCell scope="row">{id}</TableCell>
                   <TableCell scope="row">{nome}</TableCell>
@@ -199,8 +219,9 @@ export default function Studenti() {
 }
 
 
-const StudenteDialogContent = ({uid, updater}) =>{
+const StudenteDialogContent = ({uid, updater, closer}) =>{
     const [studente, setStudente] = useState(null);
+    const [storico, setStorico] = useState(null)
     const [isLoading, setLoading] = useState(true);
     const auth = useAuth();
     const classes = useStyles();
@@ -212,13 +233,44 @@ const StudenteDialogContent = ({uid, updater}) =>{
         .get(`${baseRoute}/studenti/${uid}`, { params: { token: auth.token } })
         .then((res) => {
           setStudente(res.data.data);
+          console.log(res.data.data);
         }).then(()=> {setLoading(false)})
+
+      axios
+        .get(`${baseRoute}/studenti/${uid}/storico`, { params: { token: auth.token } })
+        .then((res) => {
+          setStorico(res.data.data)
+          console.log(res.data.data);
+        })
     }, [uid]);
 
 
     return isLoading? <CircularProgress /> :
+    <>
+        <AppBar className={classes.appBar}>
+          <Toolbar>
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={closer}
+              aria-label="close"
+            >
+              <CloseIcon />
+            </IconButton>
+            
+              <Typography variant="h6" className={classes.title}>
+                Info Studente
+              </Typography>
+            
+            <Button autoFocus color="inherit" onClick={closer}>
+              OK
+                </Button>
+          </Toolbar>
+        </AppBar>
       <Box>
-        {studente.nome}
-      </Box>
+        
+
+      </Box> 
+    </>
     ;
 }
