@@ -234,6 +234,10 @@ const StudenteDialogContent = ({uid, updater, closer}) =>{
       .then(()=>updater(Math.random()))
     };
 
+    const onSubmitPass = async (data) =>{
+      console.log(data);
+    }
+
     useEffect(()=>{
       console.log(`${baseRoute}/studenti/${uid}`);
       axios
@@ -253,7 +257,7 @@ const StudenteDialogContent = ({uid, updater, closer}) =>{
 
 
     return isLoading? <CircularProgress /> :
-    <>
+      <Grid spacing={2}>
         <AppBar className={classes.appBar}>
           <Toolbar>
             <IconButton
@@ -274,8 +278,9 @@ const StudenteDialogContent = ({uid, updater, closer}) =>{
                 </Button>
           </Toolbar>
         </AppBar>
-        <Box mx={3}>
-          <Grid item xs={12}>
+        <Grid container spacing={2} style={{display: "flex"}}>
+          {/* update student data component */}
+          <Grid item md={6} xs={12}>
             <Typography variant="h6" component="h1">
               Informazioni utente
             </Typography>
@@ -309,8 +314,27 @@ const StudenteDialogContent = ({uid, updater, closer}) =>{
               />
             </Paper>
           </Grid>
-
-      </Box> 
-    </>
+          <Grid item md={6} xs={12}>
+            <Typography variant="h6" component="h1">
+              Password Reset
+            </Typography>
+            <Paper className={classes.paperContainer} >
+              <Form
+                onSubmit={onSubmitPass}
+                render={({ handleSubmit, reset, submitting, pristine, values }) => (
+                  <form onSubmit={handleSubmit} noValidate>
+                    <FormControl className={classes.formControl} >
+                      <Field fullWidth name="nuovaPass" component={TextField} type="text" label="Nuova Password" />
+                    </FormControl>
+                    <Button variant="contained" color="secondary" type="submit" disabled={submitting}>
+                      Aggiorna Password
+                  </Button>
+                  </form>
+                )}
+              />
+            </Paper>
+          </Grid>
+      </Grid> 
+    </Grid>
     ;
 }
