@@ -152,14 +152,10 @@ export default function Studenti() {
           <Form md={12} xs={12}
             onSubmit={onSubmit}
             render={({ handleSubmit, reset, submitting, pristine, values }) => (
-              //TODO andre fixami lo stile per favore
               <form onSubmit={handleSubmit} noValidate className={classes.form} onChange={handleSubmit}>
                   <FormControl className={classes.formControl} xs={9} >
                     <Field fullWidth name="filtro" component={TextField} type="text" label="Filtra studenti" />
                   </FormControl>
-                  <Button variant="contained" color="primary" type="submit">
-                    Submit
-                  </Button>
               </form>
             )}
           />
@@ -196,10 +192,10 @@ export default function Studenti() {
                 if(filter===undefined) return true;
                 if (filter[0]==="#"){
                   const temp = filter.substring(1);
-                  if(item.id==temp) return true;
+                  if(item.id===temp) return true;
                   else return false;
                 }else{
-                  if (filter == null || filter == "") return true
+                  if (filter === null || filter === "") return true
                   if (item.nome.includes(filter)) return true
                   else return false;
                 }
@@ -234,8 +230,12 @@ const StudenteDialogContent = ({uid, updater, closer}) =>{
       .then(()=>updater(Math.random()))
     };
 
-    const onSubmitPass = async (data) =>{
-      console.log(data);
+    const onSubmitPass = async ({nuovaPass}) =>{
+        if(nuovaPass!==undefined){
+          axios.put(`${baseRoute}/studenti/updatePasswordAdmin`, {token: auth.token, idstudente: studente.id, nuovaPass})
+            .then(r => { console.log(r); })
+            .then(() => updater(Math.random()))
+        }
     }
 
     useEffect(()=>{
@@ -251,8 +251,8 @@ const StudenteDialogContent = ({uid, updater, closer}) =>{
             .then((res) => {
               setStorico(res.data.data)
               console.log(res.data.data);
-            })
-        }).then(() => { setLoading(false) })
+            }).then(() => { setLoading(false) })
+        })
     }, [uid, auth]);
 
 
@@ -314,6 +314,7 @@ const StudenteDialogContent = ({uid, updater, closer}) =>{
               />
             </Paper>
           </Grid>
+          {/* password admin reset component */}
           <Grid item md={6} xs={12}>
             <Typography variant="h6" component="h1">
               Password Reset
@@ -321,12 +322,15 @@ const StudenteDialogContent = ({uid, updater, closer}) =>{
             <Paper className={classes.paperContainer} >
               <Form
                 onSubmit={onSubmitPass}
+                initialValues={{nuovaPass: ""}}
                 render={({ handleSubmit, reset, submitting, pristine, values }) => (
-                  <form onSubmit={handleSubmit} noValidate>
+                  <form onSubmit={async (event) =>{
+                    handleSubmit(event).then(reset);
+                  }}>
                     <FormControl className={classes.formControl} >
-                      <Field fullWidth name="nuovaPass" component={TextField} type="text" label="Nuova Password" />
+                      <Field fullWidth name="nuovaPass" component={TextField} type="text" label="Nuova Password"  required />
                     </FormControl>
-                    <Button variant="contained" color="secondary" type="submit" disabled={submitting}>
+                    <Button variant="contained" color="secondary" type="submit">
                       Aggiorna Password
                   </Button>
                   </form>
@@ -334,6 +338,47 @@ const StudenteDialogContent = ({uid, updater, closer}) =>{
               />
             </Paper>
           </Grid>
+          {/**storico delle classi frequentate */}
+          <Grid item md={12} xs={12}>
+            <Typography variant="h6" className={classes.title}>
+              Storico dello Studente
+              </Typography>
+            <TableContainer component={Paper}>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell scope="col" component="th">
+                      Anno Scolastico
+                    </TableCell>
+                    <TableCell scope="col" component="th">
+                      ID Classe
+                    </TableCell>
+                    <TableCell scope="col" component="th">
+                      Classe
+                    </TableCell>
+                    <TableCell scope="col" component="th">
+                      Sezione
+                    </TableCell>
+                    <TableCell scope="col" component="th">
+                      Indirizzo
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {storico.map(({ annoScolastico, id, classe, sezione, indirizzo }) => (
+                    <TableRow key={id}>
+                      <TableCell scope="row">{annoScolastico}</TableCell>
+                      <TableCell scope="row">{id}</TableCell>
+                      <TableCell scope="row">{classe}</TableCell>
+                      <TableCell scope="row">{sezione}</TableCell>
+                      <TableCell scope="row">{indirizzo}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+
       </Grid> 
     </Grid>
     ;
