@@ -24,10 +24,6 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItem from '@material-ui/core/ListItem';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
 
 const useStyles = makeStyles((theme) => ({
   modifyButton: {
@@ -219,8 +215,18 @@ const StudenteDialogContent = ({uid, updater, closer}) =>{
     const [studente, setStudente] = useState(null);
     const [storico, setStorico] = useState(null)
     const [isLoading, setLoading] = useState(true);
+    const [openAggiungiAnnoModal, setOpenAggiungiAnnoModal] = useState(false);
     const auth = useAuth();
     const classes = useStyles();
+
+    const handleOpenAggiungiModal = () => {
+      setOpenAggiungiAnnoModal(true);
+    };
+
+    const handleCloseAggiungiModal = () => {
+      setOpenAggiungiAnnoModal(false);
+    };
+
 
     const onSubmit = async (data) => {
       console.log('form submitted');
@@ -278,7 +284,7 @@ const StudenteDialogContent = ({uid, updater, closer}) =>{
                 </Button>
           </Toolbar>
         </AppBar>
-        <Grid container spacing={2} style={{display: "flex"}}>
+        <Grid container style={{display: "flex"}}>
           {/* update student data component */}
           <Grid item md={6} xs={12}>
             <Typography variant="h6" component="h1">
@@ -343,6 +349,19 @@ const StudenteDialogContent = ({uid, updater, closer}) =>{
             <Typography variant="h6" className={classes.title}>
               Storico dello Studente
               </Typography>
+            <Button variant="contained" color="primary" onClick={handleOpenAggiungiModal}>
+              Aggiungi Anno
+            </Button>
+            <Modal //add classe modal
+                    open={openAggiungiAnnoModal}
+                    onClose={handleCloseAggiungiModal}
+                    aria-labelledby="nuova classe"
+                    aria-describedby="puoi aggiungere una nuova classe"
+                    className={classes.modal}
+                >
+                    <AggiungiAnnoModal updater={updater} studenteid={studente.id} />
+                </Modal>
+
             <TableContainer component={Paper}>
               <Table size="small">
                 <TableHead>
@@ -362,16 +381,24 @@ const StudenteDialogContent = ({uid, updater, closer}) =>{
                     <TableCell scope="col" component="th">
                       Indirizzo
                     </TableCell>
+                    <TableCell scope="col" component="th">
+                      Modifica
+                    </TableCell>
+                    <TableCell scope="col" component="th">
+                      Elimina
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {storico.map(({ annoScolastico, id, classe, sezione, indirizzo }) => (
+                  {storico.map(({ annoScolastico, id, classe, sezione, indirizzo, modifica, elimina }) => (
                     <TableRow key={id}>
                       <TableCell scope="row">{annoScolastico}</TableCell>
                       <TableCell scope="row">{id}</TableCell>
                       <TableCell scope="row">{classe}</TableCell>
                       <TableCell scope="row">{sezione}</TableCell>
                       <TableCell scope="row">{indirizzo}</TableCell>
+                      <TableCell scope="row">{modifica}</TableCell>
+                      <TableCell scope="row">{elimina}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -382,4 +409,64 @@ const StudenteDialogContent = ({uid, updater, closer}) =>{
       </Grid> 
     </Grid>
     ;
+}
+
+
+
+const AggiungiAnnoModal = ({updater, studenteid}) =>{
+  console.log(studenteid);
+  const auth = useAuth();
+  const classes = useStyles();
+  const [classi, setClassi] = useState([]);
+  const [isLoading, setLoading] = useState(true);
+
+  const onSubmit = async (data) => {
+    console.log('form submitted');
+    console.log(data);
+    //TODO: add api functionality
+    updater(Math.random());
+  };
+
+  const fetchData = async() =>{
+    await axios.get(`${baseRoute}/classi/all`)
+    .then((res)=>{
+      setClassi([...res.data.data.map(item => (<MenuItem value={item.id}>{`${item.classe}${item.sezione} ${item.indirizzo}`}</MenuItem>))])
+    })
+  }
+
+  useEffect(()=>{
+    fetchData().then(()=>{
+      setLoading(false);
+    })
+  }, []);
+
+
+
+  return (isLoading? <CircularProgress />: <Box>
+    <Form
+      onSubmit={onSubmit}
+      render={({ handleSubmit, reset, submitting, pristine, values }) => (
+        <form onSubmit={handleSubmit} noValidate>
+          <Paper className={classes.paperContainer}>
+            <Typography variant="h6" component="h1">
+              Crea Nuova Classe
+                            </Typography>
+            <FormControl className={classes.formControl}>
+              <Field fullWidth required name="annoScolastico" component={TextField} type="text" label="Anno Scolastico" />
+            </FormControl>
+            
+            <FormControl className={classes.formControl}>
+              <Field fullWidth name="classe" component={Select} label="Classe" formControlProps={{ fullWidth: true }}>
+                {classi}
+              </Field>
+            </FormControl>
+
+            <Button variant="contained" color="primary" type="submit" >
+              Submit
+                            </Button>
+          </Paper>
+        </form>
+      )}
+    />
+  </Box>);
 }
