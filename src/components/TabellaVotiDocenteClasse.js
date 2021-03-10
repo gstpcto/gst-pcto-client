@@ -10,12 +10,13 @@ import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import Box from '@material-ui/core/Box';
 import { baseRoute } from '../ProvideAuth';
-import { CircularProgress, Typography, FormControl, InputLabel, MenuItem } from '@material-ui/core';
+import { CircularProgress, Typography, FormControl, MenuItem } from '@material-ui/core';
 import { Select } from 'final-form-material-ui';
 import axios from 'axios';
 import { useAuth } from '../ProvideAuth';
 import { makeStyles } from '@material-ui/core/styles';
 import { Form, Field } from 'react-final-form';
+import { TextField } from 'final-form-material-ui';
 
 const useStyles = makeStyles((theme) => ({
     modal: {
@@ -50,14 +51,8 @@ export default function TabellaVotiDocenteClasse() {
         iduser: '',
         nome: '',
         cognome: '',
-        idprogetto: '',
         data: '',
     });
-    const [voto, setVoto] = useState(6);
-
-    const handleVotoChange = (e) => {
-        setVoto(e.target.value);
-    };
 
     const handleOpen = ({ iduser, nome, cognome, idprogetto, data }) => {
         setInfoVoto({ iduser, nome, cognome, idprogetto, data });
@@ -115,25 +110,28 @@ export default function TabellaVotiDocenteClasse() {
                     </TableHead>
                     <TableBody>
                         {data.map(({ alunni }) =>
-                            alunni.map(({ iduser, nome, cognome, voto, idprogetto }, index) => (
+                            alunni.map(({ iduser, nome, cognome, voto }, index) => (
                                 <TableRow key={index}>
                                     <TableCell scope="row">{`${nome} ${cognome}`}</TableCell>
-                                    <TableCell scope="row">
-                                        {voto ? (
-                                            <>{voto}</>
-                                        ) : (
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                disableElevation
-                                                onClick={() => {
-                                                    handleOpen({ iduser, nome, cognome, idprogetto });
-                                                }}
-                                            >
-                                                Aggiungi voto
-                                            </Button>
-                                        )}
-                                    </TableCell>
+                                    {data.map(({ infoProgetto }, index) => (
+                                        <TableCell key={index} scope="row">
+                                            {voto ? (
+                                                <>{voto}</>
+                                            ) : (
+                                                <Button
+                                                    variant="contained"
+                                                    color="primary"
+                                                    disableElevation
+                                                    onClick={() => {
+                                                        handleOpen({ iduser, nome, cognome, idprogetto: infoProgetto.id });
+                                                        console.log({ iduser, nome, cognome, idprogetto: infoProgetto.id });
+                                                    }}
+                                                >
+                                                    Aggiungi voto
+                                                </Button>
+                                            )}
+                                        </TableCell>
+                                    ))}
                                 </TableRow>
                             ))
                         )}
@@ -146,25 +144,31 @@ export default function TabellaVotiDocenteClasse() {
 
 const EditValutation = ({ infoVoto }) => {
     const classes = useStyles();
-
+    const auth = useAuth();
     const onSubmit = async (data) => {
-        console.log('form submitted');
-        /* axios
-            .post(`${baseRoute}/voti/voto`, { idstudente: infoVoto.iduser, valutazione: voto })
+        axios
+            .post(`${baseRoute}/voti/voto`, {
+                token: auth.token,
+                data: {
+                    idstudente: infoVoto.iduser,
+                    idprogetto: infoVoto.idprogetto,
+                    valutazione: data.voto,
+                    date: data.dataV,
+                },
+            })
             .then(function (response) {
                 console.log(response);
             })
             .catch(function (error) {
                 console.log(error);
             });
-        */
     };
 
     return (
         <Box>
             <Form
                 onSubmit={onSubmit}
-                initialValues={{ voto: 6 }}
+                initialValues={{ voto: 6, dataV: new Date(Date.now()).toISOString().split('T')[0] }}
                 render={({ handleSubmit, reset, submitting, pristine, values }) => (
                     <form onSubmit={handleSubmit} noValidate>
                         <Paper className={classes.paperContainer}>
@@ -191,7 +195,9 @@ const EditValutation = ({ infoVoto }) => {
                                     <MenuItem value={10}>10</MenuItem>
                                 </Field>
                             </FormControl>
-
+                            <FormControl className={classes.formControl}>
+                                <Field fullWidth name="dataV" component={TextField} type="date" label="Data Voto" />
+                            </FormControl>
                             <Button variant="contained" color="primary" type="submit" disabled={submitting}>
                                 Modifica Valutazione
                             </Button>
