@@ -162,7 +162,7 @@ export default function Studenti() {
           onClose={handleClose}
           TransitionComponent={Transition}
           >
-            <StudenteDialogContent uid={uid} updater={setReloader} closer={handleClose} />
+            <StudenteDialogContent uid={uid} updater={setReloader} closer={handleClose} reloader={reloader} />
         </Dialog>
         
         <TableContainer component={Paper}>
@@ -185,6 +185,7 @@ export default function Studenti() {
             </TableHead>
             <TableBody>
               {data.filter((item)=>{
+                
                 if(filter===undefined) return true;
                 if (filter[0]==="#"){
                   const temp = filter.substring(1);
@@ -211,7 +212,7 @@ export default function Studenti() {
 }
 
 
-const StudenteDialogContent = ({uid, updater, closer}) =>{
+const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
     const [studente, setStudente] = useState(null);
     const [storico, setStorico] = useState(null)
     const [isLoading, setLoading] = useState(true);
@@ -245,6 +246,9 @@ const StudenteDialogContent = ({uid, updater, closer}) =>{
     }
 
     useEffect(()=>{
+      console.log('====================================');
+      console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+      console.log('====================================');
       console.log(`${baseRoute}/studenti/${uid}`);
       axios
         .get(`${baseRoute}/studenti/${uid}`, { params: { token: auth.token } })
@@ -259,7 +263,10 @@ const StudenteDialogContent = ({uid, updater, closer}) =>{
               console.log(res.data.data);
             }).then(() => { setLoading(false) })
         })
-    }, [uid, auth]);
+      
+      //updater(Math.random())
+      setOpenAggiungiAnnoModal(false);
+    }, [uid, auth, reloader]);
 
 
     return isLoading? <CircularProgress /> :
@@ -424,6 +431,19 @@ const AggiungiAnnoModal = ({updater, studenteid}) =>{
     console.log('form submitted');
     console.log(data);
     //TODO: add api functionality
+    const {annoScolastico, idclasse} = data;
+    const req = {
+      as: annoScolastico,
+      idclasse,
+      idstudente: studenteid
+    }
+    await axios.put(`${baseRoute}/studenti/cambiaClasse`, {token: auth.token, data: req})
+    .then(res =>{
+      console.log('====================================');
+      console.log(res);
+      console.log('====================================');
+    })    
+
     updater(Math.random());
   };
 
@@ -437,8 +457,9 @@ const AggiungiAnnoModal = ({updater, studenteid}) =>{
   useEffect(()=>{
     fetchData().then(()=>{
       setLoading(false);
+
     })
-  }, []);
+  }, [studenteid, updater]);
 
 
 
@@ -449,14 +470,14 @@ const AggiungiAnnoModal = ({updater, studenteid}) =>{
         <form onSubmit={handleSubmit} noValidate>
           <Paper className={classes.paperContainer}>
             <Typography variant="h6" component="h1">
-              Crea Nuova Classe
+              Aggiungi allo storico
                             </Typography>
             <FormControl className={classes.formControl}>
               <Field fullWidth required name="annoScolastico" component={TextField} type="text" label="Anno Scolastico" />
             </FormControl>
             
             <FormControl className={classes.formControl}>
-              <Field fullWidth name="classe" component={Select} label="Classe" formControlProps={{ fullWidth: true }}>
+              <Field fullWidth name="idclasse" component={Select} label="Classe" formControlProps={{ fullWidth: true }}>
                 {classi}
               </Field>
             </FormControl>
