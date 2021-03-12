@@ -23,6 +23,7 @@ import { useHistory } from 'react-router-dom';
 // Default Dashboards
 import DashboardLevelZero from '../fragments/DashboardLevelZero';
 import DashboardLevelOne from '../fragments/DashboardLevelOne';
+import DashboardLevelTwo from '../fragments/DashboardLevelTwo';
 import DashboardLevelFour from '../fragments/DashboardLevelFour';
 
 const drawerWidth = 240;
@@ -132,7 +133,7 @@ export default function Dashboard(props) {
             case 1:
                 return <DashboardLevelOne />;
             case 2:
-                return <>Dashboard liv2</>;
+                return <DashboardLevelTwo />;
             case 3:
                 return <>Dashboard liv3</>;
             case 4:
