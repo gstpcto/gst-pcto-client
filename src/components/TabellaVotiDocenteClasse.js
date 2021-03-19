@@ -44,6 +44,7 @@ export default function TabellaVotiDocenteClasse() {
     const [isLoading, setLoading] = useState(true);
     // eslint-disable-next-line
     const [isError, setError] = useState(false);
+    const [nomiProgetti, setNomiProgetti] = useState([]);
     const [data, setData] = useState([]);
     const [open, setOpen] = useState(false);
 
@@ -77,6 +78,20 @@ export default function TabellaVotiDocenteClasse() {
             .get(`${baseRoute}/progetti/classiAlunni`, { params: { token: auth.token } })
             .then(function (response) {
                 console.log(response);
+                setNomiProgetti(response.data['progetti']);
+            })
+            .catch(function (error) {
+                console.log(error);
+                setError(true);
+            })
+            .finally(function () {
+                setLoading(false);
+            });
+
+        axios
+            .get(`${baseRoute}/progetti/progetti`, { params: { token: auth.token } })
+            .then(function (response) {
+                console.log(response);
                 setData(response.data['progetti']);
             })
             .catch(function (error) {
@@ -101,7 +116,7 @@ export default function TabellaVotiDocenteClasse() {
                     <TableHead>
                         <TableRow>
                             <TableCell scope="col" component="th"></TableCell>
-                            {data.map(({ infoProgetto, ...rest }, index) => (
+                            {nomiProgetti.map(({ infoProgetto, ...rest }, index) => (
                                 <TableCell key={index} scope="col" component="th">
                                     {infoProgetto.nome}
                                 </TableCell>
@@ -109,32 +124,30 @@ export default function TabellaVotiDocenteClasse() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {data.map(({ alunni }) =>
-                            alunni.map(({ iduser, nome, cognome, voto }, index) => (
-                                <TableRow key={index}>
-                                    <TableCell scope="row">{`${nome} ${cognome}`}</TableCell>
-                                    {data.map(({ infoProgetto }, index) => (
-                                        <TableCell key={index} scope="row">
-                                            {voto ? (
-                                                <>{voto}</>
-                                            ) : (
-                                                <Button
-                                                    variant="contained"
-                                                    color="primary"
-                                                    disableElevation
-                                                    onClick={() => {
-                                                        handleOpen({ iduser, nome, cognome, idprogetto: infoProgetto.id });
-                                                        console.log({ iduser, nome, cognome, idprogetto: infoProgetto.id });
-                                                    }}
-                                                >
-                                                    Aggiungi voto
-                                                </Button>
-                                            )}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))
-                        )}
+                        {data.map(({ user, progetti }, index) => (
+                            <TableRow key={index}>
+                                <TableCell scope="row">{`${user.nome} ${user.cognome}`}</TableCell>
+                                {progetti.map(({ infoProgetto, voto }, indice) => (
+                                    <TableCell key={indice} scope="row">
+                                        {voto ? (
+                                            <>{voto}</>
+                                        ) : (
+                                            <Button
+                                                variant="contained"
+                                                color="primary"
+                                                disableElevation
+                                                onClick={() => {
+                                                    handleOpen({ iduser: user.iduser, nome: user.nome, cognome: user.cognome, idprogetto: infoProgetto.id });
+                                                    console.log({ iduser: user.iduser, nome: user.nome, cognome: user.cognome, idprogetto: infoProgetto.id });
+                                                }}
+                                            >
+                                                Aggiungi voto
+                                            </Button>
+                                        )}
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             </TableContainer>
