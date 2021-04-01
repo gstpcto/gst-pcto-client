@@ -214,14 +214,24 @@ export default function Studenti() {
 
 const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
     const [studente, setStudente] = useState(null);
-    const [storico, setStorico] = useState(null)
+    const [storico, setStorico] = useState(null);
+    const [rid, setRid] = useState(null);
     const [isLoading, setLoading] = useState(true);
     const [openAggiungiAnnoModal, setOpenAggiungiAnnoModal] = useState(false);
+    const [openModificaAnnoModal, setOpenModificaAnnoModal] = useState(false);
     const auth = useAuth();
     const classes = useStyles();
 
     const handleOpenAggiungiModal = () => {
       setOpenAggiungiAnnoModal(true);
+    };
+
+    const handleOpenModificaModal = () => {
+      setOpenModificaAnnoModal(true);
+    };
+
+    const handleCloseModificaModal = () => {
+      setOpenModificaAnnoModal(false);
     };
 
     const handleCloseAggiungiModal = () => {
@@ -246,9 +256,6 @@ const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
     }
 
     useEffect(()=>{
-      console.log('====================================');
-      console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-      console.log('====================================');
       console.log(`${baseRoute}/studenti/${uid}`);
       axios
         .get(`${baseRoute}/studenti/${uid}`, { params: { token: auth.token } })
@@ -259,13 +266,39 @@ const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
           axios
             .get(`${baseRoute}/studenti/${uid}/storico`, { params: { token: auth.token } })
             .then((res) => {
-              setStorico(res.data.data)
-              console.log(res.data.data);
+              const temp = res.data.data;
+              console.log(temp);
+              const tabella = temp.map(({ annoScolastico, id, classe, sezione, indirizzo, idrelazione}) =>{
+
+                
+
+                const elimina = (
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => {
+                      setRid(idrelazione);
+                      handleOpenModificaModal();
+                    }}
+                  >
+                    CANCELLA
+                  </Button>
+                );
+
+                return {
+                  annoScolastico, id, classe, sezione, indirizzo, idrelazione, elimina
+                }
+              });
+
+
+              setStorico(tabella)
+              console.log(tabella);
             }).then(() => { setLoading(false) })
         })
       
       //updater(Math.random())
       setOpenAggiungiAnnoModal(false);
+      setOpenModificaAnnoModal(false);
     }, [uid, auth, reloader]);
 
 
@@ -368,7 +401,10 @@ const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
                 >
                     <AggiungiAnnoModal updater={updater} studenteid={studente.id} />
                 </Modal>
-
+            <Modal open={openModificaAnnoModal} onClose={handleCloseModificaModal} aria-labelledby="modifica relazione" aria-describedby="modifica la relazione" className={classes.modal}>
+                <ConfirmDeleteForm rid={rid} updater={updater} />
+              </Modal>
+              {/* tabella con le relazioni */}
             <TableContainer component={Paper}>
               <Table size="small">
                 <TableHead>
@@ -389,22 +425,18 @@ const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
                       Indirizzo
                     </TableCell>
                     <TableCell scope="col" component="th">
-                      Modifica
-                    </TableCell>
-                    <TableCell scope="col" component="th">
                       Elimina
                     </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {storico.map(({ annoScolastico, id, classe, sezione, indirizzo, modifica, elimina }) => (
+                  {storico.map(({ annoScolastico, id, classe, sezione, indirizzo, elimina }) => (
                     <TableRow key={id}>
                       <TableCell scope="row">{annoScolastico}</TableCell>
                       <TableCell scope="row">{id}</TableCell>
                       <TableCell scope="row">{classe}</TableCell>
                       <TableCell scope="row">{sezione}</TableCell>
                       <TableCell scope="row">{indirizzo}</TableCell>
-                      <TableCell scope="row">{modifica}</TableCell>
                       <TableCell scope="row">{elimina}</TableCell>
                     </TableRow>
                   ))}
@@ -419,7 +451,7 @@ const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
 }
 
 
-
+//questo aggiunge una relazione
 const AggiungiAnnoModal = ({updater, studenteid}) =>{
   console.log(studenteid);
   const auth = useAuth();
@@ -430,7 +462,6 @@ const AggiungiAnnoModal = ({updater, studenteid}) =>{
   const onSubmit = async (data) => {
     console.log('form submitted');
     console.log(data);
-    //TODO: add api functionality
     const {annoScolastico, idclasse} = data;
     const req = {
       as: annoScolastico,
@@ -471,7 +502,7 @@ const AggiungiAnnoModal = ({updater, studenteid}) =>{
           <Paper className={classes.paperContainer}>
             <Typography variant="h6" component="h1">
               Aggiungi allo storico
-                            </Typography>
+            </Typography>
             <FormControl className={classes.formControl}>
               <Field fullWidth required name="annoScolastico" component={TextField} type="text" label="Anno Scolastico" />
             </FormControl>
@@ -484,10 +515,51 @@ const AggiungiAnnoModal = ({updater, studenteid}) =>{
 
             <Button variant="contained" color="primary" type="submit" >
               Submit
-                            </Button>
+            </Button>
           </Paper>
         </form>
       )}
     />
   </Box>);
+}
+
+
+const ConfirmDeleteForm = ({ rid, updater }) => {
+  console.log(rid);
+  const auth = useAuth();
+  const classes = useStyles();
+
+  const deleteFromTable = (id) => {
+    console.log(auth.token, id);
+    axios
+      .delete(`${baseRoute}/studenti/frequentare/${id}`, {
+        data: { token: auth.token}
+      })
+      .then((res) => {
+        console.log(res);
+        if (res.data.status === 'rejected') {
+          //setError(res.data.cause);
+          console.error(res.data.cause);
+        } else updater(Math.random());
+      });
+  };
+
+  return (
+    <Box>
+      <Paper className={classes.paperContainer}>
+        <Typography variant="h6" component="h1">
+          Sei sicuro di voler cancellare questa classe?
+                </Typography>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => {
+            deleteFromTable(rid)
+          }}
+        >
+          CANCELLA
+        </Button>
+      </Paper>
+    </Box>
+  );
 }
