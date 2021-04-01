@@ -214,14 +214,21 @@ export default function Studenti() {
 
 const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
     const [studente, setStudente] = useState(null);
-    const [storico, setStorico] = useState(null);
-    const [rid, setRid] = useState(null);
     const [isLoading, setLoading] = useState(true);
+    //frequentare
+    const [storico, setStorico] = useState([]);
+    const [rid, setRid] = useState(null);
     const [openAggiungiAnnoModal, setOpenAggiungiAnnoModal] = useState(false);
     const [openModificaAnnoModal, setOpenModificaAnnoModal] = useState(false);
+    //voti
+    const [voti, setVoti] = useState([]);
+    const [vid, setVid] = useState(null); //contains the id of the mark to modify
+    const [openModificaVoto, setOpenModficaVoto] = useState(false);
+
+
     const auth = useAuth();
     const classes = useStyles();
-
+    //frequentare
     const handleOpenAggiungiModal = () => {
       setOpenAggiungiAnnoModal(true);
     };
@@ -237,6 +244,15 @@ const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
     const handleCloseAggiungiModal = () => {
       setOpenAggiungiAnnoModal(false);
     };
+    //voti
+    const handleCloseModificaVoto = () => {
+      setOpenModficaVoto(false);
+    };
+    const handleOpenModificaVoto = () => {
+      setOpenModficaVoto(true);
+    };
+  
+
 
 
     const onSubmit = async (data) => {
@@ -269,9 +285,6 @@ const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
               const temp = res.data.data;
               console.log(temp);
               const tabella = temp.map(({ annoScolastico, id, classe, sezione, indirizzo, idrelazione}) =>{
-
-                
-
                 const elimina = (
                   <Button
                     variant="contained"
@@ -293,7 +306,33 @@ const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
 
               setStorico(tabella)
               console.log(tabella);
-            }).then(() => { setLoading(false) })
+            }).then(()=>{
+              axios.get(`${baseRoute}/voti/voti`, {params: {token: auth.token, idstudente: uid}})
+              .then(res =>{
+                const temp = res.data.data;
+
+                const votiFiniti = temp.map(({data, descrizione, idProgetto, nome, valutazione, id}) =>{
+                  
+                  const modifica = (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => {
+                        setVid(id);
+                        handleOpenModificaVoto();
+                      }}>
+                      MODIFICA
+                    </Button>)
+
+                  return {
+                    data, descrizione, idProgetto, nome, valutazione, id, modifica
+                  }
+                });
+                console.log("VOTI", res.data.data);
+                setVoti(votiFiniti);
+              })
+            })
+            .then(() => { setLoading(false) })
         })
       
       //updater(Math.random())
@@ -444,7 +483,65 @@ const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
               </Table>
             </TableContainer>
           </Grid>
-
+          {/* voti dello studente */}
+          <Grid item md={12} xs={12}>
+            <Typography variant="h6" className={classes.title}>
+              Voti dello studente
+              </Typography>
+            <Button variant="contained" color="primary" onClick={()=>{console.log("lol"); 
+              //TODO: create this modal
+                }}>
+              Aggiungi Anno
+            </Button>
+            <Modal //modifica un voto
+              open={openModificaVoto}
+              onClose={handleCloseModificaVoto}
+              aria-labelledby="nuova classe"
+              aria-describedby="puoi aggiungere una nuova classe"
+              className={classes.modal}
+            >
+              <ModificaVoto updater={updater} vid={vid} />
+            </Modal>
+            
+            <TableContainer component={Paper}>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell scope="col" component="th">
+                      ID
+                    </TableCell>
+                    <TableCell scope="col" component="th">
+                      ID Progetto
+                    </TableCell>
+                    <TableCell scope="col" component="th">
+                      Nome Progetto
+                    </TableCell>
+                    <TableCell scope="col" component="th">
+                      Data
+                    </TableCell>
+                    <TableCell scope="col" component="th">
+                      valutazione
+                    </TableCell>
+                    <TableCell scope="col" component="th">
+                      Modifica
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {voti.map(({ id, idProgetto, nome, data, valutazione, modifica }) => (
+                    <TableRow key={id}>
+                      <TableCell scope="row">{id}</TableCell>
+                      <TableCell scope="row">{idProgetto}</TableCell>
+                      <TableCell scope="row">{nome}</TableCell>
+                      <TableCell scope="row">{data.split('T')[0]}</TableCell>
+                      <TableCell scope="row">{valutazione}</TableCell>
+                      <TableCell scope="row">{modifica}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
       </Grid> 
     </Grid>
     ;
@@ -470,9 +567,7 @@ const AggiungiAnnoModal = ({updater, studenteid}) =>{
     }
     await axios.put(`${baseRoute}/studenti/cambiaClasse`, {token: auth.token, data: req})
     .then(res =>{
-      console.log('====================================');
       console.log(res);
-      console.log('====================================');
     })    
 
     updater(Math.random());
@@ -562,4 +657,102 @@ const ConfirmDeleteForm = ({ rid, updater }) => {
       </Paper>
     </Box>
   );
+}
+
+
+
+const ModificaVoto = ({ updater, vid }) => {
+  const auth = useAuth();
+  const classes = useStyles();
+  const [voto, setVoto] = useState(null);
+  const [isLoading, setLoading] = useState(true);
+
+  const onSubmit = async ({dataN: data, descrizione, voto}) => {
+    console.log('form submitted');
+    
+    const req = {
+      voto,
+      descrizione,
+      data
+    }
+    //TODO: finish here
+    /*
+    await axios.put(`${baseRoute}/studenti/cambiaClasse`, { token: auth.token, data: req })
+      .then(res => {
+        console.log(res);
+      })*/
+
+    updater(Math.random());
+  };
+
+
+  const fetchData = async () => {
+    await axios.get(`${baseRoute}/voti/voti/${vid}`, {params: {token: auth.token}})
+    .then(r =>{
+      console.log("ER VOTO", r.data.data);
+      console.log(r);
+      setVoto(r.data.data);
+    })
+  }
+
+  useEffect(() => {
+    fetchData().then(() => {
+      setLoading(false);
+
+    })
+  }, [vid, updater]);
+
+
+
+  return (isLoading ? <CircularProgress /> : <Box>
+    <Form
+      onSubmit={onSubmit}
+      initialValues={{ dataN: voto.data.split("T")[0], docente: voto.docente, progetto: voto.nomeProgetto, descrizione: voto.descrizione, voto: voto.valutazione }}
+      render={({ handleSubmit, reset, submitting, pristine, values }) => (
+        <form onSubmit={handleSubmit} noValidate>
+          <Paper className={classes.paperContainer}>
+            <Typography variant="h6" component="h1">
+              Modifica Voto
+            </Typography>
+            <FormControl className={classes.formControl} >
+              <Field fullWidth name="dataN" component={TextField} type="date" label="Data"  />
+            </FormControl>
+            <FormControl className={classes.formControl} >
+              <Field fullWidth name="docente" component={TextField} type="text" label="Docente" disabled />
+            </FormControl>
+            <FormControl className={classes.formControl} >
+              <Field fullWidth name="progetto" component={TextField} type="text" label="Progetto" disabled />
+            </FormControl>
+            <FormControl className={classes.formControl} >
+              <Field fullWidth name="descrizione" component={TextField} type="text" label="Descrizione voto"/>
+            </FormControl>
+            <FormControl className={classes.formControl}>
+              <Field fullWidth name="voto" component={Select} label="Voto" formControlProps={{ fullWidth: true }}>
+                <MenuItem value={3}>3</MenuItem>
+                <MenuItem value={3.5}>3.5</MenuItem>
+                <MenuItem value={4}>3</MenuItem>
+                <MenuItem value={4.5}>3</MenuItem>
+                <MenuItem value={5}>5</MenuItem>
+                <MenuItem value={5.5}>5.5</MenuItem>
+                <MenuItem value={6}>6</MenuItem>
+                <MenuItem value={6.5}>6.5</MenuItem>
+                <MenuItem value={7}>7</MenuItem>
+                <MenuItem value={7.5}>7.5</MenuItem>
+                <MenuItem value={8}>8</MenuItem>
+                <MenuItem value={8.5}>8.5</MenuItem>
+                <MenuItem value={9}>9</MenuItem>
+                <MenuItem value={9.5}>9.5</MenuItem>
+                <MenuItem value={10}>10</MenuItem>
+              </Field>
+            </FormControl>
+
+
+            <Button variant="contained" color="primary" type="submit" >
+              FATTO
+            </Button>
+          </Paper>
+        </form>
+      )}
+    />
+  </Box>);
 }
