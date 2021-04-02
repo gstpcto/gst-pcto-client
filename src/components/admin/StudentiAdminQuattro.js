@@ -24,6 +24,8 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
+import ConfirmButton from "../confirmDeleteButton";
+
 
 const useStyles = makeStyles((theme) => ({
   modifyButton: {
@@ -224,6 +226,7 @@ const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
     const [voti, setVoti] = useState([]);
     const [vid, setVid] = useState(null); //contains the id of the mark to modify
     const [openModificaVoto, setOpenModficaVoto] = useState(false);
+    const [openAggiungiVoto, setOpenAggiungiVoto] = useState(false);
 
 
     const auth = useAuth();
@@ -251,6 +254,12 @@ const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
     const handleOpenModificaVoto = () => {
       setOpenModficaVoto(true);
     };
+    const handleOpenAggiungiVoto = () => {
+      setOpenAggiungiVoto(true);
+    }
+    const handleCloseAggiungiVoto = () => {
+      setOpenAggiungiVoto(false);
+    }
   
 
 
@@ -272,6 +281,7 @@ const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
     }
 
     useEffect(()=>{
+      setLoading(true);
       console.log(`${baseRoute}/studenti/${uid}`);
       axios
         .get(`${baseRoute}/studenti/${uid}`, { params: { token: auth.token } })
@@ -338,6 +348,7 @@ const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
       //updater(Math.random())
       setOpenAggiungiAnnoModal(false);
       setOpenModificaAnnoModal(false);
+      setOpenModficaVoto(false);
     }, [uid, auth, reloader]);
 
 
@@ -488,11 +499,11 @@ const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
             <Typography variant="h6" className={classes.title}>
               Voti dello studente
               </Typography>
-            <Button variant="contained" color="primary" onClick={()=>{console.log("lol"); 
-              //TODO: create this modal
-                }}>
-              Aggiungi Anno
+            <Button variant="contained" color="primary" onClick={handleOpenAggiungiVoto}>
+              Aggiungi Voto
             </Button>
+            
+
             <Modal //modifica un voto
               open={openModificaVoto}
               onClose={handleCloseModificaVoto}
@@ -501,6 +512,16 @@ const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
               className={classes.modal}
             >
               <ModificaVoto updater={updater} vid={vid} />
+            </Modal>
+
+            <Modal
+              open={openAggiungiVoto}
+              onClose={handleCloseAggiungiVoto}
+              aria-labelledby="nuova classe"
+              aria-describedby="puoi aggiungere una nuova classe"
+              className={classes.modal}
+            >
+              <AggiungiVoto updater={updater} uid={uid} />
             </Modal>
             
             <TableContainer component={Paper}>
@@ -618,7 +639,6 @@ const AggiungiAnnoModal = ({updater, studenteid}) =>{
   </Box>);
 }
 
-
 const ConfirmDeleteForm = ({ rid, updater }) => {
   console.log(rid);
   const auth = useAuth();
@@ -659,8 +679,6 @@ const ConfirmDeleteForm = ({ rid, updater }) => {
   );
 }
 
-
-
 const ModificaVoto = ({ updater, vid }) => {
   const auth = useAuth();
   const classes = useStyles();
@@ -675,15 +693,24 @@ const ModificaVoto = ({ updater, vid }) => {
       descrizione,
       data
     }
-    //TODO: finish here
-    /*
-    await axios.put(`${baseRoute}/studenti/cambiaClasse`, { token: auth.token, data: req })
+    
+    await axios.put(`${baseRoute}/voti/voti/${vid}`, { token: auth.token, data: req })
       .then(res => {
         console.log(res);
-      })*/
+      })
 
     updater(Math.random());
   };
+
+
+
+
+  const deleteVoto = async () =>{
+    await axios.delete(`${baseRoute}/voti/voto/${vid}`, { data: { token: auth.token }}).then(r => {
+      console.log("CANCELLAZIONE", r);
+      updater(Math.random())
+    })
+  }
 
 
   const fetchData = async () => {
@@ -746,10 +773,123 @@ const ModificaVoto = ({ updater, vid }) => {
               </Field>
             </FormControl>
 
+            <Box display="flex" justifyContent="space-between">
+              <Button variant="contained" color="primary" type="submit" >
+                FATTO
+              </Button>
+              
+              <ConfirmButton onClick={deleteVoto} />
+            </Box>
+            
+          </Paper>
+        </form>
+      )}
+    />
+  </Box>);
+}
 
-            <Button variant="contained" color="primary" type="submit" >
-              FATTO
-            </Button>
+
+const AggiungiVoto = ({ updater, uid}) => {
+  const auth = useAuth();
+  const classes = useStyles();
+  const [voto, setVoto] = useState(null);
+  const [isLoading, setLoading] = useState(true);
+
+  const onSubmit = async ({ dataN: data, descrizione, voto }) => {
+    /*console.log('form submitted');
+
+    const req = {
+      voto,
+      descrizione,
+      data
+    }
+    //TODO: finish here
+
+    await axios.put(`${baseRoute}/voti/voti/${vid}`, { token: auth.token, data: req })
+      .then(res => {
+        console.log(res);
+      })
+
+    updater(Math.random());*/
+  };
+
+
+
+
+  const deleteVoto = async () => {
+    /*await axios.delete(`${baseRoute}/voti/voto/${vid}`, { data: { token: auth.token } }).then(r => {
+      console.log("CANCELLAZIONE", r);
+      updater(Math.random())
+    })*/
+  }
+
+
+  const fetchData = async () => {
+    //i progetti dello studente
+    // i docenti di quei progetti
+    await axios.get(`${baseRoute}/progetti/myProjects/${uid}`, {params: {token: auth.token}}).then(r=>{console.log("MA BOHASDASD", r);})
+    //TODO: finish here
+    
+  }
+
+  useEffect(() => {
+    fetchData().then(() => {
+      setLoading(false);
+
+    })
+  }, [updater]);
+
+
+
+  return (isLoading ? <CircularProgress /> : <Box>
+    <Form
+      onSubmit={onSubmit}
+      initialValues={{  }}
+      render={({ handleSubmit, reset, submitting, pristine, values }) => (
+        <form onSubmit={handleSubmit} noValidate>
+          <Paper className={classes.paperContainer}>
+            <Typography variant="h6" component="h1">
+              Nuovo Voto
+            </Typography>
+            <FormControl className={classes.formControl} >
+              <Field fullWidth name="dataN" component={TextField} type="date" label="Data" />
+            </FormControl>
+            <FormControl className={classes.formControl} >
+              <Field fullWidth name="docente" component={TextField} type="text" label="Docente"  />
+            </FormControl>
+            <FormControl className={classes.formControl} >
+              <Field fullWidth name="progetto" component={TextField} type="text" label="Progetto" />
+            </FormControl>
+            <FormControl className={classes.formControl} >
+              <Field fullWidth name="descrizione" component={TextField} type="text" label="Descrizione voto" />
+            </FormControl>
+            <FormControl className={classes.formControl}>
+              <Field fullWidth name="voto" component={Select} label="Voto" formControlProps={{ fullWidth: true }}>
+                <MenuItem value={3}>3</MenuItem>
+                <MenuItem value={3.5}>3.5</MenuItem>
+                <MenuItem value={4}>3</MenuItem>
+                <MenuItem value={4.5}>3</MenuItem>
+                <MenuItem value={5}>5</MenuItem>
+                <MenuItem value={5.5}>5.5</MenuItem>
+                <MenuItem value={6}>6</MenuItem>
+                <MenuItem value={6.5}>6.5</MenuItem>
+                <MenuItem value={7}>7</MenuItem>
+                <MenuItem value={7.5}>7.5</MenuItem>
+                <MenuItem value={8}>8</MenuItem>
+                <MenuItem value={8.5}>8.5</MenuItem>
+                <MenuItem value={9}>9</MenuItem>
+                <MenuItem value={9.5}>9.5</MenuItem>
+                <MenuItem value={10}>10</MenuItem>
+              </Field>
+            </FormControl>
+
+            <Box display="flex" justifyContent="space-between">
+              <Button variant="contained" color="primary" type="submit" >
+                FATTO
+              </Button>
+
+            </Box>
+
           </Paper>
         </form>
       )}
