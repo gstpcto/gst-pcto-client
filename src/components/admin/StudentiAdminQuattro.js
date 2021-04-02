@@ -25,6 +25,8 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import ConfirmButton from "../confirmDeleteButton";
+import { OnChange } from 'react-final-form-listeners'
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -349,6 +351,7 @@ const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
       setOpenAggiungiAnnoModal(false);
       setOpenModificaAnnoModal(false);
       setOpenModficaVoto(false);
+      setOpenAggiungiVoto(false);
     }, [uid, auth, reloader]);
 
 
@@ -794,41 +797,55 @@ const AggiungiVoto = ({ updater, uid}) => {
   const classes = useStyles();
   const [voto, setVoto] = useState(null);
   const [isLoading, setLoading] = useState(true);
+  const [progettiData, setProgettiData] = useState(null);
+  const [progettiOptions, setProgettiOptions] = useState(null);
+  const [docentiOptions, setDocentiOptions] = useState("");
 
-  const onSubmit = async ({ dataN: data, descrizione, voto }) => {
-    /*console.log('form submitted');
-
+  const onSubmit = async ({data, descrizione, docente, progetto, voto}) => {
     const req = {
-      voto,
+      idstudente: uid,
+      idprogetto: progetto,
+      valutazione: voto,
+      date: data,
       descrizione,
-      data
+      idDocente: docente
     }
-    //TODO: finish here
 
-    await axios.put(`${baseRoute}/voti/voti/${vid}`, { token: auth.token, data: req })
+    await axios.post(`${baseRoute}/voti/voto`, { token: auth.token, data: req })
       .then(res => {
         console.log(res);
       })
 
-    updater(Math.random());*/
+    updater(Math.random());
   };
 
+  const required = value => (value ? undefined : 'Required')
+  const changeOptions = (id) =>{
+    const docenti = progettiData.filter((item)=>{
+      return item.progetto.id == id;
+    })[0]["docenti"];
+    console.log("PIERJI", docenti);
+    setDocentiOptions([...docenti.map(d =>{
 
-
-
-  const deleteVoto = async () => {
-    /*await axios.delete(`${baseRoute}/voti/voto/${vid}`, { data: { token: auth.token } }).then(r => {
-      console.log("CANCELLAZIONE", r);
-      updater(Math.random())
-    })*/
+      return (<MenuItem value={d.id}>{d.nome+" "+d.cognome}</MenuItem>);
+    })])
   }
 
 
   const fetchData = async () => {
     //i progetti dello studente
     // i docenti di quei progetti
-    await axios.get(`${baseRoute}/progetti/myProjects/${uid}`, {params: {token: auth.token}}).then(r=>{console.log("MA BOHASDASD", r);})
-    //TODO: finish here
+    await axios.get(`${baseRoute}/progetti/myProjects/${uid}`, {params: {token: auth.token}})
+    .then(r=>{
+      const temp = r.data.data;
+      setProgettiData(temp);
+      console.log("PIPOPIPO", temp);
+      setProgettiOptions([...temp.map(p =>{
+        const {progetto } = p;
+        return (<MenuItem value={progetto.id}>{progetto.nome}</MenuItem>);
+      })])
+    })
+    
     
   }
 
@@ -844,27 +861,38 @@ const AggiungiVoto = ({ updater, uid}) => {
   return (isLoading ? <CircularProgress /> : <Box>
     <Form
       onSubmit={onSubmit}
-      initialValues={{  }}
+      initialValues={{ data: new Date(Date.now()).toISOString().split("T")[0], voto: 8 }}
       render={({ handleSubmit, reset, submitting, pristine, values }) => (
-        <form onSubmit={handleSubmit} noValidate>
+        <form onSubmit={handleSubmit}>
           <Paper className={classes.paperContainer}>
             <Typography variant="h6" component="h1">
               Nuovo Voto
             </Typography>
             <FormControl className={classes.formControl} >
-              <Field fullWidth name="dataN" component={TextField} type="date" label="Data" />
+              <Field fullWidth name="data" component={TextField} type="date" label="Data" validate={required} />
             </FormControl>
             <FormControl className={classes.formControl} >
-              <Field fullWidth name="docente" component={TextField} type="text" label="Docente"  />
+              <Field fullWidth name="progetto" component={Select} label="Progetto" formControlProps={{ fullWidth: true }} validate={required}>
+                {progettiOptions}
+              </Field>
+            </FormControl>
+            <OnChange name="progetto">
+              {(value, previous)=>{
+                changeOptions(value);
+                console.log("IDK",value);
+              }}
+            </OnChange>
+            <FormControl className={classes.formControl} >
+              <Field fullWidth name="docente" component={Select} label="Docente" validate={required}>
+                {docentiOptions}
+              </Field>
+            </FormControl>
+
+            <FormControl className={classes.formControl} >
+              <Field fullWidth name="descrizione" component={TextField} type="text" label="Descrizione voto" validate={required}/>
             </FormControl>
             <FormControl className={classes.formControl} >
-              <Field fullWidth name="progetto" component={TextField} type="text" label="Progetto" />
-            </FormControl>
-            <FormControl className={classes.formControl} >
-              <Field fullWidth name="descrizione" component={TextField} type="text" label="Descrizione voto" />
-            </FormControl>
-            <FormControl className={classes.formControl}>
-              <Field fullWidth name="voto" component={Select} label="Voto" formControlProps={{ fullWidth: true }}>
+              <Field fullWidth name="voto" component={Select} label="Voto" formControlProps={{ fullWidth: true }} onChange={() => { console.log("SEX"); }}>
                 <MenuItem value={3}>3</MenuItem>
                 <MenuItem value={3.5}>3.5</MenuItem>
                 <MenuItem value={4}>3</MenuItem>
