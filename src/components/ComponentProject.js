@@ -82,6 +82,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 //TODO: add the powerful modal here
+//this is the card
 export default function ComponentProject({ nome, descrizione, id, linkValutazioni, annoScolastico }) {
     console.log('progetto', id);
     const classes = useStyles();
@@ -90,7 +91,6 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
     const cardRoot = clsx(classes.card, classes.chevronAligner);
 
     const [open, setOpen] = useState(false);
-    const [reloader, setReloader] = useState(null);
     const [pid, setPid] = useState(null);
 
     const handleOpen = () => {
@@ -131,15 +131,16 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
                 </Box>
             </Grid>
             <Dialog fullScreen open={open} onClose={handleClose}>
-                <ProjectTableDialog pid={pid} updater={setReloader} closer={handleClose} reloader={reloader} />
+                <ProjectTableDialog pid={pid} closer={handleClose}/>
             </Dialog>
         </>
     );
 }
-
-const ProjectTableDialog = ({ pid, updater, closer, reloader }) => {
+//this is the table for a single project
+const ProjectTableDialog = ({ pid, closer }) => {
     const classes = useStyles();
     const auth = useAuth();
+    const [reloader, setReloader] = useState(null);
     const [datiProgetto, setDatiProgetto] = useState({});
     const [alunniProgetto, setAlunniProgetto] = useState([]);
 
@@ -150,17 +151,23 @@ const ProjectTableDialog = ({ pid, updater, closer, reloader }) => {
         data: '',
     });
 
-    useEffect(() => {
-        axios
+    const fetchData = async () =>{
+        return await axios
             .get(`${baseRoute}/progetti/classiAlunni/${pid}`, { params: { token: auth.token } })
+    }
+
+    useEffect(() => {
+        setOpen(false);
+        fetchData()
             .then((res) => {
+                console.log("OMG", res.data.progetti);
                 setDatiProgetto(res.data['progetti'][0].infoProgetto);
                 setAlunniProgetto(res.data['progetti'][0]['alunni']);
             })
             .catch((err) => {
                 console.error(err);
             });
-    }, [pid, auth, reloader]);
+    }, [auth, reloader]);
 
     const [open, setOpen] = useState(false);
     const handleModalOpen = ({ iduser, nome, cognome, idprogetto, data }) => {
@@ -182,7 +189,7 @@ const ProjectTableDialog = ({ pid, updater, closer, reloader }) => {
     return (
         <>
             <Modal open={open} onClose={handleModalClose} className={classes.modal}>
-                <EditValutation infoVoto={infoVoto} updater={updater} />
+                <EditValutation infoVoto={infoVoto} updater={setReloader}  />
             </Modal>
             <AppBar className={classes.appBar}>
                 <Toolbar>
@@ -239,6 +246,7 @@ const ProjectTableDialog = ({ pid, updater, closer, reloader }) => {
     );
 };
 
+//edit valutation modal
 const EditValutation = ({ infoVoto, updater }) => {
     const classes = useStyles();
     const auth = useAuth();
@@ -255,6 +263,7 @@ const EditValutation = ({ infoVoto, updater }) => {
             })
             .then(function (response) {
                 console.log(response);
+                updater(Math.random())
             })
             .catch(function (error) {
                 console.log(error);
