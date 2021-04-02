@@ -86,6 +86,11 @@ export default function Studenti() {
     const [isLoading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
     
+    const cancellaStudente = async(id) =>{
+      await axios.delete(`${baseRoute}/studenti/delete/${id}`, {data: {token: auth.token}}).then(r => {console.log(r);});
+      setReloader(Math.random());
+    }
+
   const onSubmit = async ({filtro}) => {
     console.log('form submitted');
     console.log(filtro);
@@ -128,6 +133,7 @@ export default function Studenti() {
                         MODIFICA
                     </Button>
                     ),
+                    cancella: (<ConfirmButton onClick={()=>{cancellaStudente(obj.id)} }/>)
                 };
                 }),
             ];
@@ -185,6 +191,9 @@ export default function Studenti() {
                 <TableCell scope="col" component="th">
                   Modifica
                 </TableCell>
+                <TableCell scope="col" component="th">
+                  Cancella
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -200,12 +209,13 @@ export default function Studenti() {
                   if (item.nome.includes(filter)) return true
                   else return false;
                 }
-              }).map(({ id, nome, email, modifica }) => (
+              }).map(({ id, nome, email, modifica, cancella }) => (
                 <TableRow key={id}>
                   <TableCell scope="row">{id}</TableCell>
                   <TableCell scope="row">{nome}</TableCell>
                   <TableCell scope="row">{email}</TableCell>
                   <TableCell scope="row">{modifica}</TableCell>
+                  <TableCell scope="row">{cancella}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
