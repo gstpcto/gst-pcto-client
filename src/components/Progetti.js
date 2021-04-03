@@ -15,8 +15,12 @@ export default function ProgettiWrapper() {
     useEffect(() => {
         setError(false);
         setLoading(true);
-        axios
-            .get(`${baseRoute}/progetti/classiAlunni`, { params: { token: auth.token } })
+        const fetchData = async () =>{
+            return await axios
+                .get(`${baseRoute}/progetti/classiAlunni`, { params: { token: auth.token } })
+        };
+
+        fetchData()
             .then(function (response) {
                 console.log("progetti", response);
                 setData(response.data['progetti']);
@@ -37,7 +41,7 @@ export default function ProgettiWrapper() {
         <>
                 {data.map(({ infoProgetto }, index) => {
                     const { nome, descrizione, id, linkValutazioni, annoScolastico } = infoProgetto;
-                    return <ComponentProject key={index} props={infoProgetto} nome={nome} descrizione={descrizione} id={id} linkValutazioni={linkValutazioni} annoScolastico={annoScolastico} />;
+                    return <ComponentProject key={index} nome={nome} descrizione={descrizione} id={id} linkValutazioni={linkValutazioni} annoScolastico={annoScolastico} />;
                 })}
         </>
     );

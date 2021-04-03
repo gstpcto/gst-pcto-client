@@ -82,18 +82,18 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 //TODO: add the powerful modal here
 //this is the card
 export default function ComponentProject({ nome, descrizione, id, linkValutazioni, annoScolastico }) {
-    const Transition = React.forwardRef(function Transition(props, ref) {
-        return <Slide direction="up" ref={ref} {...props} />;
-    });
+    
     
     console.log('progetto', id);
     const classes = useStyles();
-
+    const auth = useAuth();
     const fixedSizeCardDetails = clsx(classes.card, classes.maxWidth);
     const cardRoot = clsx(classes.card, classes.chevronAligner);
 
@@ -106,7 +106,7 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
     };
     const handleClose = () => {
         setOpen(false);
-        setPid(null);
+        //setPid(null);
     };
 
     return (
@@ -114,9 +114,7 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
             <Grid item xs={12} md={6}>
                 <Box>
                     <CardActionArea
-                        onClick={() => {
-                            handleOpen();
-                        }}
+                        onClick={handleOpen}
                     >
                         <Card className={cardRoot}>
                             <div className={fixedSizeCardDetails}>
@@ -138,7 +136,7 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
                 </Box>
             </Grid>
             <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-                <ProjectTableDialog pid={pid} closer={handleClose}/>
+                <ProjectTableDialog pid={pid} closer={handleClose}/> 
             </Dialog>
         </>
     );
@@ -170,13 +168,16 @@ const ProjectTableDialog = ({ pid, closer }) => {
         fetchData()
             .then((res) => {
                 console.log("OMG", res.data.progetti);
-                setDatiProgetto(res.data['progetti'][0].infoProgetto);
-                setAlunniProgetto(res.data['progetti'][0]['alunni']);
+                if(res.data.progetti==[]) return;
+                else{
+                    setDatiProgetto(res.data['progetti'][0].infoProgetto);
+                    setAlunniProgetto(res.data['progetti'][0]['alunni']);
+                }
             })
             .catch((err) => {
                 console.error(err);
             });
-    }, [auth, reloader]);
+    }, [reloader]);
 
     const [open, setOpen] = useState(false);
     const handleModalOpen = ({ iduser, nome, cognome, idprogetto, data }) => {
