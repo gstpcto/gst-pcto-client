@@ -198,7 +198,7 @@ const ProjectTableDialog = ({ pid, closer }) => {
     return (
         <>
             <Modal open={open} onClose={handleModalClose} className={classes.modal}>
-                <EditValutation infoVoto={infoVoto} updater={setReloader}  />
+                <AddValutation infoVoto={infoVoto} updater={setReloader}  />
             </Modal>
             <AppBar className={classes.appBar}>
                 <Toolbar>
@@ -256,7 +256,7 @@ const ProjectTableDialog = ({ pid, closer }) => {
 };
 
 //edit valutation modal
-const EditValutation = ({ infoVoto, updater }) => {
+const AddValutation = ({ infoVoto, updater }) => {
     const classes = useStyles();
     const auth = useAuth();
     const onSubmit = async (data) => {
