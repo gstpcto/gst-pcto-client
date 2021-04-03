@@ -106,47 +106,48 @@ export default function Studenti() {
         setOpen(false);
     };
 
-    const fetchData = async () => {
+    
+
+    useEffect(() => {
+      const fetchData = async () => {
         axios
-        .get(`${baseRoute}/studenti/all`, { params: { token: auth.token } })
-        .then((res) => {
+          .get(`${baseRoute}/studenti/all`, { params: { token: auth.token } })
+          .then((res) => {
             console.log(res.data.data);
             if (res.data.data === undefined) {
-            console.error(res.data);
+              console.error(res.data);
             } else {
-            const temp = [
+              const temp = [
                 ...res.data.data.map((obj) => {
-                return {
+                  return {
                     id: obj.id,
                     email: obj.email,
                     nome: `${obj.nome} ${obj.cognome}`,
                     modifica: (
-                    <Button
+                      <Button
                         variant="contained"
                         className={`${classes.modifyButton} ${classes.modifyButtonHover}`}
                         onClick={() => {
-                            console.log(obj.id);
-                            setUid(obj.id);
-                            handleClickOpen()
+                          console.log(obj.id);
+                          setUid(obj.id);
+                          handleClickOpen()
                         }}
-                    >
+                      >
                         MODIFICA
-                    </Button>
+                      </Button>
                     ),
-                    cancella: (<ConfirmButton onClick={()=>{cancellaStudente(obj.id)} }/>)
-                };
+                    cancella: (<ConfirmButton onClick={() => { cancellaStudente(obj.id) }} />)
+                  };
                 }),
-            ];
-            console.log("temp", temp);
-            setData(temp);
+              ];
+              console.log("temp", temp);
+              setData(temp);
             }
-        })
-        .then(() => {
+          })
+          .then(() => {
             setLoading(false);
-        });
-    };
-
-    useEffect(() => {
+          });
+      };
         fetchData();
     }, [reloader, filter]);
 
@@ -726,16 +727,15 @@ const ModificaVoto = ({ updater, vid }) => {
   }
 
 
-  const fetchData = async () => {
-    await axios.get(`${baseRoute}/voti/voti/${vid}`, {params: {token: auth.token}})
-    .then(r =>{
-      console.log("ER VOTO", r.data.data);
-      console.log(r);
-      setVoto(r.data.data);
-    })
-  }
-
   useEffect(() => {
+    const fetchData = async () => {
+      await axios.get(`${baseRoute}/voti/voti/${vid}`, { params: { token: auth.token } })
+        .then(r => {
+          console.log("ER VOTO", r.data.data);
+          console.log(r);
+          setVoto(r.data.data);
+        })
+    }
     fetchData().then(() => {
       setLoading(false);
 
@@ -805,7 +805,6 @@ const ModificaVoto = ({ updater, vid }) => {
 const AggiungiVoto = ({ updater, uid}) => {
   const auth = useAuth();
   const classes = useStyles();
-  const [voto, setVoto] = useState(null);
   const [isLoading, setLoading] = useState(true);
   const [progettiData, setProgettiData] = useState(null);
   const [progettiOptions, setProgettiOptions] = useState(null);
@@ -832,7 +831,7 @@ const AggiungiVoto = ({ updater, uid}) => {
   const required = value => (value ? undefined : 'Required')
   const changeOptions = (id) =>{
     const docenti = progettiData.filter((item)=>{
-      return item.progetto.id == id;
+      return item.progetto.id === id;
     })[0]["docenti"];
     console.log("PIERJI", docenti);
     setDocentiOptions([...docenti.map(d =>{

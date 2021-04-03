@@ -1,7 +1,5 @@
 import React from 'react';
-import Voti from '../components/Voti';
-import { Grid, Box, Typography } from '@material-ui/core';
-import ComponentProjectsTable from '../components/ComponentProjectsTable';
+import { Grid} from '@material-ui/core';
 import { useAuth } from '../ProvideAuth';
 
 export default function DashboardLevelZero() {
