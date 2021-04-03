@@ -27,6 +27,7 @@ import TableRow from '@material-ui/core/TableRow';
 import { Form, Field } from 'react-final-form';
 import { FormControl, MenuItem } from '@material-ui/core';
 import { Select, TextField } from 'final-form-material-ui';
+import DialogProgettoLivelloQuattro from "./admin/DialogProgettoLivelloQuattro"
 
 const useStyles = makeStyles((theme) => ({
     modal: {
@@ -94,6 +95,7 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
     console.log('progetto', id);
     const classes = useStyles();
     const auth = useAuth();
+    console.log(auth.user["livello"]);
     const fixedSizeCardDetails = clsx(classes.card, classes.maxWidth);
     const cardRoot = clsx(classes.card, classes.chevronAligner);
 
@@ -136,7 +138,7 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
                 </Box>
             </Grid>
             <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-                <ProjectTableDialog pid={pid} closer={handleClose}/> 
+                {auth.user["livello"] === 4 ? <DialogProgettoLivelloQuattro pid={pid} closer={handleClose} /> : <ProjectTableDialog pid={pid} closer={handleClose} /> }
             </Dialog>
         </>
     );
