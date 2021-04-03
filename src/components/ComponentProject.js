@@ -25,7 +25,7 @@ import TableHead from '@material-ui/core/TableHead';
 import Slide from "@material-ui/core/Slide";
 import TableRow from '@material-ui/core/TableRow';
 import { Form, Field } from 'react-final-form';
-import { FormControl, MenuItem } from '@material-ui/core';
+import { FormControl, MenuItem, CircularProgress } from '@material-ui/core';
 import { Select, TextField } from 'final-form-material-ui';
 
 const useStyles = makeStyles((theme) => ({
@@ -163,15 +163,24 @@ const ProjectTableDialog = ({ pid, closer }) => {
             .get(`${baseRoute}/progetti/classiAlunni/${pid}`, { params: { token: auth.token } })
     }
 
+    const [votoEdit, setVotoEdit] = useState(null);
+    const [open, setOpen] = useState(false);
+    const handleModalOpen = ({ iduser, nome, cognome, idprogetto, data }) => {
+        setInfoVoto({ iduser, nome, cognome, idprogetto, data });
+        setOpen(true);
+    };
+    const [openEditValutation, setOpenEditValutation] = useState(false);
+    
     useEffect(() => {
         setOpen(false);
+        setOpenEditValutation(false);
         fetchData()
             .then((res) => {
                 console.log("OMG", res.data.progetti);
                 if(res.data.progetti==[]) return;
                 else{
-                    setDatiProgetto(res.data['progetti'][0].infoProgetto);
-                    setAlunniProgetto(res.data['progetti'][0]['alunni']);
+                    setDatiProgetto(res.data['progetti'].infoProgetto);
+                    setAlunniProgetto(res.data['progetti']['alunni']);
                 }
             })
             .catch((err) => {
@@ -179,11 +188,6 @@ const ProjectTableDialog = ({ pid, closer }) => {
             });
     }, [reloader]);
 
-    const [open, setOpen] = useState(false);
-    const handleModalOpen = ({ iduser, nome, cognome, idprogetto, data }) => {
-        setInfoVoto({ iduser, nome, cognome, idprogetto, data });
-        setOpen(true);
-    };
 
     const handleModalClose = () => {
         setInfoVoto({
@@ -196,10 +200,24 @@ const ProjectTableDialog = ({ pid, closer }) => {
         setOpen(false);
     };
 
+
+    const handleOpenEditValutation = ({ idvoto, nome, cognome }) => {
+        setVotoEdit({ idvoto: idvoto, nome: nome, cognome: cognome });
+        setOpenEditValutation(true);
+    };
+
+    const handleCloseEditValutation = () => {
+        setVotoEdit({ idvoto: '', nome: '', cognome: '' });
+        setOpenEditValutation(false);
+    };
+
     return (
         <>
+            <Modal open={openEditValutation} onClose={handleCloseEditValutation} className={classes.modal}>
+                <EditValutation vid={votoEdit} updater={setReloader} />
+            </Modal>
             <Modal open={open} onClose={handleModalClose} className={classes.modal}>
-                <AddValutation infoVoto={infoVoto} updater={setReloader}  />
+                <AddValutation infoVoto={infoVoto} updater={setReloader} />
             </Modal>
             <AppBar className={classes.appBar}>
                 <Toolbar>
@@ -213,7 +231,7 @@ const ProjectTableDialog = ({ pid, closer }) => {
                 </Toolbar>
             </AppBar>
             <Grid container>
-                <TableContainer style={{margin: '25px'}} component={Paper}>
+                <TableContainer style={{ margin: '25px' }} component={Paper}>
                     <Table size="small">
                         <TableHead>
                             <TableRow>
@@ -226,20 +244,29 @@ const ProjectTableDialog = ({ pid, closer }) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {alunniProgetto.map(({ iduser, nome, cognome, voto }, index) => (
+                            {alunniProgetto.map(({ iduser, nome, cognome, voto, idvalutazione }, index) => (
                                 <TableRow key={index}>
                                     <TableCell scope="row">{`${nome} ${cognome}`}</TableCell>
                                     <TableCell scope="row">
                                         {voto ? (
-                                            <>{voto}</>
+                                            <Button
+                                                variant="contained"
+                                                disableElevation
+                                                onClick={() => {
+                                                    console.log('QUESTO è IL VOTOOOOOOOOO', voto);
+                                                    handleOpenEditValutation({ idvoto: idvalutazione, nome: nome, cognome: cognome });
+                                                }}
+                                            >
+                                                {voto}
+                                            </Button>
                                         ) : (
                                             <Button
                                                 variant="contained"
                                                 color="primary"
                                                 disableElevation
                                                 onClick={() => {
-                                                    handleModalOpen({ iduser: iduser, nome: nome, cognome: cognome, idprogetto: datiProgetto.id });
-                                                    console.log({ iduser: iduser, nome: nome, cognome: cognome, idprogetto: datiProgetto.id });
+                                                    handleModalOpen({ iduser: iduser, nome, cognome, idprogetto: datiProgetto.id });
+                                                    console.log({ iduser: iduser, nome, cognome, idprogetto: datiProgetto.id });
                                                 }}
                                             >
                                                 Aggiungi voto
@@ -253,6 +280,98 @@ const ProjectTableDialog = ({ pid, closer }) => {
                 </TableContainer>
             </Grid>
         </>
+    );
+};
+
+
+const EditValutation = ({ vid, updater }) => {
+    const classes = useStyles();
+    const auth = useAuth();
+    const [infoTutto, SetInfoTutto] = useState();
+    const [loading, setLoading] = useState(true);
+    const { idvoto, nome, cognome } = vid;
+
+    useEffect(() => {
+        axios
+            .get(`${baseRoute}/voti/voti/${idvoto}`, { params: { token: auth.token } })
+            .then((res) => {
+                console.log('EDIT VOTOOOOOOOOOOO> ', res.data.data);
+                SetInfoTutto(res.data.data);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    }, []);
+
+    const onSubmit = async (data) => {
+        console.log(data);
+        const req = {
+            voto: data.voto,
+            descrizione: data.descV,
+            data: data.dataV,
+        };
+
+        await axios
+            .put(`${baseRoute}/voti/voti/${idvoto}`, { token: auth.token, data: req })
+            .then((res) => {
+                console.log(res);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+        updater(Math.random());
+    };
+
+    return (
+        <Box>
+            {loading ? (
+                <CircularProgress />
+            ) : (
+                <Form
+                    onSubmit={onSubmit}
+                    initialValues={{ voto: infoTutto.valutazione, descV: infoTutto.descrizione, dataV: infoTutto.data.split('T')[0] }}
+                    render={({ handleSubmit, reset, submitting, pristine, values }) => (
+                        <form onSubmit={handleSubmit} noValidate>
+                            <Paper className={classes.paperContainer}>
+                                <Typography variant="h6" component="h1" color="initial">
+                                    Modifica il voto allo studente
+                                    {nome} {cognome}
+                                </Typography>
+                                <FormControl className={classes.formControl}>
+                                    <Field fullWidth name="voto" component={Select} label="Voto" formControlProps={{ fullWidth: true }}>
+                                        <MenuItem value={3}>3</MenuItem>
+                                        <MenuItem value={3.5}>3.5</MenuItem>
+                                        <MenuItem value={4}>3</MenuItem>
+                                        <MenuItem value={4.5}>3</MenuItem>
+                                        <MenuItem value={5}>5</MenuItem>
+                                        <MenuItem value={5.5}>5.5</MenuItem>
+                                        <MenuItem value={6}>6</MenuItem>
+                                        <MenuItem value={6.5}>6.5</MenuItem>
+                                        <MenuItem value={7}>7</MenuItem>
+                                        <MenuItem value={7.5}>7.5</MenuItem>
+                                        <MenuItem value={8}>8</MenuItem>
+                                        <MenuItem value={8.5}>8.5</MenuItem>
+                                        <MenuItem value={9}>9</MenuItem>
+                                        <MenuItem value={9.5}>9.5</MenuItem>
+                                        <MenuItem value={10}>10</MenuItem>
+                                    </Field>
+                                </FormControl>
+                                <FormControl className={classes.formControl}>
+                                    <Field fullWidth name="descV" component={TextField} type="text" label="Descrizione Voto" />
+                                </FormControl>
+                                <FormControl className={classes.formControl}>
+                                    <Field fullWidth name="dataV" component={TextField} type="date" label="Data Voto" />
+                                </FormControl>
+                                <Button variant="contained" color="primary" type="submit" disabled={submitting}>
+                                    Modifica Valutazione
+                                </Button>
+                            </Paper>
+                        </form>
+                    )}
+                />
+            )}
+        </Box>
     );
 };
 
