@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import Button from "@material-ui/core/Button";
 
 
@@ -9,11 +9,11 @@ const ConfirmButton = ({onClick}) =>{
     const [textDisplay, setTextDisplay] = useState("CANCELLA")
 
     const handleClick = () =>{
-        if(click==0){
+        if(click===0){
             setClick(click+1);
             setTextDisplay("SEI SICURO?")
         }
-        else if(click==1){
+        else if(click===1){
             onClick();
             setTextDisplay("CANCELLA");
             setClick(0)

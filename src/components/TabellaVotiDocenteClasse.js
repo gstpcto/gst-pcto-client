@@ -47,6 +47,7 @@ export default function TabellaVotiDocenteClasse() {
     const [nomiProgetti, setNomiProgetti] = useState([]);
     const [data, setData] = useState([]);
     const [open, setOpen] = useState(false);
+    const [reloader, setReloader] = useState(null);
 
     const [infoVoto, setInfoVoto] = useState({
         iduser: '',
@@ -73,6 +74,7 @@ export default function TabellaVotiDocenteClasse() {
 
     useEffect(() => {
         setError(false);
+        setOpen(false);
         setLoading(true);
         axios
             .get(`${baseRoute}/progetti/classiAlunni`, { params: { token: auth.token } })
@@ -102,14 +104,14 @@ export default function TabellaVotiDocenteClasse() {
                 setLoading(false);
             });
         // eslint-disable-next-line
-    }, []);
+    }, [reloader]);
 
     return isLoading ? (
         <CircularProgress />
     ) : (
         <>
             <Modal open={open} onClose={handleClose} className={classes.modal}>
-                <EditValutation infoVoto={infoVoto} />
+                <EditValutation infoVoto={infoVoto} updater={setReloader} />
             </Modal>
             <TableContainer component={Paper}>
                 <Table size="small">
@@ -155,7 +157,7 @@ export default function TabellaVotiDocenteClasse() {
     );
 }
 
-const EditValutation = ({ infoVoto }) => {
+const EditValutation = ({ infoVoto, updater }) => {
     const classes = useStyles();
     const auth = useAuth();
     const onSubmit = async (data) => {
@@ -172,6 +174,7 @@ const EditValutation = ({ infoVoto }) => {
             })
             .then(function (response) {
                 console.log(response);
+                updater(Math.random());
             })
             .catch(function (error) {
                 console.log(error);

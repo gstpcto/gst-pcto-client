@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Box } from '@material-ui/core';
 import { baseRoute } from '../ProvideAuth';
-import { CircularProgress, Grid } from '@material-ui/core';
+import { CircularProgress } from '@material-ui/core';
 import axios from 'axios';
 import { useAuth } from '../ProvideAuth';
 import ComponentProject from './ComponentProject';
