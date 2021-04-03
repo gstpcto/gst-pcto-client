@@ -47,6 +47,7 @@ const useStyles = makeStyles((theme) => ({
     },
     paperContainer: {
         padding: theme.spacing(2),
+        margin: theme.spacing(2)
     },
     boxContainer: {
         width: "100%",
@@ -72,6 +73,12 @@ const useStyles = makeStyles((theme) => ({
     heroContent: {
         padding: theme.spacing(4, 0, 6),
     },
+    margin: {
+        margin: theme.spacing(2),
+    },
+    marginLeft: {
+        marginLeft: theme.spacing(2),  
+    },
 }));
 
 
@@ -81,15 +88,29 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
     const [reloader, setReloader] = useState(null);
     const [isLoading, setLoading] = useState(true)
     const [progetto, setProgetto] = useState(null);
-    const [datiProgetto, setDatiProgetto] = useState({});
+    const [classiProgetto, setClassiProgetto] = useState({});
     const [alunniProgetto, setAlunniProgetto] = useState([]);
     
+    const [openAggiungiClasse, setOpenAggiungiClasse] = useState(false);
+    const handleOpenAggiungiClasse = () => {
+        setOpenAggiungiClasse(true);
+    }
+    const handleCloseAggiungiClasse = () => {
+        setOpenAggiungiClasse(false);
+    }
 
-    console.log("PIPO");
+    const remove = async (id) =>{
+        await axios.delete(`${baseRoute}/progetti/stage/${id}`, {data: {token: auth.token}}).catch(err =>{
+            console.log(err);
+        })
+
+        setReloader(Math.random());
+    }
 
     const required = value => (value ? undefined : 'Required')
 
     useEffect(() => {
+        setOpenAggiungiClasse(false);
         const fetchData = async () =>{
             return await axios
                 .get(`${baseRoute}/progetti/${pid}`, { params: { token: auth.token } })
@@ -97,11 +118,34 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
         fetchData().then((res)=>{
             console.log("ER PROGETTO", res.data.data);
             setProgetto(res.data.data.info);
+            setClassiProgetto([...res.data.data.classi.map(({ id, classe, sezione, indirizzo, idRelazione }) =>{
+                return {
+                    id, classe, sezione, indirizzo,
+                    cancella : <ConfirmButton onClick={()=>{
+                        remove(idRelazione)
+                    }} />
+                }
+            })])
         })
         .then(()=>{setLoading(false)})
     }, [reloader]);
 
-    
+    const onSubmit = async({nome,descrizione,durata,ente,linkValutazioni,annoScolastico,startDate,endDate}) => {
+
+        const req = {
+            nome, descrizione, durata, periodo: annoScolastico, ente, start: startDate, end: endDate, link: linkValutazioni
+        }
+        
+        await axios.put(`${baseRoute}/progetti/modifica/${pid}`, { token: auth.token, data: req })
+            .then(res => {
+                console.log(res);
+            })
+            .catch(err =>{
+                console.log(err);
+            })
+
+        setReloader(Math.random());
+    };
 
     return (
         <>
@@ -135,32 +179,49 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
                         </Typography>
                     </Container>
                     {/* form di modifica */}
-                    <Grid item md={6} xs={12}>
-                        <Typography variant="h6" component="h1">
+                    <Grid item xs={12}>
+                        <Typography variant="h6" component="h1" className={classes.margin}>
                             Informazioni Progetto
                         </Typography>
                         <Paper className={classes.paperContainer} >
                             <Form
-                                onSubmit={()=>{}}
-                                initialValues={{}}
+                                onSubmit={onSubmit}
+                                initialValues={{nome: progetto.nome, 
+                                    descrizione: progetto.descrizione, 
+                                    durata: progetto.durata,
+                                    ente: progetto.ente,
+                                    linkValutazioni: progetto.linkValutazioni,
+                                    annoScolastico: progetto.annoScolastico,
+                                    startDate: progetto.startDate.split("T")[0],
+                                    endDate: progetto.endDate.split("T")[0],
+                                }}
                                 render={({ handleSubmit, reset, submitting, pristine, values }) => (
                                     <form onSubmit={handleSubmit} noValidate>
                                         <FormControl className={classes.formControl} >
                                             <Field fullWidth name="nome" component={TextField} type="text" label="Nome" validate={required} />
                                         </FormControl>
                                         <FormControl className={classes.formControl} >
-                                            <Field fullWidth name="cognome" component={TextField} type="text" label="Cognome" />
+                                            <Field fullWidth name="descrizione" component={TextField} type="text" label="Descrizione" validate={required} />
                                         </FormControl>
                                         <FormControl className={classes.formControl} >
-                                            <Field fullWidth name="email" component={TextField} type="text" label="Email" />
+                                            <Field fullWidth name="durata" component={TextField} type="text" label="Durata in Ore" validate={required} />
                                         </FormControl>
                                         <FormControl className={classes.formControl} >
-                                            <Field fullWidth name="codiceF" component={TextField} type="text" label="Codice Fiscale" />
+                                            <Field fullWidth name="ente" component={TextField} type="text" label="Ente" validate={required}  />
                                         </FormControl>
                                         <FormControl className={classes.formControl} >
-                                            <Field fullWidth name="dataN" component={TextField} type="date" label="Data di Nascita" />
+                                            <Field fullWidth name="annoScolastico" component={TextField} type="text" label="Anno Scolastico" validate={required} />
+                                        </FormControl>
+                                        <FormControl className={classes.formControl} >
+                                            <Field fullWidth name="startDate" component={TextField} type="date" label="Data di Inizio" validate={required} />
+                                        </FormControl>
+                                        <FormControl className={classes.formControl} >
+                                            <Field fullWidth name="endDate" component={TextField} type="date" label="Data di Fine" validate={required} />
                                         </FormControl>
 
+                                        <FormControl className={classes.formControl} >
+                                            <Field fullWidth name="linkValutazioni" component={TextField} type="text" label="Link Valutazioni" />
+                                        </FormControl>
                                         <Button variant="contained" color="primary" type="submit" disabled={submitting}>
                                             Aggiorna Dati
                                         </Button>
@@ -169,10 +230,153 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
                             />
                         </Paper>
                     </Grid>
+                    {/* aggiungere una classe */}
+                    <Grid item xs={12}>
+                        <Typography variant="h6" component="h1" className={classes.margin}>
+                            Classi partecipanti al progetto
+                        </Typography>
+                        <Modal
+                            open={openAggiungiClasse}
+                            onClose={handleCloseAggiungiClasse}
+                            aria-labelledby="nuova classe"
+                            aria-describedby="puoi aggiungere una nuova classe"
+                            className={classes.modal}
+                        >
+                            <AggiungiClasse updater={setReloader} pid={pid} ceStanno={classiProgetto} />
+                        </Modal>
+                        <Button variant="contained" color="primary" className={classes.marginLeft} onClick={handleOpenAggiungiClasse}>
+                            Aggiungi Classe
+                        </Button>
+                        <TableContainer component={Paper}>
+                            <Table size="small">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell scope="col" component="th">
+                                            ID Classe
+                                        </TableCell>
+                                        <TableCell scope="col" component="th">
+                                            Classe
+                                        </TableCell>
+                                        <TableCell scope="col" component="th">
+                                            Sezione
+                                        </TableCell>
+                                        <TableCell scope="col" component="th">
+                                            Indirizzo
+                                        </TableCell>
+                                        <TableCell scope="col" component="th">
+                                            Elimina
+                                        </TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {
+                                        classiProgetto.map(({id, classe, sezione, indirizzo, cancella})=>{
+                                            return <TableRow key={id}>
+                                                <TableCell scope="row">{id}</TableCell>
+                                                <TableCell scope="row">{classe}</TableCell>
+                                                <TableCell scope="row">{sezione}</TableCell>
+                                                <TableCell scope="row">{indirizzo}</TableCell>
+                                                <TableCell scope="row">{cancella}</TableCell>
+                                            </TableRow>
+                                        })
+                                    }
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Grid>
                 </Grid>
             }
         </>
     );
 };
+
+
+
+const AggiungiClasse = ({ updater, pid, ceStanno }) => {
+    const auth = useAuth();
+    const classes = useStyles();
+    const [isLoading, setLoading] = useState(true);
+    const [classi, setClassi] = useState([]);
+    
+
+    const onSubmit = async ({classe}) => {
+        
+        await axios.put(`${baseRoute}/progetti/addClass`, { token: auth.token, data: { idclasse: classe, idprogetto: pid } }).catch((err) => {
+            console.log(err);
+
+        })
+
+        updater(Math.random());
+    };
+
+    
+
+    const required = value => (value ? undefined : 'Required')
+    const fetchData = async () => {
+       return await axios.get(`${baseRoute}/classi/allconcat`)
+    }
+
+    useEffect(() => {
+        const test = ceStanno.map(c => c.id);
+        fetchData().then((res) => {
+            console.log("LE CLASSI",res );
+            setClassi([...res.data.data.filter((item)=>{
+                return !test.includes(item.id)
+            }).map(c=>{
+                return <MenuItem value={c.id}>{c.classe}</MenuItem>
+            })])
+            setLoading(false);
+        })
+    }, [updater]);
+
+
+
+    return (isLoading ? <CircularProgress /> : <Box>
+        <Form
+            onSubmit={onSubmit}
+            render={({ handleSubmit, reset, submitting, pristine, values }) => (
+                <form onSubmit={handleSubmit}>
+                    <Paper className={classes.paperContainer}>
+                        <Typography variant="h6" component="h1">
+                            Aggiungi Classe
+                        </Typography>
+                        
+                        
+                        <FormControl className={classes.formControl} >
+                            <Field fullWidth name="classe" component={Select} label="Classe" formControlProps={{ fullWidth: true }} validate={required}>
+                                {classi}
+                            </Field>
+                        </FormControl>
+
+                        <Box display="flex" justifyContent="space-between">
+                            <Button variant="contained" color="primary" type="submit" >
+                                FATTO
+                            </Button>
+
+                        </Box>
+
+                    </Paper>
+                </form>
+            )}
+        />
+    </Box>);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export default ProjectTableDialogQuattro;
