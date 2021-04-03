@@ -166,6 +166,7 @@ const EditValutation = ({ infoVoto }) => {
                     idstudente: infoVoto.iduser,
                     idprogetto: infoVoto.idprogetto,
                     valutazione: data.voto,
+                    descrizione: data.descV,
                     date: data.dataV,
                 },
             })
@@ -181,7 +182,7 @@ const EditValutation = ({ infoVoto }) => {
         <Box>
             <Form
                 onSubmit={onSubmit}
-                initialValues={{ voto: 6, dataV: new Date(Date.now()).toISOString().split('T')[0] }}
+                initialValues={{ voto: 6, descV: "", dataV: new Date(Date.now()).toISOString().split('T')[0] }}
                 render={({ handleSubmit, reset, submitting, pristine, values }) => (
                     <form onSubmit={handleSubmit} noValidate>
                         <Paper className={classes.paperContainer}>
@@ -207,6 +208,9 @@ const EditValutation = ({ infoVoto }) => {
                                     <MenuItem value={9.5}>9.5</MenuItem>
                                     <MenuItem value={10}>10</MenuItem>
                                 </Field>
+                            </FormControl>
+                            <FormControl className={classes.formControl}>
+                                <Field fullWidth name="descV" component={TextField} type="text" label="Descrizione Voto" />
                             </FormControl>
                             <FormControl className={classes.formControl}>
                                 <Field fullWidth name="dataV" component={TextField} type="date" label="Data Voto" />
