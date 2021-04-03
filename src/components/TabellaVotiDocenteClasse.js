@@ -46,7 +46,8 @@ export default function TabellaVotiDocenteClasse() {
     const [isError, setError] = useState(false);
     const [nomiProgetti, setNomiProgetti] = useState([]);
     const [data, setData] = useState([]);
-    const [open, setOpen] = useState(false);
+    const [openAddValutation, setOpenAddValutation] = useState(false);
+    const [openEditValutation, setOpenEditValutation] = useState(false);
     const [reloader, setReloader] = useState(null);
 
     const [infoVoto, setInfoVoto] = useState({
@@ -56,12 +57,14 @@ export default function TabellaVotiDocenteClasse() {
         data: '',
     });
 
-    const handleOpen = ({ iduser, nome, cognome, idprogetto, data }) => {
+    const [votoEdit, setVotoEdit] = useState(null);
+
+    const handleOpenAddValutation = ({ iduser, nome, cognome, idprogetto, data }) => {
         setInfoVoto({ iduser, nome, cognome, idprogetto, data });
-        setOpen(true);
+        setOpenAddValutation(true);
     };
 
-    const handleClose = () => {
+    const handleCloseAddValutation = () => {
         setInfoVoto({
             iduser: '',
             nome: '',
@@ -69,12 +72,22 @@ export default function TabellaVotiDocenteClasse() {
             idprogetto: '',
             data: '',
         });
-        setOpen(false);
+        setOpenAddValutation(false);
+    };
+
+    const handleOpenEditValutation = ({ idvoto, nome, cognome }) => {
+        setVotoEdit({ idvoto: idvoto, nome: nome, cognome: cognome });
+        setOpenEditValutation(true);
+    };
+
+    const handleCloseEditValutation = () => {
+        setVotoEdit({ idvoto: '', nome: '', cognome: '' });
+        setOpenEditValutation(false);
     };
 
     useEffect(() => {
         setError(false);
-        setOpen(false);
+        setOpenAddValutation(false);
         setLoading(true);
         axios
             .get(`${baseRoute}/progetti/classiAlunni`, { params: { token: auth.token } })
@@ -110,8 +123,11 @@ export default function TabellaVotiDocenteClasse() {
         <CircularProgress />
     ) : (
         <>
-            <Modal open={open} onClose={handleClose} className={classes.modal}>
-                <EditValutation infoVoto={infoVoto} updater={setReloader} />
+            <Modal open={openEditValutation} onClose={handleCloseEditValutation} className={classes.modal}>
+                <EditValutation vid={votoEdit} updater={setReloader} />
+            </Modal>
+            <Modal open={openAddValutation} onClose={handleCloseAddValutation} className={classes.modal}>
+                <AddValutation infoVoto={infoVoto} updater={setReloader} />
             </Modal>
             <TableContainer component={Paper}>
                 <Table size="small">
@@ -131,15 +147,24 @@ export default function TabellaVotiDocenteClasse() {
                                 <TableCell scope="row">{`${user.nome} ${user.cognome}`}</TableCell>
                                 {progetti.map(({ infoProgetto, voto }, indice) => (
                                     <TableCell key={indice} scope="row">
-                                        {voto ? (
-                                            <>{voto}</>
+                                        {voto.voto ? (
+                                            <Button
+                                                variant="contained"
+                                                disableElevation
+                                                onClick={() => {
+                                                    console.log('QUESTO è IL VOTOOOOOOOOO', voto);
+                                                    handleOpenEditValutation({ idvoto: voto.idvalutazione, nome: user.nome, cognome: user.cognome });
+                                                }}
+                                            >
+                                                {voto.voto}
+                                            </Button>
                                         ) : (
                                             <Button
                                                 variant="contained"
                                                 color="primary"
                                                 disableElevation
                                                 onClick={() => {
-                                                    handleOpen({ iduser: user.iduser, nome: user.nome, cognome: user.cognome, idprogetto: infoProgetto.id });
+                                                    handleOpenAddValutation({ iduser: user.iduser, nome: user.nome, cognome: user.cognome, idprogetto: infoProgetto.id });
                                                     console.log({ iduser: user.iduser, nome: user.nome, cognome: user.cognome, idprogetto: infoProgetto.id });
                                                 }}
                                             >
@@ -157,7 +182,98 @@ export default function TabellaVotiDocenteClasse() {
     );
 }
 
-const EditValutation = ({ infoVoto, updater }) => {
+const EditValutation = ({ vid, updater }) => {
+    const classes = useStyles();
+    const auth = useAuth();
+    const [infoTutto, SetInfoTutto] = useState();
+    const [loading, setLoading] = useState(true);
+    const { idvoto, nome, cognome } = vid;
+
+    useEffect(() => {
+        axios
+            .get(`${baseRoute}/voti/voti/${idvoto}`, { params: { token: auth.token } })
+            .then((res) => {
+                console.log('EDIT VOTOOOOOOOOOOO> ', res.data.data);
+                SetInfoTutto(res.data.data);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    }, []);
+
+    const onSubmit = async (data) => {
+        console.log(data);
+        const req = {
+            voto: data.voto,
+            descrizione: data.descV,
+            data: data.dataV,
+        };
+
+        await axios
+            .put(`${baseRoute}/voti/voti/${idvoto}`, { token: auth.token, data: req })
+            .then((res) => {
+                console.log(res);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+        updater(Math.random());
+    };
+
+    return (
+        <Box>
+            {loading ? (
+                <CircularProgress />
+            ) : (
+                <Form
+                    onSubmit={onSubmit}
+                    initialValues={{ voto: infoTutto.valutazione, descV: infoTutto.descrizione, dataV: infoTutto.data.split('T')[0] }}
+                    render={({ handleSubmit, reset, submitting, pristine, values }) => (
+                        <form onSubmit={handleSubmit} noValidate>
+                            <Paper className={classes.paperContainer}>
+                                <Typography variant="h6" component="h1" color="initial">
+                                    Modifica il voto allo studente
+                                    {nome} {cognome}
+                                </Typography>
+                                <FormControl className={classes.formControl}>
+                                    <Field fullWidth name="voto" component={Select} label="Voto" formControlProps={{ fullWidth: true }}>
+                                        <MenuItem value={3}>3</MenuItem>
+                                        <MenuItem value={3.5}>3.5</MenuItem>
+                                        <MenuItem value={4}>3</MenuItem>
+                                        <MenuItem value={4.5}>3</MenuItem>
+                                        <MenuItem value={5}>5</MenuItem>
+                                        <MenuItem value={5.5}>5.5</MenuItem>
+                                        <MenuItem value={6}>6</MenuItem>
+                                        <MenuItem value={6.5}>6.5</MenuItem>
+                                        <MenuItem value={7}>7</MenuItem>
+                                        <MenuItem value={7.5}>7.5</MenuItem>
+                                        <MenuItem value={8}>8</MenuItem>
+                                        <MenuItem value={8.5}>8.5</MenuItem>
+                                        <MenuItem value={9}>9</MenuItem>
+                                        <MenuItem value={9.5}>9.5</MenuItem>
+                                        <MenuItem value={10}>10</MenuItem>
+                                    </Field>
+                                </FormControl>
+                                <FormControl className={classes.formControl}>
+                                    <Field fullWidth name="descV" component={TextField} type="text" label="Descrizione Voto" />
+                                </FormControl>
+                                <FormControl className={classes.formControl}>
+                                    <Field fullWidth name="dataV" component={TextField} type="date" label="Data Voto" />
+                                </FormControl>
+                                <Button variant="contained" color="primary" type="submit" disabled={submitting}>
+                                    Modifica Valutazione
+                                </Button>
+                            </Paper>
+                        </form>
+                    )}
+                />
+            )}
+        </Box>
+    );
+};
+
+const AddValutation = ({ infoVoto, updater }) => {
     const classes = useStyles();
     const auth = useAuth();
     const onSubmit = async (data) => {
@@ -185,7 +301,7 @@ const EditValutation = ({ infoVoto, updater }) => {
         <Box>
             <Form
                 onSubmit={onSubmit}
-                initialValues={{ voto: 6, descV: "", dataV: new Date(Date.now()).toISOString().split('T')[0] }}
+                initialValues={{ voto: 6, descV: '', dataV: new Date(Date.now()).toISOString().split('T')[0] }}
                 render={({ handleSubmit, reset, submitting, pristine, values }) => (
                     <form onSubmit={handleSubmit} noValidate>
                         <Paper className={classes.paperContainer}>
