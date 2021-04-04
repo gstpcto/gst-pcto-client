@@ -14,6 +14,7 @@ import NotInterestedIcon from '@material-ui/icons/NotInterested';
 import TableChartIcon from '@material-ui/icons/TableChart';
 import WidgetsIcon from '@material-ui/icons/Widgets';
 import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 
 // Fragments
 import DashboardLevelZero from '../fragments/DashboardLevelZero';
@@ -24,6 +25,7 @@ import ProjectsLevelOne from '../fragments/ProjectsLevelOne';
 import DashboardLevelFour from '../fragments/DashboardLevelFour';
 import Classi from './admin/ClassiAdminQuattro'
 import Studenti from './admin/StudentiAdminQuattro'
+import Docenti from './admin/DocentiAdminQuattro'
 
 
 export default function MenuItems({ level, setFragment }) {
@@ -198,6 +200,20 @@ export default function MenuItems({ level, setFragment }) {
                                 <PeopleAltIcon />
                             </ListItemIcon>
                             <ListItemText primary="Studenti" />
+                        </ListItem>
+                        <ListItem
+                            button
+                            onClick={() => {
+                                setFragment({
+                                    titolo: 'Docenti',
+                                    component: <Docenti />,
+                                });
+                            }}
+                        >
+                            <ListItemIcon>
+                                <SupervisorAccountIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Docenti" />
                         </ListItem>
 
                         <ListItem

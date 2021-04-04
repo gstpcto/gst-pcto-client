@@ -79,6 +79,9 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: {
         marginLeft: theme.spacing(2),  
     },
+    marginBottom: {
+        marginBottom: theme.spacing(8),
+    }
 }));
 
 
@@ -89,7 +92,7 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
     const [isLoading, setLoading] = useState(true)
     const [progetto, setProgetto] = useState(null);
     const [classiProgetto, setClassiProgetto] = useState({});
-    const [alunniProgetto, setAlunniProgetto] = useState([]);
+    const [docenti, setDocenti] = useState([]);
     
     const [openAggiungiClasse, setOpenAggiungiClasse] = useState(false);
     const handleOpenAggiungiClasse = () => {
@@ -125,7 +128,9 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
                         remove(idRelazione)
                     }} />
                 }
-            })])
+            })]);
+            setDocenti([...res.data.data.docenti])
+
         })
         .then(()=>{setLoading(false)})
     }, [reloader]);
@@ -167,7 +172,7 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
             </AppBar>
             {   isLoading ? <CircularProgress />
                 : 
-                <Grid container style={{display: "flex"}}>
+                <Grid container style={{display: "flex"}} className={classes.marginBottom}>
                     {/*progetto titolo e descrizione */}
                     <Container maxWidth="md" component="main" className={classes.heroContent}>
                         <Typography component="h2" variant="h4" align="center" color="textPrimary" gutterBottom>
@@ -277,6 +282,59 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
                                                 <TableCell scope="row">{sezione}</TableCell>
                                                 <TableCell scope="row">{indirizzo}</TableCell>
                                                 <TableCell scope="row">{cancella}</TableCell>
+                                            </TableRow>
+                                        })
+                                    }
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Grid>
+                    <Container maxWidth="md" component="main" className={classes.heroContent}>
+                        <Typography variant="h6" align="center" color="textSecondary" component="p">
+                            I docenti vengono automaticamente aggiunti tramite la classe
+                        </Typography>
+                    </Container>
+                    <Grid item xs={12}>
+                        <Typography variant="h6" component="h1" className={classes.margin}>
+                            Docenti partecipanti al progetto
+                        </Typography>
+                        <Button variant="contained" color="primary" className={classes.marginLeft} onClick={handleOpenAggiungiClasse}>
+                            Aggiungi Classe
+                        </Button>
+                        <TableContainer component={Paper}>
+                            <Table size="small">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell scope="col" component="th">
+                                            ID Docente
+                                        </TableCell>
+                                        <TableCell scope="col" component="th">
+                                            Nome
+                                        </TableCell>
+                                        <TableCell scope="col" component="th">
+                                            Cognome
+                                        </TableCell>
+                                        <TableCell scope="col" component="th">
+                                            Classe
+                                        </TableCell>
+                                        <TableCell scope="col" component="th">
+                                            Indirizzo
+                                        </TableCell>
+                                        <TableCell scope="col" component="th">
+                                            Descrizione
+                                        </TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {
+                                        docenti.map(({ id, nome, cognome, classe, indirizzo, descrizione }) => {
+                                            return <TableRow key={id}>
+                                                <TableCell scope="row">{id}</TableCell>
+                                                <TableCell scope="row">{nome}</TableCell>
+                                                <TableCell scope="row">{cognome}</TableCell>
+                                                <TableCell scope="row">{classe || "NO"}</TableCell>
+                                                <TableCell scope="row">{indirizzo}</TableCell>
+                                                <TableCell scope="row">{descrizione}</TableCell>
                                             </TableRow>
                                         })
                                     }
