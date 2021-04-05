@@ -775,8 +775,8 @@ const ModificaVoto = ({ updater, vid }) => {
               <Field fullWidth name="voto" component={Select} label="Voto" formControlProps={{ fullWidth: true }}>
                 <MenuItem value={3}>3</MenuItem>
                 <MenuItem value={3.5}>3.5</MenuItem>
-                <MenuItem value={4}>3</MenuItem>
-                <MenuItem value={4.5}>3</MenuItem>
+                <MenuItem value={4}>4</MenuItem>
+                <MenuItem value={4.5}>4.5</MenuItem>
                 <MenuItem value={5}>5</MenuItem>
                 <MenuItem value={5.5}>5.5</MenuItem>
                 <MenuItem value={6}>6</MenuItem>
@@ -909,8 +909,8 @@ const AggiungiVoto = ({ updater, uid}) => {
               <Field fullWidth name="voto" component={Select} label="Voto" formControlProps={{ fullWidth: true }} onChange={() => { console.log("SEX"); }}>
                 <MenuItem value={3}>3</MenuItem>
                 <MenuItem value={3.5}>3.5</MenuItem>
-                <MenuItem value={4}>3</MenuItem>
-                <MenuItem value={4.5}>3</MenuItem>
+                <MenuItem value={4}>4</MenuItem>
+                <MenuItem value={4.5}>4.5</MenuItem>
                 <MenuItem value={5}>5</MenuItem>
                 <MenuItem value={5.5}>5.5</MenuItem>
                 <MenuItem value={6}>6</MenuItem>
