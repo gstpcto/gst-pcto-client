@@ -27,7 +27,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import ConfirmButton from "../confirmDeleteButton";
 import Container from '@material-ui/core/Container';
 import { OnChange } from 'react-final-form-listeners'
-
+import { Transition} from "./StudentiAdminQuattro";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -91,16 +91,40 @@ const Docenti = () => {
     const [reloader, setReloader] = useState(null);
     const [isLoading, setLoading] = useState(true)
     const [docenti, setDocenti] = useState([]);
+    const [docente, setDocente] = useState(null);
+    const [open, setOpen] = useState(false);
+    //dialog handlers
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+        setReloader(Math.random())
+    };
 
 
     useEffect(()=>{
+        console.log("CARICANDO LA GENKIDAMA");
         const fetchData = async () =>{
             return await axios.get(`${baseRoute}/docenti/all`, { params: { token: auth.token}})
         }
+
         fetchData().then(res=>{
             console.log(res.data);
             setDocenti([...res.data.data.map((d)=>{
-                const modifica = <></>
+                const modifica = <Button
+                    variant="contained"
+                    className={`${classes.modifyButton} ${classes.modifyButtonHover}`}
+                    onClick={() => {
+                        console.log(d.id);
+                        setDocente(d.id);
+                        handleClickOpen()
+                    }}
+                >
+                    MODIFICA
+                </Button>
                 return {...d, modifica}
             })])
         })
@@ -110,6 +134,14 @@ const Docenti = () => {
 
     return ( isLoading? <CircularProgress /> : 
         <>
+            <Dialog
+                fullScreen
+                open={open}
+                onClose={handleClose}
+                TransitionComponent={Transition}
+            >
+                <StudenteDialogContent did={docente} closer={handleClose} />
+            </Dialog>
             <Container maxWidth="md" component="main" className={classes.heroContent}>
                 <Typography component="h2" variant="h4" align="center" color="textPrimary" gutterBottom>
                     Docenti
@@ -154,5 +186,125 @@ const Docenti = () => {
     );
 
 }
+
+const StudenteDialogContent = ({ did, closer }) => {
+    const classes = useStyles();
+    const auth = useAuth();
+    const [docente, setDocente] = useState(null);
+    const [isLoading, setLoading] = useState(true);
+    const [updater, setUpdater] = useState(null)
+    //frequentare
+    
+
+    useEffect(() => {
+        const fetchData = async () =>{
+            return await axios.get(`${baseRoute}/docenti/${did}`,  {params: {token: auth.token}});
+        }
+        fetchData().then(res =>{
+            console.log(res.data.data);
+            setDocente(res.data.data)
+        }).then(()=>{setLoading(false)})
+        
+    }, [updater])
+
+    const onSubmit = async (data) => {
+        console.log('form submitted');
+        console.log(data);
+        axios.put(`${baseRoute}/docenti/updateAdmin`, { token: auth.token, idDocente: did, data })
+            .then(r => { console.log(r); })
+            .then(() => setUpdater(Math.random()))
+    };
+
+
+
+    return isLoading ? <CircularProgress /> :
+        <Grid spacing={2}>
+            <AppBar className={classes.appBar}>
+                <Toolbar>
+                    <IconButton
+                        edge="start"
+                        color="inherit"
+                        onClick={closer}
+                        aria-label="close"
+                    >
+                        <CloseIcon />
+                    </IconButton>
+
+                    <Typography variant="h6" className={classes.title}>
+                        Info Docente
+              </Typography>
+
+                    <Button autoFocus color="inherit" onClick={closer}>
+                        OK
+                </Button>
+                </Toolbar>
+            </AppBar>
+            <Grid container style={{ display: "flex" }}>
+                <Grid item md={6} xs={12}>
+                    <Typography variant="h6" component="h1">
+                        Informazioni utente
+                    </Typography>
+                    <Paper className={classes.paperContainer} >
+                        <Form
+                            onSubmit={onSubmit}
+                            initialValues={{ nome: docente.nome, cognome: docente.cognome, email: docente.email, codiceF: docente.codiceF, dataN: docente.dataN.split('T')[0] }}
+                            render={({ handleSubmit, reset, submitting, pristine, values }) => (
+                                <form onSubmit={handleSubmit} noValidate>
+                                    <FormControl className={classes.formControl} >
+                                        <Field fullWidth name="nome" component={TextField} type="text" label="Nome" />
+                                    </FormControl>
+                                    <FormControl className={classes.formControl} >
+                                        <Field fullWidth name="cognome" component={TextField} type="text" label="Cognome" />
+                                    </FormControl>
+                                    <FormControl className={classes.formControl} >
+                                        <Field fullWidth name="email" component={TextField} type="text" label="Email" />
+                                    </FormControl>
+                                    <FormControl className={classes.formControl} >
+                                        <Field fullWidth name="codiceF" component={TextField} type="text" label="Codice Fiscale" />
+                                    </FormControl>
+                                    <FormControl className={classes.formControl} >
+                                        <Field fullWidth name="dataN" component={TextField} type="date" label="Data di Nascita" />
+                                    </FormControl>
+
+                                    <Button variant="contained" color="primary" type="submit" disabled={submitting}>
+                                        Aggiorna Dati
+                                    </Button>
+                                </form>
+                            )}
+                        />
+                    </Paper>
+                </Grid>
+            </Grid>
+        </Grid>
+        ;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export default Docenti;

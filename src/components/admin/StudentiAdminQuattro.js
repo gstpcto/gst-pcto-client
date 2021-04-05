@@ -28,6 +28,11 @@ import ConfirmButton from "../confirmDeleteButton";
 import { OnChange } from 'react-final-form-listeners'
 
 
+const PWResetForm = () =>{
+  return <></>
+}
+
+
 
 const useStyles = makeStyles((theme) => ({
   modifyButton: {
@@ -933,3 +938,5 @@ const AggiungiVoto = ({ updater, uid}) => {
     />
   </Box>);
 }
+
+export {Transition}
