@@ -342,8 +342,8 @@ const EditValutation = ({ vid, updater }) => {
                                     <Field fullWidth name="voto" component={Select} label="Voto" formControlProps={{ fullWidth: true }}>
                                         <MenuItem value={3}>3</MenuItem>
                                         <MenuItem value={3.5}>3.5</MenuItem>
-                                        <MenuItem value={4}>3</MenuItem>
-                                        <MenuItem value={4.5}>3</MenuItem>
+                                        <MenuItem value={4}>4</MenuItem>
+                                        <MenuItem value={4.5}>4.5</MenuItem>
                                         <MenuItem value={5}>5</MenuItem>
                                         <MenuItem value={5.5}>5.5</MenuItem>
                                         <MenuItem value={6}>6</MenuItem>
@@ -417,8 +417,8 @@ const AddValutation = ({ infoVoto, updater }) => {
                                 <Field fullWidth name="voto" component={Select} label="Voto" formControlProps={{ fullWidth: true }}>
                                     <MenuItem value={3}>3</MenuItem>
                                     <MenuItem value={3.5}>3.5</MenuItem>
-                                    <MenuItem value={4}>3</MenuItem>
-                                    <MenuItem value={4.5}>3</MenuItem>
+                                    <MenuItem value={4}>4</MenuItem>
+                                    <MenuItem value={4.5}>4.5</MenuItem>
                                     <MenuItem value={5}>5</MenuItem>
                                     <MenuItem value={5.5}>5.5</MenuItem>
                                     <MenuItem value={6}>6</MenuItem>
