@@ -21,6 +21,7 @@ import DashboardLevelZero from '../fragments/DashboardLevelZero';
 import SettingsLevelZero from '../fragments/SettingsLevelZero';
 import DashboardLevelOne from '../fragments/DashboardLevelOne';
 import TabellaLevelOne from '../fragments/TabellaLevelOne';
+import TabellaLevelTwo from '../fragments/TabellaLevelTwo';
 import ProjectsLevelOne from '../fragments/ProjectsLevelOne';
 import DashboardLevelFour from '../fragments/DashboardLevelFour';
 import Classi from './admin/ClassiAdminQuattro'
@@ -135,6 +136,20 @@ export default function MenuItems({ level, setFragment }) {
                                 <DashboardIcon />
                             </ListItemIcon>
                             <ListItemText primary="Dashboard" /> {/* Voti */}
+                        </ListItem>
+                        <ListItem
+                            button
+                            onClick={() => {
+                                setFragment({
+                                    titolo: 'Classi',
+                                    component: <TabellaLevelTwo />,
+                                });
+                            }}
+                        >
+                            <ListItemIcon>
+                                <TableChartIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Classi" />
                         </ListItem>
                     </>
                 );
