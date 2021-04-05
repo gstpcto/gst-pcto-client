@@ -28,6 +28,7 @@ import ConfirmButton from "../confirmDeleteButton";
 import Container from '@material-ui/core/Container';
 import { OnChange } from 'react-final-form-listeners'
 import { Transition} from "./StudentiAdminQuattro";
+import PWResetForm from "./PWResetForm";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -191,6 +192,7 @@ const StudenteDialogContent = ({ did, closer }) => {
     const classes = useStyles();
     const auth = useAuth();
     const [docente, setDocente] = useState(null);
+    const [storico, setStorico] = useState([]);
     const [isLoading, setLoading] = useState(true);
     const [updater, setUpdater] = useState(null)
     //frequentare
@@ -200,10 +202,21 @@ const StudenteDialogContent = ({ did, closer }) => {
         const fetchData = async () =>{
             return await axios.get(`${baseRoute}/docenti/${did}`,  {params: {token: auth.token}});
         }
+        const fetchStorico = async () =>{
+            return await axios.get(`${baseRoute}/docenti/storico/${did}`, {params: {token: auth.token}})
+        }
+
         fetchData().then(res =>{
             console.log(res.data.data);
             setDocente(res.data.data)
-        }).then(()=>{setLoading(false)})
+        }).then(async()=>{
+            fetchStorico().then(res =>{
+                console.log("STORICO PROFESSORE", res.data.data);
+                setStorico(res.data.data);
+            })
+        })
+        
+        .then(()=>{setLoading(false)})
         
     }, [updater])
 
@@ -240,6 +253,7 @@ const StudenteDialogContent = ({ did, closer }) => {
                 </Toolbar>
             </AppBar>
             <Grid container style={{ display: "flex" }}>
+                {/* modify data item */}
                 <Grid item md={6} xs={12}>
                     <Typography variant="h6" component="h1">
                         Informazioni utente
@@ -273,6 +287,56 @@ const StudenteDialogContent = ({ did, closer }) => {
                             )}
                         />
                     </Paper>
+                </Grid>
+                <PWResetForm id={did} />
+                {/* tabella storico */}
+                <Grid item md={12} xs={12}>
+                    <Typography variant="h6" className={classes.title}>
+                        Storico dello Docente
+                    </Typography>
+                    <Button variant="contained" color="primary" onClick={()=>{}}>
+                        Aggiungi Anno
+                    </Button>
+                    
+                    {/* tabella con le relazioni */}
+                    <TableContainer component={Paper}>
+                        <Table size="small">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell scope="col" component="th">
+                                        ID
+                                    </TableCell>
+                                    <TableCell scope="col" component="th">
+                                        Anno Scolastico
+                                    </TableCell>
+                                    <TableCell scope="col" component="th">
+                                        ID Classe
+                                    </TableCell>
+                                    <TableCell scope="col" component="th">
+                                        Indirizzo
+                                    </TableCell>
+                                    <TableCell scope="col" component="th">
+                                        Descrizione
+                                    </TableCell>
+                                    <TableCell scope="col" component="th">
+                                        Elimina
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {storico.map(({ relID, annoScolastico, idClasse, indirizzo, descrizione,  elimina }) => (
+                                    <TableRow key={relID}>
+                                        <TableCell scope="row">{relID}</TableCell>
+                                        <TableCell scope="row">{annoScolastico}</TableCell>
+                                        <TableCell scope="row">{idClasse || "NO"}</TableCell>
+                                        <TableCell scope="row">{indirizzo || "NO"}</TableCell>
+                                        <TableCell scope="row">{descrizione}</TableCell>
+                                        <TableCell scope="row">{elimina}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </Grid>
             </Grid>
         </Grid>

@@ -26,11 +26,8 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import ConfirmButton from "../confirmDeleteButton";
 import { OnChange } from 'react-final-form-listeners'
+import PWResetForm from "./PWResetForm";
 
-
-const PWResetForm = () =>{
-  return <></>
-}
 
 
 
@@ -290,13 +287,6 @@ const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
       .then(()=>updater(Math.random()))
     };
 
-    const onSubmitPass = async ({nuovaPass}) =>{
-        if(nuovaPass!==undefined){
-          axios.put(`${baseRoute}/studenti/updatePasswordAdmin`, {token: auth.token, idstudente: studente.id, nuovaPass})
-            .then(r => { console.log(r); })
-            .then(() => updater(Math.random()))
-        }
-    }
 
     useEffect(()=>{
       setLoading(true);
@@ -430,29 +420,7 @@ const StudenteDialogContent = ({uid, updater, closer, reloader}) =>{
             </Paper>
           </Grid>
           {/* password admin reset component */}
-          <Grid item md={6} xs={12}>
-            <Typography variant="h6" component="h1">
-              Password Reset
-            </Typography>
-            <Paper className={classes.paperContainer} >
-              <Form
-                onSubmit={onSubmitPass}
-                initialValues={{nuovaPass: ""}}
-                render={({ handleSubmit, reset, submitting, pristine, values }) => (
-                  <form onSubmit={async (event) =>{
-                    handleSubmit(event).then(reset);
-                  }}>
-                    <FormControl className={classes.formControl} >
-                      <Field fullWidth name="nuovaPass" component={TextField} type="text" label="Nuova Password"  required />
-                    </FormControl>
-                    <Button variant="contained" color="secondary" type="submit">
-                      Aggiorna Password
-                  </Button>
-                  </form>
-                )}
-              />
-            </Paper>
-          </Grid>
+          <PWResetForm id={uid} />
           {/**storico delle classi frequentate */}
           <Grid item md={12} xs={12}>
             <Typography variant="h6" className={classes.title}>
