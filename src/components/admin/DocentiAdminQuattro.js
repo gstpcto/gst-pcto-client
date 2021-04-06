@@ -27,7 +27,8 @@ import CloseIcon from "@material-ui/icons/Close";
 import ConfirmButton from "../confirmDeleteButton";
 import Container from '@material-ui/core/Container';
 import { OnChange } from 'react-final-form-listeners'
-
+import { Transition} from "./StudentiAdminQuattro";
+import PWResetForm from "./PWResetForm";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -81,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: theme.spacing(2),
     },
     marginBottom: {
-        marginBottom: theme.spacing(8),
+        marginBottom: theme.spacing(4),
     }
 }));
 
@@ -91,16 +92,40 @@ const Docenti = () => {
     const [reloader, setReloader] = useState(null);
     const [isLoading, setLoading] = useState(true)
     const [docenti, setDocenti] = useState([]);
+    const [docente, setDocente] = useState(null);
+    const [open, setOpen] = useState(false);
+    //dialog handlers
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+        setReloader(Math.random())
+    };
 
 
     useEffect(()=>{
+        console.log("CARICANDO LA GENKIDAMA");
         const fetchData = async () =>{
             return await axios.get(`${baseRoute}/docenti/all`, { params: { token: auth.token}})
         }
+
         fetchData().then(res=>{
             console.log(res.data);
             setDocenti([...res.data.data.map((d)=>{
-                const modifica = <></>
+                const modifica = <Button
+                    variant="contained"
+                    className={`${classes.modifyButton} ${classes.modifyButtonHover}`}
+                    onClick={() => {
+                        console.log(d.id);
+                        setDocente(d.id);
+                        handleClickOpen()
+                    }}
+                >
+                    MODIFICA
+                </Button>
                 return {...d, modifica}
             })])
         })
@@ -110,6 +135,14 @@ const Docenti = () => {
 
     return ( isLoading? <CircularProgress /> : 
         <>
+            <Dialog
+                fullScreen
+                open={open}
+                onClose={handleClose}
+                TransitionComponent={Transition}
+            >
+                <StudenteDialogContent did={docente} closer={handleClose} />
+            </Dialog>
             <Container maxWidth="md" component="main" className={classes.heroContent}>
                 <Typography component="h2" variant="h4" align="center" color="textPrimary" gutterBottom>
                     Docenti
@@ -154,5 +187,313 @@ const Docenti = () => {
     );
 
 }
+
+const StudenteDialogContent = ({ did, closer }) => {
+    const classes = useStyles();
+    const auth = useAuth();
+    const [docente, setDocente] = useState(null);
+    const [storico, setStorico] = useState([]);
+    const [isLoading, setLoading] = useState(true);
+    const [updater, setUpdater] = useState(null)
+    //frequentare
+
+
+    const [modificaStoricoModal, setModificaStoricoModal] = useState(false);
+    const handleOpenModificaStorico = () =>{
+        setModificaStoricoModal(true);
+    }
+    const handleCloseModificaStorico = () =>{
+        setModificaStoricoModal(false);
+    }
+    
+
+    useEffect(() => {
+        const fetchData = async () =>{
+            return await axios.get(`${baseRoute}/docenti/${did}`,  {params: {token: auth.token}});
+        }
+        const fetchStorico = async () =>{
+            return await axios.get(`${baseRoute}/docenti/storico/${did}`, {params: {token: auth.token}})
+        }
+
+        fetchData().then(res =>{
+            console.log(res.data.data);
+            setDocente(res.data.data)
+        }).then(async()=>{
+            fetchStorico().then(res =>{
+                console.log("STORICO PROFESSORE", res.data.data);
+                setStorico(res.data.data);
+            })
+        })
+        
+        .then(()=>{setLoading(false)})
+        setModificaStoricoModal(false);
+    }, [updater])
+
+    const onSubmit = async (data) => {
+        console.log('form submitted');
+        console.log(data);
+        axios.put(`${baseRoute}/docenti/updateAdmin`, { token: auth.token, idDocente: did, data })
+            .then(r => { console.log(r); })
+            .then(() => setUpdater(Math.random()))
+    };
+
+    
+
+    return isLoading ? <CircularProgress /> :
+        <Grid spacing={2}>
+            <AppBar className={classes.appBar}>
+                <Toolbar>
+                    <IconButton
+                        edge="start"
+                        color="inherit"
+                        onClick={closer}
+                        aria-label="close"
+                    >
+                        <CloseIcon />
+                    </IconButton>
+
+                    <Typography variant="h6" className={classes.title}>
+                        Info Docente
+                    </Typography>
+
+                    <Button autoFocus color="inherit" onClick={closer}>
+                        OK
+                </Button>
+                </Toolbar>
+            </AppBar>
+            <Grid container style={{ display: "flex" }}>
+                {/* modify data item */}
+                <Grid item md={6} xs={12}>
+                    <Typography variant="h6" component="h1" className={classes.marginLeft}>
+                        Informazioni utente
+                    </Typography>
+                    <Paper className={classes.paperContainer} >
+                        <Form
+                            onSubmit={onSubmit}
+                            initialValues={{ nome: docente.nome, cognome: docente.cognome, email: docente.email, codiceF: docente.codiceF, dataN: docente.dataN.split('T')[0] }}
+                            render={({ handleSubmit, reset, submitting, pristine, values }) => (
+                                <form onSubmit={handleSubmit} noValidate>
+                                    <FormControl className={classes.formControl} >
+                                        <Field fullWidth name="nome" component={TextField} type="text" label="Nome" />
+                                    </FormControl>
+                                    <FormControl className={classes.formControl} >
+                                        <Field fullWidth name="cognome" component={TextField} type="text" label="Cognome" />
+                                    </FormControl>
+                                    <FormControl className={classes.formControl} >
+                                        <Field fullWidth name="email" component={TextField} type="text" label="Email" />
+                                    </FormControl>
+                                    <FormControl className={classes.formControl} >
+                                        <Field fullWidth name="codiceF" component={TextField} type="text" label="Codice Fiscale" />
+                                    </FormControl>
+                                    <FormControl className={classes.formControl} >
+                                        <Field fullWidth name="dataN" component={TextField} type="date" label="Data di Nascita" />
+                                    </FormControl>
+
+                                    <Button variant="contained" color="primary" type="submit" disabled={submitting}>
+                                        Aggiorna Dati
+                                    </Button>
+                                </form>
+                            )}
+                        />
+                    </Paper>
+                </Grid>
+                <PWResetForm id={did} />
+                {/* tabella storico */}
+                <Grid item md={12} xs={12}>
+                    <Typography variant="h6" className={classes.title}>
+                        Storico dello Docente
+                    </Typography>
+                    <Button variant="contained" color="primary" onClick={handleOpenModificaStorico} className={`${classes.marginLeft} ${classes.marginBottom}`}>
+                        Aggiungi o Modifica
+                    </Button>
+                    <Modal //add classe modal
+                        open={modificaStoricoModal}
+                        onClose={handleCloseModificaStorico}
+                        aria-labelledby="nuova classe"
+                        aria-describedby="puoi aggiungere una nuova classe"
+                        className={classes.modal}
+                    >
+                        <ModificaStorico updater={setUpdater} did={did} />
+                    </Modal>
+                    {/* tabella con le relazioni */}
+                    <TableContainer component={Paper}>
+                        <Table size="small">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell scope="col" component="th">
+                                        ID
+                                    </TableCell>
+                                    <TableCell scope="col" component="th">
+                                        Anno Scolastico
+                                    </TableCell>
+                                    <TableCell scope="col" component="th">
+                                        ID Classe
+                                    </TableCell>
+                                    <TableCell scope="col" component="th">
+                                        Indirizzo
+                                    </TableCell>
+                                    <TableCell scope="col" component="th">
+                                        Descrizione
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {storico.map(({ relID, annoScolastico, idClasse, indirizzo, descrizione }) => (
+                                    <TableRow key={relID}>
+                                        <TableCell scope="row">{relID}</TableCell>
+                                        <TableCell scope="row">{annoScolastico}</TableCell>
+                                        <TableCell scope="row">{idClasse || "NO"}</TableCell>
+                                        <TableCell scope="row">{indirizzo || "NO"}</TableCell>
+                                        <TableCell scope="row">{(!(idClasse===indirizzo && indirizzo===null))? descrizione : descrizione.split(",")[0] }</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Grid>
+            </Grid>
+        </Grid>
+        ;
+}
+
+
+
+
+const ModificaStorico = ({updater , did}) =>{
+    console.log(did);
+    const auth = useAuth();
+    const classes = useStyles();
+    const [classi, setClassi] = useState([]);
+    const [indirizzi, setIndirizzi] = useState([]);
+    const [isLoading, setLoading] = useState(true);
+    const [options, setOptions] = useState(null);
+
+    const onSubmit = async ({ annoScolastico, idclasse, indirizzo, ruolo }) => {
+        console.log('form submitted');
+        console.log(annoScolastico, idclasse, indirizzo, ruolo);
+        
+        const req = {
+            as: annoScolastico,
+            idDocente: did,
+            idClasse: idclasse
+        }
+
+        if(ruolo===1) {
+            await axios.put(`${baseRoute}/docenti/toReferenteClasse`, {token: auth.token, data: req }).then(res =>{
+                console.log("OH MY GAH", res);
+            })
+        }
+        //todo: finish here
+
+        updater(Math.random());
+    };
+
+
+    const changeOptions = async (value) =>{
+        console.log(value);
+        switch(value){
+            case 1: {
+                setOptions(<FormControl key="salhd" className={classes.formControl}>
+                    <Field fullWidth name="idclasse" component={Select} label="Classe" formControlProps={{ fullWidth: true }} validate={required} >
+                        {classi}
+                    </Field>
+                </FormControl>)
+                break;
+            }
+            case 2: {
+                setOptions(<FormControl key="dfjsahfjlkda" className={classes.formControl}>
+                    <Field fullWidth name="indirizzo" component={Select} label="Indirizzo" formControlProps={{ fullWidth: true }} validate={required} >
+                        {indirizzi}
+                    </Field>
+                </FormControl>);
+                break;
+            }
+            default: {
+                setOptions(null);
+            }
+        }
+    }
+
+    const fetchData = async () => {
+        return await axios.get(`${baseRoute}/classi/all`)
+            .then((res) => {
+                setClassi([...res.data.data.map(item => (<MenuItem value={item.id}>{`${item.classe}${item.sezione} ${item.indirizzo}`}</MenuItem>))])
+            })
+    }
+    const fetchIndirizzi = async () =>{
+        return await axios.get(`${baseRoute}/classi/getIndirizzi`).then((res)=>{
+            console.log(res.data.data, "SADASJDASLHD");
+            setIndirizzi([...res.data.data.map(({indirizzo})=>(<MenuItem value={indirizzo}>{indirizzo}</MenuItem>))])
+        })
+    }
+
+    useEffect(() => {
+        fetchData()
+        .then(fetchIndirizzi)
+        .then(() => {
+            setLoading(false);
+        })
+    }, [did, updater]);
+
+
+    const required = value => (value ? undefined : 'Required')
+    return (isLoading ? <CircularProgress /> : <Box>
+        <Form
+            onSubmit={onSubmit}
+            render={({ handleSubmit, reset, submitting, pristine, values }) => (
+                <form onSubmit={handleSubmit} noValidate>
+                    <Paper className={classes.paperContainer}>
+                        <Typography variant="h6" component="h1">
+                            Aggiungi allo storico
+                        </Typography>
+                        <FormControl className={classes.formControl}>
+                            <Field fullWidth required name="annoScolastico" component={TextField} type="text" label="Anno Scolastico" validate={required} /> 
+                        </FormControl>
+
+                        <FormControl className={classes.formControl}>
+                            <Field fullWidth required name="ruolo" component={Select} type="text" label="Ruolo" validate={required} >
+                                <MenuItem value={1}>Docente, referente di Classe</MenuItem>
+                                <MenuItem value={2}>Docente, referente di Indirizzo</MenuItem>
+                                <MenuItem value={3}>Docente, referente di Alternanza</MenuItem>
+                            </Field>
+                        </FormControl>
+                        <OnChange name="ruolo">
+                            {(value, previous) => {
+                                changeOptions(value)
+                            }}
+                        </OnChange>
+                        
+                        {options}
+
+                        <Button variant="contained" color="primary" type="submit" >
+                            FATTO
+                        </Button>
+                    </Paper>
+                </form>
+            )}
+        />
+    </Box>);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export default Docenti;
