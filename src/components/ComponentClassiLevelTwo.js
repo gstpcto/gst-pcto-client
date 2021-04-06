@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { baseRoute, useAuth } from '../ProvideAuth';
+import clsx from 'clsx';
 import { Box, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { baseRoute, useAuth } from '../ProvideAuth';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardActionArea from '@material-ui/core/CardActionArea';
-import clsx from 'clsx';
+import Dialog from '@material-ui/core/Dialog';
+import Slide from '@material-ui/core/Slide';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import CloseIcon from '@material-ui/icons/Close';
+import IconButton from '@material-ui/core/IconButton';
+import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
     modal: {
@@ -61,9 +68,16 @@ const useStyles = makeStyles((theme) => ({
         hyphens: 'auto',
         width: '90%',
     },
+    appBar: {
+        position: 'relative',
+    },
 }));
 
-export default function ComponentClassiLevelTwo(props) {
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
+export default function ComponentClassiLevelTwo({classe, sezione, idClasse, indirizzo}) {
     const classes = useStyles();
     const auth = useAuth();
     const fixedSizeCardDetails = clsx(classes.card, classes.maxWidth);
@@ -74,7 +88,8 @@ export default function ComponentClassiLevelTwo(props) {
 
     const handleOpenClasse = () => {
         setOpenClasse(true);
-        // setCid(); imposta il cid
+        setCid(idClasse);
+        console.log(cid);
     };
     const handleCloseClasse = () => {
         setOpenClasse(false);
@@ -90,12 +105,12 @@ export default function ComponentClassiLevelTwo(props) {
                         <Card className={cardRoot}>
                             <div className={fixedSizeCardDetails}>
                                 <CardContent className={classes.textWrap}>
-                                    <Typography variant="h6">{}</Typography>
-                                    <Typography variant="subtitle1" color="textSecondary">
-                                        {}
+                                    <Typography variant="h6">
+                                        {classe}
+                                        {sezione}
                                     </Typography>
                                     <Typography variant="subtitle1" color="textSecondary">
-                                        {}
+                                        {`${idClasse} - ${indirizzo}`}
                                     </Typography>
                                 </CardContent>
                             </div>
@@ -106,6 +121,50 @@ export default function ComponentClassiLevelTwo(props) {
                     </CardActionArea>
                 </Box>
             </Grid>
+            <Dialog fullScreen open={openClasse} onClose={handleCloseClasse} TransitionComponent={Transition}>
+                <DialogProgettiClasse closer={handleCloseClasse} classe={classe} sezione={sezione} idClasse={idClasse} indirizzo={indirizzo} />
+            </Dialog>
         </>
     );
 }
+
+
+const DialogProgettiClasse = ({ classe, sezione, idClasse, indirizzo, closer }) => {
+    const classes = useStyles();
+    const auth = useAuth();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            return await axios.get(`${baseRoute}/progetti/classiAlunni`, { params: { token: auth.token } });
+        };
+
+        fetchData()
+            .then(function (response) {
+                console.log('progetti', response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        // eslint-disable-next-line
+    }, []);
+
+    return (
+        <>
+            <AppBar className={classes.appBar}>
+                <Toolbar>
+                    <IconButton edge="start" color="inherit" onClick={closer} aria-label="close">
+                        <CloseIcon />
+                    </IconButton>
+                    <Typography variant="h6" className={classes.title}>
+                        Progetti Classe {classe}
+                        {sezione} - {indirizzo}
+                    </Typography>
+                </Toolbar>
+            </AppBar>
+            <Grid item container xs={12} spacing={1}>
+                
+            </Grid>
+        </>
+    );
+};
+

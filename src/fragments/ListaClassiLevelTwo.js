@@ -5,7 +5,7 @@ import Classi from '../components/Classi';
 export default function ListaClassiLevelTwo() {
     return (
         <>
-            <Grid item xs={12}>
+            <Grid item container xs={12} spacing={1}>
                 <Classi />
             </Grid>
         </>

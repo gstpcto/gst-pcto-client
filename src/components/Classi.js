@@ -16,12 +16,12 @@ export default function ClassiWrapper() {
         setError(false);
         setLoading(true);
         const fetchData = async () => {
-            // return await axios.get(`${baseRoute}/progetti/classiAlunni`, { params: { token: auth.token } });
+            return await axios.get(`${baseRoute}/progetti/classiAlunni`, { params: { token: auth.token } });
         };
 
         fetchData()
             .then(function (response) {
-                // setData(response.data['progetti']);
+                setData(response.data['progetti']);
             })
             .catch(function (error) {
                 console.log(error);
@@ -37,10 +37,12 @@ export default function ClassiWrapper() {
         <CircularProgress />
     ) : (
         <>
-            {data.map((index) => {
-                // returna ogni classe di quell'indirizzo su cui lavora
-                return <ComponentClassiLevelTwo key={index} />;
-            })}
+            {data.map(({ classi }) =>
+                classi.map(({ classe, sezione, idClasse, indirizzo }, index) => {
+                    // returna ogni classe di quell'indirizzo su cui lavora
+                    return <ComponentClassiLevelTwo key={index} classe={classe} sezione={sezione} idClasse={idClasse} indirizzo={indirizzo} />;
+                })
+            )}
         </>
     );
 }
