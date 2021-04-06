@@ -82,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: theme.spacing(2),
     },
     marginBottom: {
-        marginBottom: theme.spacing(8),
+        marginBottom: theme.spacing(4),
     }
 }));
 
@@ -196,6 +196,15 @@ const StudenteDialogContent = ({ did, closer }) => {
     const [isLoading, setLoading] = useState(true);
     const [updater, setUpdater] = useState(null)
     //frequentare
+
+
+    const [modificaStoricoModal, setModificaStoricoModal] = useState(false);
+    const handleOpenModificaStorico = () =>{
+        setModificaStoricoModal(true);
+    }
+    const handleCloseModificaStorico = () =>{
+        setModificaStoricoModal(false);
+    }
     
 
     useEffect(() => {
@@ -217,7 +226,7 @@ const StudenteDialogContent = ({ did, closer }) => {
         })
         
         .then(()=>{setLoading(false)})
-        
+        setModificaStoricoModal(false);
     }, [updater])
 
     const onSubmit = async (data) => {
@@ -228,7 +237,7 @@ const StudenteDialogContent = ({ did, closer }) => {
             .then(() => setUpdater(Math.random()))
     };
 
-
+    
 
     return isLoading ? <CircularProgress /> :
         <Grid spacing={2}>
@@ -245,7 +254,7 @@ const StudenteDialogContent = ({ did, closer }) => {
 
                     <Typography variant="h6" className={classes.title}>
                         Info Docente
-              </Typography>
+                    </Typography>
 
                     <Button autoFocus color="inherit" onClick={closer}>
                         OK
@@ -255,7 +264,7 @@ const StudenteDialogContent = ({ did, closer }) => {
             <Grid container style={{ display: "flex" }}>
                 {/* modify data item */}
                 <Grid item md={6} xs={12}>
-                    <Typography variant="h6" component="h1">
+                    <Typography variant="h6" component="h1" className={classes.marginLeft}>
                         Informazioni utente
                     </Typography>
                     <Paper className={classes.paperContainer} >
@@ -294,10 +303,18 @@ const StudenteDialogContent = ({ did, closer }) => {
                     <Typography variant="h6" className={classes.title}>
                         Storico dello Docente
                     </Typography>
-                    <Button variant="contained" color="primary" onClick={()=>{}}>
-                        Aggiungi Anno
+                    <Button variant="contained" color="primary" onClick={handleOpenModificaStorico} className={`${classes.marginLeft} ${classes.marginBottom}`}>
+                        Aggiungi o Modifica
                     </Button>
-                    
+                    <Modal //add classe modal
+                        open={modificaStoricoModal}
+                        onClose={handleCloseModificaStorico}
+                        aria-labelledby="nuova classe"
+                        aria-describedby="puoi aggiungere una nuova classe"
+                        className={classes.modal}
+                    >
+                        <ModificaStorico updater={setUpdater} did={did} />
+                    </Modal>
                     {/* tabella con le relazioni */}
                     <TableContainer component={Paper}>
                         <Table size="small">
@@ -318,20 +335,16 @@ const StudenteDialogContent = ({ did, closer }) => {
                                     <TableCell scope="col" component="th">
                                         Descrizione
                                     </TableCell>
-                                    <TableCell scope="col" component="th">
-                                        Elimina
-                                    </TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {storico.map(({ relID, annoScolastico, idClasse, indirizzo, descrizione,  elimina }) => (
+                                {storico.map(({ relID, annoScolastico, idClasse, indirizzo, descrizione }) => (
                                     <TableRow key={relID}>
                                         <TableCell scope="row">{relID}</TableCell>
                                         <TableCell scope="row">{annoScolastico}</TableCell>
                                         <TableCell scope="row">{idClasse || "NO"}</TableCell>
                                         <TableCell scope="row">{indirizzo || "NO"}</TableCell>
-                                        <TableCell scope="row">{descrizione}</TableCell>
-                                        <TableCell scope="row">{elimina}</TableCell>
+                                        <TableCell scope="row">{(!(idClasse===indirizzo && indirizzo===null))? descrizione : descrizione.split(",")[0] }</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -346,9 +359,121 @@ const StudenteDialogContent = ({ did, closer }) => {
 
 
 
+const ModificaStorico = ({updater , did}) =>{
+    console.log(did);
+    const auth = useAuth();
+    const classes = useStyles();
+    const [classi, setClassi] = useState([]);
+    const [indirizzi, setIndirizzi] = useState([]);
+    const [isLoading, setLoading] = useState(true);
+    const [options, setOptions] = useState(null);
+
+    const onSubmit = async ({ annoScolastico, idclasse, indirizzo, ruolo }) => {
+        console.log('form submitted');
+        console.log(annoScolastico, idclasse, indirizzo, ruolo);
+        
+        const req = {
+            as: annoScolastico,
+            idDocente: did,
+            idClasse: idclasse
+        }
+
+        if(ruolo===1) {
+            await axios.put(`${baseRoute}/docenti/toReferenteClasse`, {token: auth.token, data: req }).then(res =>{
+                console.log("OH MY GAH", res);
+            })
+        }
+        //todo: finish here
+
+        updater(Math.random());
+    };
 
 
+    const changeOptions = async (value) =>{
+        console.log(value);
+        switch(value){
+            case 1: {
+                setOptions(<FormControl key="salhd" className={classes.formControl}>
+                    <Field fullWidth name="idclasse" component={Select} label="Classe" formControlProps={{ fullWidth: true }} validate={required} >
+                        {classi}
+                    </Field>
+                </FormControl>)
+                break;
+            }
+            case 2: {
+                setOptions(<FormControl key="dfjsahfjlkda" className={classes.formControl}>
+                    <Field fullWidth name="indirizzo" component={Select} label="Indirizzo" formControlProps={{ fullWidth: true }} validate={required} >
+                        {indirizzi}
+                    </Field>
+                </FormControl>);
+                break;
+            }
+            default: {
+                setOptions(null);
+            }
+        }
+    }
 
+    const fetchData = async () => {
+        return await axios.get(`${baseRoute}/classi/all`)
+            .then((res) => {
+                setClassi([...res.data.data.map(item => (<MenuItem value={item.id}>{`${item.classe}${item.sezione} ${item.indirizzo}`}</MenuItem>))])
+            })
+    }
+    const fetchIndirizzi = async () =>{
+        return await axios.get(`${baseRoute}/classi/getIndirizzi`).then((res)=>{
+            console.log(res.data.data, "SADASJDASLHD");
+            setIndirizzi([...res.data.data.map(({indirizzo})=>(<MenuItem value={indirizzo}>{indirizzo}</MenuItem>))])
+        })
+    }
+
+    useEffect(() => {
+        fetchData()
+        .then(fetchIndirizzi)
+        .then(() => {
+            setLoading(false);
+        })
+    }, [did, updater]);
+
+
+    const required = value => (value ? undefined : 'Required')
+    return (isLoading ? <CircularProgress /> : <Box>
+        <Form
+            onSubmit={onSubmit}
+            render={({ handleSubmit, reset, submitting, pristine, values }) => (
+                <form onSubmit={handleSubmit} noValidate>
+                    <Paper className={classes.paperContainer}>
+                        <Typography variant="h6" component="h1">
+                            Aggiungi allo storico
+                        </Typography>
+                        <FormControl className={classes.formControl}>
+                            <Field fullWidth required name="annoScolastico" component={TextField} type="text" label="Anno Scolastico" validate={required} /> 
+                        </FormControl>
+
+                        <FormControl className={classes.formControl}>
+                            <Field fullWidth required name="ruolo" component={Select} type="text" label="Ruolo" validate={required} >
+                                <MenuItem value={1}>Docente, referente di Classe</MenuItem>
+                                <MenuItem value={2}>Docente, referente di Indirizzo</MenuItem>
+                                <MenuItem value={3}>Docente, referente di Alternanza</MenuItem>
+                            </Field>
+                        </FormControl>
+                        <OnChange name="ruolo">
+                            {(value, previous) => {
+                                changeOptions(value)
+                            }}
+                        </OnChange>
+                        
+                        {options}
+
+                        <Button variant="contained" color="primary" type="submit" >
+                            FATTO
+                        </Button>
+                    </Paper>
+                </form>
+            )}
+        />
+    </Box>);
+}
 
 
 
