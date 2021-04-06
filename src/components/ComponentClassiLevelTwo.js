@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function ClassiLevelTwo(props) {
+export default function ComponentClassiLevelTwo(props) {
     const classes = useStyles();
     const auth = useAuth();
     const fixedSizeCardDetails = clsx(classes.card, classes.maxWidth);

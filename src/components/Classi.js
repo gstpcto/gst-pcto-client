@@ -3,7 +3,7 @@ import { baseRoute } from '../ProvideAuth';
 import { CircularProgress } from '@material-ui/core';
 import axios from 'axios';
 import { useAuth } from '../ProvideAuth';
-import ClassiLevelTwo from './ClassiLevelTwo';
+import ComponentClassiLevelTwo from './ComponentClassiLevelTwo';
 
 export default function ClassiWrapper() {
     const auth = useAuth();
@@ -39,7 +39,7 @@ export default function ClassiWrapper() {
         <>
             {data.map((index) => {
                 // returna ogni classe di quell'indirizzo su cui lavora
-                return <ClassiLevelTwo key={index} />;
+                return <ComponentClassiLevelTwo key={index} />;
             })}
         </>
     );

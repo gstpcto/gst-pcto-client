@@ -1,12 +1,12 @@
 import React from 'react';
 import { Grid } from '@material-ui/core';
-import ClassiLevelTwo from '../components/ClassiLevelTwo';
+import Classi from '../components/Classi';
 
-export default function TabellaLevelOne() {
+export default function ListaClassiLevelTwo() {
     return (
         <>
             <Grid item xs={12}>
-                <ClassiLevelTwo />
+                <Classi />
             </Grid>
         </>
     );

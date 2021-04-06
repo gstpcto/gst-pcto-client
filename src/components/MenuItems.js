@@ -15,13 +15,15 @@ import TableChartIcon from '@material-ui/icons/TableChart';
 import WidgetsIcon from '@material-ui/icons/Widgets';
 import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
+import GroupIcon from '@material-ui/icons/Group';
 
 // Fragments
 import DashboardLevelZero from '../fragments/DashboardLevelZero';
 import SettingsLevelZero from '../fragments/SettingsLevelZero';
 import DashboardLevelOne from '../fragments/DashboardLevelOne';
 import TabellaLevelOne from '../fragments/TabellaLevelOne';
-import TabellaLevelTwo from '../fragments/TabellaLevelTwo';
+import DashboardLevelTwo from '../fragments/DashboardLevelTwo';
+import ListaClassiLevelTwo from '../fragments/ListaClassiLevelTwo';
 import ProjectsLevelOne from '../fragments/ProjectsLevelOne';
 import DashboardLevelFour from '../fragments/DashboardLevelFour';
 import Classi from './admin/ClassiAdminQuattro'
@@ -131,7 +133,15 @@ export default function MenuItems({ level, setFragment }) {
             case 2:
                 return (
                     <>
-                        <ListItem button>
+                        <ListItem
+                            button
+                            onClick={() => {
+                                setFragment({
+                                    titolo: 'Dashboard',
+                                    component: <DashboardLevelTwo />,
+                                });
+                            }}
+                        >
                             <ListItemIcon>
                                 <DashboardIcon />
                             </ListItemIcon>
@@ -142,12 +152,12 @@ export default function MenuItems({ level, setFragment }) {
                             onClick={() => {
                                 setFragment({
                                     titolo: 'Classi',
-                                    component: <TabellaLevelTwo />,
+                                    component: <ListaClassiLevelTwo />,
                                 });
                             }}
                         >
                             <ListItemIcon>
-                                <TableChartIcon />
+                                <GroupIcon />
                             </ListItemIcon>
                             <ListItemText primary="Classi" />
                         </ListItem>
