@@ -15,6 +15,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
 import axios from 'axios';
+import ComponentProject from './ComponentProject';
 
 const useStyles = makeStyles((theme) => ({
     modal: {
@@ -68,18 +69,14 @@ const useStyles = makeStyles((theme) => ({
         hyphens: 'auto',
         width: '90%',
     },
-    appBar: {
-        position: 'relative',
-    },
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function ComponentClassiLevelTwo({classe, sezione, idClasse, indirizzo}) {
+export default function ComponentClassiLevelTwo({ classe, sezione, idClasse, indirizzo }) {
     const classes = useStyles();
-    const auth = useAuth();
     const fixedSizeCardDetails = clsx(classes.card, classes.maxWidth);
     const cardRoot = clsx(classes.card, classes.chevronAligner);
 
@@ -95,7 +92,6 @@ export default function ComponentClassiLevelTwo({classe, sezione, idClasse, indi
         setOpenClasse(false);
         setCid(null);
     };
-    
 
     return (
         <>
@@ -128,19 +124,22 @@ export default function ComponentClassiLevelTwo({classe, sezione, idClasse, indi
     );
 }
 
-
 const DialogProgettiClasse = ({ classe, sezione, idClasse, indirizzo, closer }) => {
     const classes = useStyles();
     const auth = useAuth();
 
+    const [progettiClasse, setProgettiClasse] = useState([]);
+
     useEffect(() => {
         const fetchData = async () => {
-            return await axios.get(`${baseRoute}/progetti/classiAlunni`, { params: { token: auth.token } });
+            return await axios.get(`${baseRoute}/progetti/progettiPerClasse/${idClasse}`, { params: { token: auth.token } });
         };
 
         fetchData()
             .then(function (response) {
-                console.log('progetti', response);
+                // console.log('questi sono i progetti della classe ', idClasse, ' PROGETTI ', response);
+                // console.log('progetti', response['data']['data']);
+                setProgettiClasse(response['data']['data']);
             })
             .catch(function (error) {
                 console.log(error);
@@ -161,10 +160,14 @@ const DialogProgettiClasse = ({ classe, sezione, idClasse, indirizzo, closer }) 
                     </Typography>
                 </Toolbar>
             </AppBar>
-            <Grid item container xs={12} spacing={1}>
-                
-            </Grid>
+            <Box className={classes.paperContainer}>
+                <Grid item container xs={12} spacing={1}>
+                    {progettiClasse &&
+                        progettiClasse.map(({ id, nome, descrizione, linkValutazioni, annoScolastico }, index) => {
+                            return <ComponentProject key={index} nome={nome} descrizione={descrizione} id={id} linkValutazioni={linkValutazioni} annoScolastico={annoScolastico} />;
+                        })}
+                </Grid>
+            </Box>
         </>
     );
 };
-
