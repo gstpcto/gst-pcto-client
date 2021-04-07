@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FormControl, MenuItem, Typography } from "@material-ui/core";
+import { FormControl, Menu, MenuItem, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { baseRoute, useAuth } from "../../ProvideAuth";
 import Grid from "@material-ui/core/Grid";
@@ -98,7 +98,16 @@ export default function Studenti() {
     console.log(filtro);
     setFilter(filtro)
   };
-    
+
+  //modal aggiungi studente
+    const [openNuovoStudente, setOpenNuovoStudente] = useState(false);
+
+    const handleOpenNuovoStudente = () =>{
+      setOpenNuovoStudente(true);
+    }     
+    const handleCloseNuovoStudente = () =>{
+      setOpenNuovoStudente(false);
+    }
     
     const handleClickOpen = () => {
         setOpen(true);
@@ -111,6 +120,7 @@ export default function Studenti() {
     
 
     useEffect(() => {
+      setOpenNuovoStudente(false);
       const fetchData = async () => {
         axios
           .get(`${baseRoute}/studenti/all`, { params: { token: auth.token } })
@@ -168,6 +178,18 @@ export default function Studenti() {
               </form>
             )}
           />
+          <Button variant="contained" color="primary" onClick={handleOpenNuovoStudente}>
+            Nuovo Studente
+          </Button>
+          <Modal //add classe modal
+            open={openNuovoStudente}
+            onClose={handleCloseNuovoStudente}
+            aria-labelledby="nuova studente"
+            aria-describedby="puoi aggiungere un nuovo studente"
+            className={classes.modal}
+          >
+            <NewStudente updater={setReloader} />
+          </Modal>
 
         <Dialog
           fullScreen
@@ -226,6 +248,80 @@ export default function Studenti() {
         </TableContainer>
       </>
     );
+}
+
+
+const NewStudente = ({updater}) =>{
+  const classes = useStyles();
+  const auth = useAuth();
+  const [classi, setClassi] = useState([]);
+  const [isLoading, setLoading] = useState(true);
+
+  const onSubmit = async ({mail, pass, name, surname, codiceF, date, annoScolastico: as, idclasse}) =>{
+    const req = {mail, pass, name, surname, codiceF, date, as, idclasse};
+    axios.post(`${baseRoute}/studenti/create`, {token: auth.token, data: req}).then((res)=>{
+      console.log(res);
+    })
+    .then(() => { updater(Math.random())})
+    
+  }
+  const required = value => (value ? undefined : 'Required')
+  useEffect(()=>{
+    const fetchData = async () =>{
+      return await axios.get(`${baseRoute}/classi/allconcat`);
+    }
+    fetchData().then((res)=>{
+      setClassi([...res.data.data.map(item => (<MenuItem value={item.id}>{item.classe} </MenuItem>))])
+    }).then(()=>{setLoading(false)})
+  }, [])
+
+  return (isLoading ? <CircularProgress /> : <Box>
+    <Form
+      onSubmit={onSubmit}
+      render={({ handleSubmit, reset, submitting, pristine, values }) => (
+        <form onSubmit={handleSubmit} noValidate>
+          <Paper className={classes.paperContainer}>
+            <Typography variant="h6" component="h1">
+              Aggiungi studente
+            </Typography>
+            <FormControl className={classes.formControl}>
+              <Field fullWidth name="mail" component={TextField} type="email" label="Email" validate={required} />
+            </FormControl>
+            <FormControl className={classes.formControl}>
+              <Field fullWidth name="pass" component={TextField} type="text" label="Password" validate={required} />
+            </FormControl>
+            <FormControl className={classes.formControl}>
+              <Field fullWidth name="name" component={TextField} type="text" label="Nome" validate={required} />
+            </FormControl>
+            <FormControl className={classes.formControl}>
+              <Field fullWidth name="surname" component={TextField} type="text" label="Cognome" validate={required} />
+            </FormControl>
+            <FormControl className={classes.formControl}>
+              <Field fullWidth name="codiceF" component={TextField} type="text" label="Codice Fiscale" validate={required} />
+            </FormControl>
+            <FormControl className={classes.formControl}>
+              <Field fullWidth name="date" component={TextField} type="date" label="Data di Nascita" validate={required} />
+            </FormControl>
+
+
+            <FormControl className={classes.formControl}>
+              <Field fullWidth name="annoScolastico" component={TextField} type="text" label="Anno Scolastico" validate={required} />
+            </FormControl>
+
+            <FormControl className={classes.formControl}>
+              <Field fullWidth name="idclasse" component={Select} label="Classe" formControlProps={{ fullWidth: true }} validate={required}>
+                {classi}
+              </Field>
+            </FormControl>
+
+            <Button variant="contained" color="primary" type="submit" >
+              FATTO
+            </Button>
+          </Paper>
+        </form>
+      )}
+    />
+  </Box>);
 }
 
 

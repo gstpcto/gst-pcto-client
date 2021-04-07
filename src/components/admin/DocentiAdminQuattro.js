@@ -372,18 +372,30 @@ const ModificaStorico = ({updater , did}) =>{
         console.log('form submitted');
         console.log(annoScolastico, idclasse, indirizzo, ruolo);
         
-        const req = {
-            as: annoScolastico,
-            idDocente: did,
-            idClasse: idclasse
-        }
+        
 
         if(ruolo===1) {
+            const req = {
+                as: annoScolastico,
+                idDocente: did,
+                idClasse: idclasse
+            }
             await axios.put(`${baseRoute}/docenti/toReferenteClasse`, {token: auth.token, data: req }).then(res =>{
                 console.log("OH MY GAH", res);
             })
         }
-        //todo: finish here
+        if(ruolo===2) {
+            const req = {
+                as: annoScolastico,
+                idDocente: did,
+                indirizzo,
+            }
+            await axios.put(`${baseRoute}/docenti/toReferenteIndirizzo`, {token: auth.token, data: req})
+            .then(res=>{ console.log("DOCENTE INDIRIZZO", res);})
+        }
+        if (ruolo===3){
+            await axios.put(`${baseRoute}/docenti/toReferenteAlternanza`, {token: auth.token, idDocente: did});
+        }
 
         updater(Math.random());
     };
@@ -406,6 +418,10 @@ const ModificaStorico = ({updater , did}) =>{
                         {indirizzi}
                     </Field>
                 </FormControl>);
+                break;
+            }
+            case 3:{
+                setOptions(<Typography color="secondary" >ATTENZIONE questa funzione è molto pericolosa</Typography>)
                 break;
             }
             default: {
