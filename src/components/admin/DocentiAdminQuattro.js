@@ -29,6 +29,7 @@ import Container from '@material-ui/core/Container';
 import { OnChange } from 'react-final-form-listeners'
 import { Transition} from "./StudentiAdminQuattro";
 import PWResetForm from "./PWResetForm";
+import { theme } from "src/theme";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -94,8 +95,9 @@ const Docenti = () => {
     const [docenti, setDocenti] = useState([]);
     const [docente, setDocente] = useState(null);
     const [open, setOpen] = useState(false);
-    //dialog handlers
+    const [openModal, setOpenModal] = useState(false);
 
+    //dialog handlers
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -104,9 +106,17 @@ const Docenti = () => {
         setOpen(false);
         setReloader(Math.random())
     };
+    //modal handlers
+    const handleOpenModal = () =>{
+        setOpenModal(true);
+    }
+    const handleCloseModal = () =>{
+        setOpenModal(false);
+    }
 
 
     useEffect(()=>{
+        handleCloseModal();
         console.log("CARICANDO LA GENKIDAMA");
         const fetchData = async () =>{
             return await axios.get(`${baseRoute}/docenti/all`, { params: { token: auth.token}})
@@ -143,11 +153,30 @@ const Docenti = () => {
             >
                 <StudenteDialogContent did={docente} closer={handleClose} />
             </Dialog>
+
+            <Modal //add classe modal
+                open={openModal}
+                onClose={handleCloseModal}
+                aria-labelledby="nuovo docente"
+                aria-describedby="puoi aggiungere un nuovo docente"
+                className={classes.modal}
+            >
+                <AggiungiDocente updater={setReloader} />
+            </Modal>
+
+
             <Container maxWidth="md" component="main" className={classes.heroContent}>
                 <Typography component="h2" variant="h4" align="center" color="textPrimary" gutterBottom>
                     Docenti
                 </Typography>
-                
+                <Box align="center">
+                    <Button variant="contained" color="primary" style={{marginRight:theme.spacing(2)}} onClick={handleOpenModal}>
+                        Aggiungi un Docente
+                    </Button>
+                    <Button variant="contained" color="primary" >
+                        Importa Docenti
+                    </Button>
+                </Box>
             </Container>
             <TableContainer component={Paper}>
                 <Table size="small">
@@ -357,8 +386,6 @@ const StudenteDialogContent = ({ did, closer }) => {
 }
 
 
-
-
 const ModificaStorico = ({updater , did}) =>{
     console.log(did);
     const auth = useAuth();
@@ -491,6 +518,63 @@ const ModificaStorico = ({updater , did}) =>{
     </Box>);
 }
 
+
+const AggiungiDocente = ({updater}) =>{
+    const classes = useStyles();
+    const auth = useAuth();
+
+    const onSubmit = async ({ mail, pass, name, surname, codiceF, date, annoScolastico: as, idclasse }) => {
+        const req = { mail, pass, name, surname, codiceF, date, as, idclasse };
+        axios
+            .post(`${baseRoute}/docenti/create`, { token: auth.token, data: req })
+            .then((res) => {
+                console.log(res);
+            })
+            .then(() => {
+                updater(Math.random());
+            });
+    };
+    const required = (value) => (value ? undefined : 'Required');
+    
+
+    return (
+        <Box>
+            <Form
+                onSubmit={onSubmit}
+                render={({ handleSubmit, reset, submitting, pristine, values }) => (
+                    <form onSubmit={handleSubmit} noValidate>
+                        <Paper className={classes.paperContainer}>
+                            <Typography variant="h6" component="h1">
+                                Aggiungi studente
+                            </Typography>
+                            <FormControl className={classes.formControl}>
+                                <Field fullWidth name="mail" component={TextField} type="email" label="Email" validate={required} />
+                            </FormControl>
+                            <FormControl className={classes.formControl}>
+                                <Field fullWidth name="pass" component={TextField} type="text" label="Password" validate={required} />
+                            </FormControl>
+                            <FormControl className={classes.formControl}>
+                                <Field fullWidth name="name" component={TextField} type="text" label="Nome" validate={required} />
+                            </FormControl>
+                            <FormControl className={classes.formControl}>
+                                <Field fullWidth name="surname" component={TextField} type="text" label="Cognome" validate={required} />
+                            </FormControl>
+                            <FormControl className={classes.formControl}>
+                                <Field fullWidth name="codiceF" component={TextField} type="text" label="Codice Fiscale" validate={required} />
+                            </FormControl>
+                            <FormControl className={classes.formControl}>
+                                <Field fullWidth name="date" component={TextField} type="date" label="Data di Nascita" validate={required} />
+                            </FormControl>
+                            <Button variant="contained" color="primary" type="submit">
+                                FATTO
+                            </Button>
+                        </Paper>
+                    </form>
+                )}
+            />
+        </Box>
+    );
+}
 
 
 
