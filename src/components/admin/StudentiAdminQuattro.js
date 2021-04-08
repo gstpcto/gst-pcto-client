@@ -118,9 +118,24 @@ export default function Studenti() {
         setOpenCaricaCSV(false);
     };
 
-    const handleSubmitCaricaCSV = (files) => {
+    const handleSubmitCaricaCSV = async (files) => {
         console.log('OLLARE I FILESSSSSSSSSSSSSSSSS');
-        console.log(files);
+        console.log(files[0]);
+        const formData = new FormData();
+        formData.append("token", auth.token);
+        formData.append("studenti", files[0]);
+
+        await axios.post(`${baseRoute}/studenti/createMoreStudents`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }).then(res=>{
+          console.log(res);
+          setReloader(Math.random())
+        }).catch(res=>{
+          console.log(res);
+        })
+
         handleCloseCaricaCSV();
     };
 
