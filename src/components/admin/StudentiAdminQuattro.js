@@ -27,8 +27,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import ConfirmButton from '../confirmDeleteButton';
 import { OnChange } from 'react-final-form-listeners';
 import PWResetForm from './PWResetForm';
-import { DropzoneDialog } from 'material-ui-dropzone';
-import DescriptionIcon from '@material-ui/icons/Description';
+import CSVDropzone from '../CSVDropzone';
 
 const useStyles = makeStyles((theme) => ({
     modifyButton: {
@@ -59,16 +58,6 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'center',
         alignItems: 'center',
         padding: theme.spacing(2),
-    },
-    uploader: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    uploaderContainerPreview: {
-        margin: 0,
-        width: 'auto',
-        marginTop: theme.spacing(1),
     },
     appBar: {
         position: 'relative',
@@ -109,6 +98,7 @@ export default function Studenti() {
         setFilter(filtro);
     };
 
+
     const [openCaricaCSV, setOpenCaricaCSV] = useState(false);
 
     const handleOpenCaricaCSV = () => {
@@ -116,46 +106,6 @@ export default function Studenti() {
     };
     const handleCloseCaricaCSV = () => {
         setOpenCaricaCSV(false);
-    };
-
-    const handleSubmitCaricaCSV = async (files) => {
-        console.log('OLLARE I FILESSSSSSSSSSSSSSSSS');
-        console.log(files[0]);
-        const formData = new FormData();
-        formData.append("token", auth.token);
-        formData.append("studenti", files[0]);
-
-        await axios.post(`${baseRoute}/studenti/createMoreStudents`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }).then(res=>{
-          console.log(res);
-          setReloader(Math.random())
-        }).catch(res=>{
-          console.log(res);
-        })
-
-        handleCloseCaricaCSV();
-    };
-
-    const handleCaricaCSVPreviewIcon = (fileObject) => {
-        const { type } = fileObject.file;
-        switch (type) {
-            default:
-                return <DescriptionIcon />;
-        }
-    };
-
-    const handleCaricaCSVFilesLimitExceed = (filesLimit) => {
-        return `Non puoi caricare altri file [MAX: ${filesLimit}]`;
-    };
-
-    const handleCaricaCSVFileUploadSuccess = (fileName) => {
-        return `Hai caricato ${fileName} con successo!`;
-    };
-    const handleCaricaCSVFileRemoved = (fileName) => {
-        return `${fileName} è stato rimosso.`;
     };
 
     //modal aggiungi studente
@@ -259,29 +209,7 @@ export default function Studenti() {
                 </Grid>
             </Box>
 
-            <DropzoneDialog
-                open={openCaricaCSV}
-                onSave={handleSubmitCaricaCSV}
-                acceptedFiles={['.csv']}
-                clearOnUnmount={true}
-                filesLimit={1}
-                dropzoneClass={classes.uploader}
-                showPreviews={true}
-                maxFileSize={50000000}
-                onClose={handleCloseCaricaCSV}
-                getPreviewIcon={handleCaricaCSVPreviewIcon}
-                dropzoneText={'Carica un file .csv'}
-                getFileLimitExceedMessage={handleCaricaCSVFilesLimitExceed}
-                getFileAddedMessage={handleCaricaCSVFileUploadSuccess}
-                getFileRemovedMessage={handleCaricaCSVFileRemoved}
-                cancelButtonText={'Annulla'}
-                submitButtonText={'Carica'}
-                dialogTitle={'Carica file:'}
-                previewText={'File caricati:'}
-                previewGridClasses={{
-                    container: classes.uploaderContainerPreview,
-                }}
-            />
+            <CSVDropzone isopen={openCaricaCSV} opener={handleOpenCaricaCSV} closer={handleCloseCaricaCSV} reloader={setReloader}/>
 
             <Modal //add classe modal
                 open={openNuovoStudente}
