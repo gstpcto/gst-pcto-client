@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function CSVDropzone({isopen, opener, closer, reloader}) {
+export default function CSVDropzone({isopen, opener, closer, reloader, route}) {
     const classes = useStyles();
     const auth = useAuth();
     const handleSubmitCaricaCSV = async (files) => {
@@ -26,10 +26,10 @@ export default function CSVDropzone({isopen, opener, closer, reloader}) {
         console.log(files[0]);
         const formData = new FormData();
         formData.append('token', auth.token);
-        formData.append('studenti', files[0]);
+        formData.append('data', files[0]);
 
         await axios
-            .post(`${baseRoute}/studenti/createMoreStudents`, formData, {
+            .post(route, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

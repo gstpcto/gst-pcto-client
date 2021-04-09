@@ -209,7 +209,7 @@ export default function Studenti() {
                 </Grid>
             </Box>
 
-            <CSVDropzone isopen={openCaricaCSV} opener={handleOpenCaricaCSV} closer={handleCloseCaricaCSV} reloader={setReloader}/>
+                <CSVDropzone isopen={openCaricaCSV} opener={handleOpenCaricaCSV} closer={handleCloseCaricaCSV} reloader={setReloader} route={`${baseRoute}/studenti/createMoreStudents`}/>
 
             <Modal //add classe modal
                 open={openNuovoStudente}
