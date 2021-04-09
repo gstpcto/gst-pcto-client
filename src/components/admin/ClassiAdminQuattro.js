@@ -296,9 +296,12 @@ export const ModifyClassForm = ({ cid, updater }) => {
         });
     };
 
-    useEffect(async () => {
-        await axios
-            .get(`${baseRoute}/classi/${cid}`)
+    useEffect(() => {
+        const fetchData = async () =>{
+            return await axios
+                .get(`${baseRoute}/classi/${cid}`)
+        }
+        fetchData()
             .then((res) => {
                 console.log(res);
                 setClasse(res.data.data);

@@ -127,6 +127,7 @@ const Docenti = () => {
 
     useEffect(()=>{
         handleCloseModal();
+        setOpenCaricaCSV(false);
         console.log("CARICANDO LA GENKIDAMA");
         const fetchData = async () =>{
             return await axios.get(`${baseRoute}/docenti/all`, { params: { token: auth.token}})
@@ -145,7 +146,11 @@ const Docenti = () => {
                     }}
                 >
                     MODIFICA
+                </Button>;
+                const elimina = <Button>
+                    
                 </Button>
+
                 return {...d, modifica}
             })])
         })
