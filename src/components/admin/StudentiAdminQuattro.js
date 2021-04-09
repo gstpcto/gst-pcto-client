@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FormControl, Menu, MenuItem, Typography } from '@material-ui/core';
+import { FormControl, MenuItem, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { baseRoute, useAuth } from 'ProvideAuth';
 import Grid from '@material-ui/core/Grid';
@@ -174,6 +174,7 @@ export default function Studenti() {
                 });
         };
         fetchData();
+        // eslint-disable-next-line
     }, [reloader, filter]);
 
     return isLoading ? (
@@ -836,6 +837,7 @@ const ModificaVoto = ({ updater, vid }) => {
         fetchData().then(() => {
             setLoading(false);
         });
+        // eslint-disable-next-line
     }, [vid, updater]);
 
     return isLoading ? (
@@ -956,6 +958,7 @@ const AggiungiVoto = ({ updater, uid }) => {
         fetchData().then(() => {
             setLoading(false);
         });
+        // eslint-disable-next-line
     }, [updater]);
 
     return isLoading ? (

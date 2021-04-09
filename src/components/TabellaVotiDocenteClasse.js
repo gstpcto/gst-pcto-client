@@ -200,6 +200,7 @@ const EditValutation = ({ vid, updater }) => {
             .catch((err) => {
                 console.error(err);
             });
+        // eslint-disable-next-line
     }, []);
 
     const onSubmit = async (data) => {

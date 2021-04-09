@@ -12,7 +12,6 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
-import Slide from "@material-ui/core/Slide";
 import TableRow from "@material-ui/core/TableRow";
 import Button from "@material-ui/core/Button";
 import Modal from "@material-ui/core/Modal";
@@ -24,7 +23,6 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
-import ConfirmButton from "components/confirmDeleteButton";
 import Container from '@material-ui/core/Container';
 import { OnChange } from 'react-final-form-listeners'
 import { Transition} from "components/admin/StudentiAdminQuattro";
@@ -125,33 +123,41 @@ const Docenti = () => {
         setReloader(Math.random())
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         handleCloseModal();
-        console.log("CARICANDO LA GENKIDAMA");
-        const fetchData = async () =>{
-            return await axios.get(`${baseRoute}/docenti/all`, { params: { token: auth.token}})
-        }
+        console.log('CARICANDO LA GENKIDAMA');
+        const fetchData = async () => {
+            return await axios.get(`${baseRoute}/docenti/all`, { params: { token: auth.token } });
+        };
 
-        fetchData().then(res=>{
-            console.log(res.data);
-            setDocenti([...res.data.data.map((d)=>{
-                const modifica = <Button
-                    variant="contained"
-                    className={`${classes.modifyButton} ${classes.modifyButtonHover}`}
-                    onClick={() => {
-                        console.log(d.id);
-                        setDocente(d.id);
-                        handleClickOpen()
-                    }}
-                >
-                    MODIFICA
-                </Button>
-                return {...d, modifica}
-            })])
-        })
-        .then(()=>{setLoading(false)})
+        fetchData()
+            .then((res) => {
+                console.log(res.data);
+                setDocenti([
+                    ...res.data.data.map((d) => {
+                        const modifica = (
+                            <Button
+                                variant="contained"
+                                className={`${classes.modifyButton} ${classes.modifyButtonHover}`}
+                                onClick={() => {
+                                    console.log(d.id);
+                                    setDocente(d.id);
+                                    handleClickOpen();
+                                }}
+                            >
+                                MODIFICA
+                            </Button>
+                        );
+                        return { ...d, modifica };
+                    }),
+                ]);
+            })
+            .then(() => {
+                setLoading(false);
+            });
 
-    }, [auth, reloader])
+        // eslint-disable-next-line
+    }, [auth, reloader]);
 
     return ( isLoading? <CircularProgress /> : 
         <>
@@ -247,26 +253,31 @@ const StudenteDialogContent = ({ did, closer }) => {
     
 
     useEffect(() => {
-        const fetchData = async () =>{
-            return await axios.get(`${baseRoute}/docenti/${did}`,  {params: {token: auth.token}});
-        }
-        const fetchStorico = async () =>{
-            return await axios.get(`${baseRoute}/docenti/storico/${did}`, {params: {token: auth.token}})
-        }
+        const fetchData = async () => {
+            return await axios.get(`${baseRoute}/docenti/${did}`, { params: { token: auth.token } });
+        };
+        const fetchStorico = async () => {
+            return await axios.get(`${baseRoute}/docenti/storico/${did}`, { params: { token: auth.token } });
+        };
 
-        fetchData().then(res =>{
-            console.log(res.data.data);
-            setDocente(res.data.data)
-        }).then(async()=>{
-            fetchStorico().then(res =>{
-                console.log("STORICO PROFESSORE", res.data.data);
-                setStorico(res.data.data);
+        fetchData()
+            .then((res) => {
+                console.log(res.data.data);
+                setDocente(res.data.data);
             })
-        })
-        
-        .then(()=>{setLoading(false)})
+            .then(async () => {
+                fetchStorico().then((res) => {
+                    console.log('STORICO PROFESSORE', res.data.data);
+                    setStorico(res.data.data);
+                });
+            })
+
+            .then(() => {
+                setLoading(false);
+            });
         setModificaStoricoModal(false);
-    }, [updater])
+        // eslint-disable-next-line
+    }, [updater]);
 
     const onSubmit = async (data) => {
         console.log('form submitted');

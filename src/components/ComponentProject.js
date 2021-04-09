@@ -178,9 +178,9 @@ const ProjectTableDialog = ({ pid, closer }) => {
         setOpenEditValutation(false);
         fetchData()
             .then((res) => {
-                console.log("OMG", res.data.progetti);
-                if(res.data.progetti==[]) return;
-                else{
+                console.log('OMG', res.data.progetti);
+                if (res.data.progetti === []) return;
+                else {
                     setDatiProgetto(res.data['progetti'].infoProgetto);
                     setAlunniProgetto(res.data['progetti']['alunni']);
                 }
@@ -188,6 +188,7 @@ const ProjectTableDialog = ({ pid, closer }) => {
             .catch((err) => {
                 console.error(err);
             });
+        // eslint-disable-next-line
     }, [reloader]);
 
 
@@ -304,6 +305,7 @@ const EditValutation = ({ vid, updater }) => {
             .catch((err) => {
                 console.error(err);
             });
+        // eslint-disable-next-line
     }, []);
 
     const onSubmit = async (data) => {
