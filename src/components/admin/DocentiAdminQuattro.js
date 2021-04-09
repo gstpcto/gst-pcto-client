@@ -29,6 +29,7 @@ import { Transition} from "components/admin/StudentiAdminQuattro";
 import PWResetForm from "components/admin/PWResetForm";
 import { theme } from "theme";
 import CSVDropzone from 'components/CSVDropzone';
+import ConfirmButton from "components/confirmDeleteButton";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -123,6 +124,14 @@ const Docenti = () => {
         setReloader(Math.random())
     };
 
+
+    const cancellaDocente = async (id) => {
+        await axios.delete(`${baseRoute}/docenti/delete/${id}`, { data: { token: auth.token } }).then((r) => {
+            console.log(r);
+        });
+        setReloader(Math.random());
+    };
+
     useEffect(() => {
         handleCloseModal();
         setOpenCaricaCSV(false);
@@ -133,7 +142,7 @@ const Docenti = () => {
 
         fetchData().then(res=>{
             console.log(res.data);
-            setDocenti([...res.data.data.map((d)=>{
+            setDocenti([...res?.data?.data?.map((d)=>{
                 const modifica = <Button
                     variant="contained"
                     className={`${classes.modifyButton} ${classes.modifyButtonHover}`}
@@ -145,11 +154,9 @@ const Docenti = () => {
                 >
                     MODIFICA
                 </Button>;
-                const elimina = <Button>
-                    
-                </Button>
+                const elimina = <ConfirmButton onClick={()=>{cancellaDocente(d.id)}} />
 
-                return {...d, modifica}
+                return {...d, modifica, elimina}
             })])
         })
         .then(()=>{setLoading(false)})
@@ -211,16 +218,20 @@ const Docenti = () => {
                             <TableCell scope="col" component="th">
                                 Modifica
                             </TableCell>
+                            <TableCell scope="col" component="th">
+                                Elimina
+                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {docenti.map(({ id, nome,cognome,  email, modifica}) => (
+                        {docenti.map(({ id, nome,cognome,  email, modifica, elimina}) => (
                             <TableRow key={id}>
                                 <TableCell scope="row">{id}</TableCell>
                                 <TableCell scope="row">{nome}</TableCell>
                                 <TableCell scope="row">{cognome}</TableCell>
                                 <TableCell scope="row">{email}</TableCell>
                                 <TableCell scope="row">{modifica}</TableCell>
+                                <TableCell scope="row">{elimina}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
