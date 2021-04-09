@@ -1,8 +1,8 @@
 import React from 'react';
-import Voti from '../components/Voti';
+import Voti from 'components/Voti';
 import { Grid, Box, Typography } from '@material-ui/core';
-import ComponentProjectsTable from '../components/ComponentProjectsTable';
-import { useAuth } from '../ProvideAuth';
+import ComponentProjectsTable from 'components/ComponentProjectsTable';
+import { useAuth } from 'ProvideAuth';
 
 export default function DashboardLevelZero() {
     const auth = useAuth();

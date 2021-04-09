@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { baseRoute } from '../ProvideAuth';
+import { baseRoute } from 'ProvideAuth';
 import { CircularProgress } from '@material-ui/core';
 import axios from 'axios';
-import { useAuth } from '../ProvideAuth';
-import ComponentClassiLevelTwo from './ComponentClassiLevelTwo';
+import { useAuth } from 'ProvideAuth';
+import ComponentClassiLevelTwo from 'components/ComponentClassiLevelTwo';
 
 export default function ClassiWrapper() {
     const auth = useAuth();

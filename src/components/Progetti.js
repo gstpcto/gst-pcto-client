@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { baseRoute } from '../ProvideAuth';
+import { baseRoute } from 'ProvideAuth';
 import { CircularProgress } from '@material-ui/core';
 import axios from 'axios';
-import { useAuth } from '../ProvideAuth';
-import ComponentProject from './ComponentProject';
+import { useAuth } from 'ProvideAuth';
+import ComponentProject from 'components/ComponentProject';
 
 export default function ProgettiWrapper() {
     const auth = useAuth();

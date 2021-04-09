@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Box, Typography } from '@material-ui/core';
-import { useAuth } from '../ProvideAuth';
-import ClasseDocenteClasse from '../components/ClasseDocenteClasse';
+import { useAuth } from 'ProvideAuth';
+import ClasseDocenteClasse from 'components/ClasseDocenteClasse';
 
 export default function DashboardLevelOne() {
     const auth = useAuth();

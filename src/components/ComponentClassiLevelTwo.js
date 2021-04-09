@@ -15,7 +15,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
 import axios from 'axios';
-import ComponentProject from './ComponentProject';
+import ComponentProject from 'components/ComponentProject';
 
 const useStyles = makeStyles((theme) => ({
     modal: {

@@ -9,11 +9,11 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import Box from '@material-ui/core/Box';
-import { baseRoute } from '../ProvideAuth';
+import { baseRoute } from 'ProvideAuth';
 import { CircularProgress, Typography, FormControl, MenuItem } from '@material-ui/core';
 import { Select } from 'final-form-material-ui';
 import axios from 'axios';
-import { useAuth } from '../ProvideAuth';
+import { useAuth } from 'ProvideAuth';
 import { makeStyles } from '@material-ui/core/styles';
 import { Form, Field } from 'react-final-form';
 import { TextField } from 'final-form-material-ui';
@@ -200,6 +200,7 @@ const EditValutation = ({ vid, updater }) => {
             .catch((err) => {
                 console.error(err);
             });
+        // eslint-disable-next-line
     }, []);
 
     const onSubmit = async (data) => {

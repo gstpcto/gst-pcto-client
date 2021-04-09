@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Box, Typography } from '@material-ui/core';
-import { useAuth } from '../ProvideAuth';
+import { useAuth } from 'ProvideAuth';
 
 export default function DashboardLevelZero() {
     const auth = useAuth();

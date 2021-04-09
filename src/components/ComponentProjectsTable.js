@@ -7,10 +7,10 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import { baseRoute } from '../ProvideAuth';
+import { baseRoute } from 'ProvideAuth';
 import { CircularProgress } from '@material-ui/core';
 import axios from 'axios';
-import { useAuth } from '../ProvideAuth';
+import { useAuth } from 'ProvideAuth';
 
 export default function ComponentProjectsTable() {
     const auth = useAuth();

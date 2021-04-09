@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FormControl, MenuItem, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { baseRoute, useAuth } from "../../ProvideAuth";
+import { baseRoute, useAuth } from "ProvideAuth";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import { CircularProgress } from "@material-ui/core";
@@ -12,22 +12,18 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
-import Slide from "@material-ui/core/Slide";
 import TableRow from "@material-ui/core/TableRow";
 import Button from "@material-ui/core/Button";
 import Modal from "@material-ui/core/Modal";
 import { Form, Field } from "react-final-form";
 import { Select, TextField } from "final-form-material-ui";
 import { green } from "@material-ui/core/colors";
-import Dialog from "@material-ui/core/Dialog";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import ConfirmButton from "../confirmDeleteButton";
-import { OnChange } from 'react-final-form-listeners'
 import Container from '@material-ui/core/Container';
-import { flexbox } from '@material-ui/system';
 
 const useStyles = makeStyles((theme) => ({
     modifyButton: {
@@ -114,25 +110,36 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
 
     useEffect(() => {
         setOpenAggiungiClasse(false);
-        const fetchData = async () =>{
-            return await axios
-                .get(`${baseRoute}/progetti/${pid}`, { params: { token: auth.token } })
-        }
-        fetchData().then((res)=>{
-            console.log("ER PROGETTO", res.data.data);
-            setProgetto(res.data.data.info);
-            setClassiProgetto([...res.data.data.classi.map(({ id, classe, sezione, indirizzo, idRelazione }) =>{
-                return {
-                    id, classe, sezione, indirizzo,
-                    cancella : <ConfirmButton onClick={()=>{
-                        remove(idRelazione)
-                    }} />
-                }
-            })]);
-            setDocenti([...res.data.data.docenti])
-
-        })
-        .then(()=>{setLoading(false)})
+        const fetchData = async () => {
+            return await axios.get(`${baseRoute}/progetti/${pid}`, { params: { token: auth.token } });
+        };
+        fetchData()
+            .then((res) => {
+                console.log('ER PROGETTO', res.data.data);
+                setProgetto(res.data.data.info);
+                setClassiProgetto([
+                    ...res.data.data.classi.map(({ id, classe, sezione, indirizzo, idRelazione }) => {
+                        return {
+                            id,
+                            classe,
+                            sezione,
+                            indirizzo,
+                            cancella: (
+                                <ConfirmButton
+                                    onClick={() => {
+                                        remove(idRelazione);
+                                    }}
+                                />
+                            ),
+                        };
+                    }),
+                ]);
+                setDocenti([...res.data.data.docenti]);
+            })
+            .then(() => {
+                setLoading(false);
+            });
+        // eslint-disable-next-line
     }, [reloader]);
 
     const onSubmit = async({nome,descrizione,durata,ente,linkValutazioni,annoScolastico,startDate,endDate}) => {
@@ -375,16 +382,21 @@ const AggiungiClasse = ({ updater, pid, ceStanno }) => {
     }
 
     useEffect(() => {
-        const test = ceStanno.map(c => c.id);
+        const test = ceStanno.map((c) => c.id);
         fetchData().then((res) => {
-            console.log("LE CLASSI",res );
-            setClassi([...res.data.data.filter((item)=>{
-                return !test.includes(item.id)
-            }).map(c=>{
-                return <MenuItem value={c.id}>{c.classe}</MenuItem>
-            })])
+            console.log('LE CLASSI', res);
+            setClassi([
+                ...res.data.data
+                    .filter((item) => {
+                        return !test.includes(item.id);
+                    })
+                    .map((c) => {
+                        return <MenuItem value={c.id}>{c.classe}</MenuItem>;
+                    }),
+            ]);
             setLoading(false);
-        })
+        });
+        // eslint-disable-next-line
     }, [updater]);
 
 

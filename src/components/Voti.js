@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { baseRoute } from '../ProvideAuth';
+import { baseRoute } from 'ProvideAuth';
 import axios from 'axios';
 import { Box, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { CircularProgress } from '@material-ui/core';
-import ComponentVoti from './ComponentVoti';
-import { useAuth } from '../ProvideAuth';
+import ComponentVoti from 'components/ComponentVoti';
+import { useAuth } from 'ProvideAuth';
 
 const useStyles = makeStyles((theme) => ({
     paper: {

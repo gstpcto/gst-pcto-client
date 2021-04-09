@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid } from '@material-ui/core';
-import TabellaVotiDocenteClasse from '../components/TabellaVotiDocenteClasse';
+import TabellaVotiDocenteClasse from 'components/TabellaVotiDocenteClasse';
 
 export default function TabellaLevelOne() {
     return (

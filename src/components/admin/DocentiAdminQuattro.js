@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FormControl, MenuItem, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { baseRoute, useAuth } from "../../ProvideAuth";
+import { baseRoute, useAuth } from "ProvideAuth";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import { CircularProgress } from "@material-ui/core";
@@ -12,7 +12,6 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
-import Slide from "@material-ui/core/Slide";
 import TableRow from "@material-ui/core/TableRow";
 import Button from "@material-ui/core/Button";
 import Modal from "@material-ui/core/Modal";
@@ -24,13 +23,12 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
-import ConfirmButton from "../confirmDeleteButton";
 import Container from '@material-ui/core/Container';
 import { OnChange } from 'react-final-form-listeners'
-import { Transition} from "./StudentiAdminQuattro";
-import PWResetForm from "./PWResetForm";
-import { theme } from "src/theme";
-import CSVDropzone from '../CSVDropzone';
+import { Transition} from "components/admin/StudentiAdminQuattro";
+import PWResetForm from "components/admin/PWResetForm";
+import { theme } from "theme";
+import CSVDropzone from 'components/CSVDropzone';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -125,7 +123,7 @@ const Docenti = () => {
         setReloader(Math.random())
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         handleCloseModal();
         setOpenCaricaCSV(false);
         console.log("CARICANDO LA GENKIDAMA");
@@ -156,7 +154,8 @@ const Docenti = () => {
         })
         .then(()=>{setLoading(false)})
 
-    }, [auth, reloader])
+        // eslint-disable-next-line
+    }, [auth, reloader]);
 
     return ( isLoading? <CircularProgress /> : 
         <>
@@ -252,26 +251,31 @@ const StudenteDialogContent = ({ did, closer }) => {
     
 
     useEffect(() => {
-        const fetchData = async () =>{
-            return await axios.get(`${baseRoute}/docenti/${did}`,  {params: {token: auth.token}});
-        }
-        const fetchStorico = async () =>{
-            return await axios.get(`${baseRoute}/docenti/storico/${did}`, {params: {token: auth.token}})
-        }
+        const fetchData = async () => {
+            return await axios.get(`${baseRoute}/docenti/${did}`, { params: { token: auth.token } });
+        };
+        const fetchStorico = async () => {
+            return await axios.get(`${baseRoute}/docenti/storico/${did}`, { params: { token: auth.token } });
+        };
 
-        fetchData().then(res =>{
-            console.log(res.data.data);
-            setDocente(res.data.data)
-        }).then(async()=>{
-            fetchStorico().then(res =>{
-                console.log("STORICO PROFESSORE", res.data.data);
-                setStorico(res.data.data);
+        fetchData()
+            .then((res) => {
+                console.log(res.data.data);
+                setDocente(res.data.data);
             })
-        })
-        
-        .then(()=>{setLoading(false)})
+            .then(async () => {
+                fetchStorico().then((res) => {
+                    console.log('STORICO PROFESSORE', res.data.data);
+                    setStorico(res.data.data);
+                });
+            })
+
+            .then(() => {
+                setLoading(false);
+            });
         setModificaStoricoModal(false);
-    }, [updater])
+        // eslint-disable-next-line
+    }, [updater]);
 
     const onSubmit = async (data) => {
         console.log('form submitted');

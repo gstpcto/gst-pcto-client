@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FormControl, InputLabel, Select, MenuItem, Button, Paper, Box, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { baseRoute, getCurrentYear, useAuth } from '../ProvideAuth';
+import { baseRoute, getCurrentYear, useAuth } from 'ProvideAuth';
 import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
