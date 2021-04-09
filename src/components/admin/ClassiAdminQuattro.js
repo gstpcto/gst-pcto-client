@@ -17,6 +17,8 @@ import Modal from '@material-ui/core/Modal';
 import { Form, Field } from 'react-final-form';
 import { Select, TextField } from 'final-form-material-ui';
 import { green } from '@material-ui/core/colors';
+import Container from '@material-ui/core/Container';
+import { theme } from 'theme';
 
 const useStyles = makeStyles((theme) => ({
     modifyButton: {
@@ -47,6 +49,9 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'center',
         alignItems: 'center',
         padding: theme.spacing(2),
+    },
+    heroContent: {
+        padding: theme.spacing(4, 0, 6),
     },
 }));
 
@@ -163,71 +168,76 @@ function TableBella() {
     return isLoading ? (
         <CircularProgress />
     ) : (
-            <>
-                <Button variant="contained" color="primary" onClick={handleOpen}>
-                    Nuova Classe
-            </Button>
-                <Modal //add classe modal
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="nuova classe"
-                    aria-describedby="puoi aggiungere una nuova classe"
-                    className={classes.modal}
-                >
-                    <AddClassForm updater={setReloader} />
-                </Modal>
+        <>
+            <Container maxWidth="md" component="main" className={classes.heroContent}>
+                <Typography component="h2" variant="h4" align="center" color="textPrimary" gutterBottom>
+                    Classi
+                </Typography>
+                <Box display="flex" justifyContent="center" flexDirection={{ xs: 'column', sm: 'row' }}>
+                    <Button variant="contained" color="primary" style={{ margin: theme.spacing(1) }} onClick={handleOpen}>
+                        Nuova Classe
+                    </Button>
+                </Box>
+            </Container>
+            <Modal //add classe modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="nuova classe"
+                aria-describedby="puoi aggiungere una nuova classe"
+                className={classes.modal}
+            >
+                <AddClassForm updater={setReloader} />
+            </Modal>
 
-                <Modal open={openM} onClose={handleCloseM} aria-labelledby="nuova classe" aria-describedby="puoi aggiungere una nuova classe" className={classes.modal}>
-                    <ModifyClassForm cid={cid} updater={setReloader} />
-                </Modal>
+            <Modal open={openM} onClose={handleCloseM} aria-labelledby="nuova classe" aria-describedby="puoi aggiungere una nuova classe" className={classes.modal}>
+                <ModifyClassForm cid={cid} updater={setReloader} />
+            </Modal>
 
-                <Modal open={openModalConfirm} onClose={handleCloseConfirm} aria-labelledby="cancella classe" aria-describedby="conferma cancella classe" className={classes.modal}>
+            <Modal open={openModalConfirm} onClose={handleCloseConfirm} aria-labelledby="cancella classe" aria-describedby="conferma cancella classe" className={classes.modal}>
+                <ConfirmDeleteForm cid={cid} updater={setReloader} />
+            </Modal>
 
-                    <ConfirmDeleteForm cid={cid} updater={setReloader} />
-                </Modal>
-
-
-                {isError}
-                <TableContainer component={Paper}>
-                    <Table size="small">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell scope="col" component="th">
-                                    ID
+            {isError}
+            <TableContainer component={Paper}>
+                <Table size="small">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell scope="col" component="th">
+                                ID
                             </TableCell>
-                                <TableCell scope="col" component="th">
-                                    classe
+                            <TableCell scope="col" component="th">
+                                classe
                             </TableCell>
-                                <TableCell scope="col" component="th">
-                                    Sezione
+                            <TableCell scope="col" component="th">
+                                Sezione
                             </TableCell>
-                                <TableCell scope="col" component="th">
-                                    Indirizzo
+                            <TableCell scope="col" component="th">
+                                Indirizzo
                             </TableCell>
-                                <TableCell scope="col" component="th">
-                                    Modifica Classe
+                            <TableCell scope="col" component="th">
+                                Modifica Classe
                             </TableCell>
-                                <TableCell scope="col" component="th">
-                                    Cancella Classe
+                            <TableCell scope="col" component="th">
+                                Cancella Classe
                             </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {data.map(({ id, classe, sezione, indirizzo, modifica, cancella }) => (
+                            <TableRow key={id}>
+                                <TableCell scope="row">{id}</TableCell>
+                                <TableCell scope="row">{classe}</TableCell>
+                                <TableCell scope="row">{sezione}</TableCell>
+                                <TableCell scope="row">{indirizzo}</TableCell>
+                                <TableCell scope="row">{modifica}</TableCell>
+                                <TableCell scope="row">{cancella}</TableCell>
                             </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {data.map(({ id, classe, sezione, indirizzo, modifica, cancella }) => (
-                                <TableRow key={id}>
-                                    <TableCell scope="row">{id}</TableCell>
-                                    <TableCell scope="row">{classe}</TableCell>
-                                    <TableCell scope="row">{sezione}</TableCell>
-                                    <TableCell scope="row">{indirizzo}</TableCell>
-                                    <TableCell scope="row">{modifica}</TableCell>
-                                    <TableCell scope="row">{cancella}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </>
-        );
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </>
+    );
 }
 
 export const AddClassForm = ({ updater }) => {

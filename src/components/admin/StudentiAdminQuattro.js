@@ -23,11 +23,13 @@ import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
+import Container from '@material-ui/core/Container';
 import CloseIcon from '@material-ui/icons/Close';
 import ConfirmButton from 'components/confirmDeleteButton';
 import { OnChange } from 'react-final-form-listeners';
 import PWResetForm from 'components/admin/PWResetForm';
 import CSVDropzone from 'components/CSVDropzone';
+import { theme } from 'theme';
 
 const useStyles = makeStyles((theme) => ({
     modifyButton: {
@@ -48,6 +50,9 @@ const useStyles = makeStyles((theme) => ({
     paperContainer: {
         padding: theme.spacing(2),
     },
+    heroContent: {
+        padding: theme.spacing(4, 0, 6),
+    },
     boxContainer: {
         width: '100%',
     },
@@ -65,9 +70,6 @@ const useStyles = makeStyles((theme) => ({
     title: {
         marginLeft: theme.spacing(2),
         flex: 1,
-    },
-    form: {
-        display: 'inline-flex',
     },
 }));
 
@@ -181,36 +183,7 @@ export default function Studenti() {
         <CircularProgress />
     ) : (
         <>
-            <Box>
-                <Form
-                    md={12}
-                    xs={12}
-                    onSubmit={onSubmit}
-                    render={({ handleSubmit, reset, submitting, pristine, values }) => (
-                        <form onSubmit={handleSubmit} noValidate className={classes.form} onChange={handleSubmit}>
-                            <FormControl className={classes.formControl} xs={9}>
-                                <Field fullWidth name="filtro" component={TextField} type="text" label="Filtra studenti" />
-                            </FormControl>
-                        </form>
-                    )}
-                />
-            </Box>
-            <Box mx={2} my={2}>
-                <Grid container spacing={1}>
-                    <Grid item>
-                        <Button variant="contained" color="primary" onClick={handleOpenNuovoStudente}>
-                            Nuovo Studente
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button variant="contained" color="primary" onClick={handleOpenCaricaCSV}>
-                            Importa Studenti
-                        </Button>
-                    </Grid>
-                </Grid>
-            </Box>
-
-                <CSVDropzone isopen={openCaricaCSV} opener={handleOpenCaricaCSV} closer={handleCloseCaricaCSV} reloader={setReloader} route={`${baseRoute}/studenti/createMore`}/>
+            <CSVDropzone isopen={openCaricaCSV} opener={handleOpenCaricaCSV} closer={handleCloseCaricaCSV} reloader={setReloader} route={`${baseRoute}/studenti/createMore`} />
 
             <Modal //add classe modal
                 open={openNuovoStudente}
@@ -226,6 +199,34 @@ export default function Studenti() {
                 <StudenteDialogContent uid={uid} updater={setReloader} closer={handleClose} reloader={reloader} />
             </Dialog>
 
+            <Container maxWidth="md" component="main" className={classes.heroContent}>
+                <Typography component="h2" variant="h4" align="center" color="textPrimary" gutterBottom>
+                    Studenti
+                </Typography>
+
+                <Box display="flex" justifyContent="center" flexDirection={{ xs: 'column', sm: 'row' }}>
+                    <Button variant="contained" color="primary" style={{ margin: theme.spacing(1) }} onClick={handleOpenNuovoStudente}>
+                        Nuovo Studente
+                    </Button>
+
+                    <Button variant="contained" color="primary" style={{ margin: theme.spacing(1) }} onClick={handleOpenCaricaCSV}>
+                        Importa Studenti
+                    </Button>
+                </Box>
+
+                <Form
+                    md={12}
+                    xs={12}
+                    onSubmit={onSubmit}
+                    render={({ handleSubmit, reset, submitting, pristine, values }) => (
+                        <form onSubmit={handleSubmit} noValidate className={classes.form} onChange={handleSubmit}>
+                            <FormControl className={classes.formControl} xs={9}>
+                                <Field fullWidth name="filtro" component={TextField} type="text" label="Filtra studenti" />
+                            </FormControl>
+                        </form>
+                    )}
+                />
+            </Container>
             <TableContainer component={Paper}>
                 <Table size="small">
                     <TableHead>
