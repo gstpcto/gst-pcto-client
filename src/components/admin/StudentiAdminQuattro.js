@@ -203,13 +203,13 @@ export default function Studenti() {
                     </Grid>
                     <Grid item>
                         <Button variant="contained" color="primary" onClick={handleOpenCaricaCSV}>
-                            Carica CSV
+                            Importa Studenti
                         </Button>
                     </Grid>
                 </Grid>
             </Box>
 
-                <CSVDropzone isopen={openCaricaCSV} opener={handleOpenCaricaCSV} closer={handleCloseCaricaCSV} reloader={setReloader} route={`${baseRoute}/studenti/createMoreStudents`}/>
+                <CSVDropzone isopen={openCaricaCSV} opener={handleOpenCaricaCSV} closer={handleCloseCaricaCSV} reloader={setReloader} route={`${baseRoute}/studenti/createMore`}/>
 
             <Modal //add classe modal
                 open={openNuovoStudente}

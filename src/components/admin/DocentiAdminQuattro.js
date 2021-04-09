@@ -30,6 +30,7 @@ import { OnChange } from 'react-final-form-listeners'
 import { Transition} from "components/admin/StudentiAdminQuattro";
 import PWResetForm from "components/admin/PWResetForm";
 import { theme } from "theme";
+import CSVDropzone from 'components/CSVDropzone';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -113,7 +114,16 @@ const Docenti = () => {
     const handleCloseModal = () =>{
         setOpenModal(false);
     }
+    //csv upload modal
+    const [openCaricaCSV, setOpenCaricaCSV] = useState(false);
 
+    const handleOpenCaricaCSV = () => {
+        setOpenCaricaCSV(true);
+    };
+    const handleCloseCaricaCSV = () => {
+        setOpenCaricaCSV(false);
+        setReloader(Math.random())
+    };
 
     useEffect(()=>{
         handleCloseModal();
@@ -164,7 +174,7 @@ const Docenti = () => {
                 <AggiungiDocente updater={setReloader} />
             </Modal>
 
-
+            <CSVDropzone isopen={openCaricaCSV} opener={handleOpenCaricaCSV} closer={handleCloseCaricaCSV} reloader={setReloader} route={`${baseRoute}/docenti/createMore`} />
             <Container maxWidth="md" component="main" className={classes.heroContent}>
                 <Typography component="h2" variant="h4" align="center" color="textPrimary" gutterBottom>
                     Docenti
@@ -173,7 +183,7 @@ const Docenti = () => {
                     <Button variant="contained" color="primary" style={{marginRight:theme.spacing(2)}} onClick={handleOpenModal}>
                         Aggiungi un Docente
                     </Button>
-                    <Button variant="contained" color="primary" >
+                    <Button variant="contained" color="primary" onClick={handleOpenCaricaCSV}>
                         Importa Docenti
                     </Button>
                 </Box>
