@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
-import Copyright from './Copyright';
+import Copyright from 'components/Copyright';
 import { FaNodeJs, FaReact } from 'react-icons/fa';
 import { GrMysql } from "react-icons/gr";
 

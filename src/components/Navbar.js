@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import { useHistory } from 'react-router-dom';
-import { useAuth } from '../ProvideAuth';
+import { useAuth } from 'ProvideAuth';
 
 const useStyles = makeStyles((theme) => ({
     root: {

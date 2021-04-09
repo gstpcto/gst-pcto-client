@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Grid } from '@material-ui/core';
-import { baseRoute, useAuth } from '../ProvideAuth';
+import { baseRoute, useAuth } from 'ProvideAuth';
 import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -27,7 +27,7 @@ import TableRow from '@material-ui/core/TableRow';
 import { Form, Field } from 'react-final-form';
 import { FormControl, MenuItem, CircularProgress } from '@material-ui/core';
 import { Select, TextField } from 'final-form-material-ui';
-import DialogProgettoLivelloQuattro from "./admin/DialogProgettoLivelloQuattro"
+import DialogProgettoLivelloQuattro from "components/admin/DialogProgettoLivelloQuattro"
 
 const useStyles = makeStyles((theme) => ({
     modal: {

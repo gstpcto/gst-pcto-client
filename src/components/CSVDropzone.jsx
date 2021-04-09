@@ -3,7 +3,7 @@ import { DropzoneDialog } from 'material-ui-dropzone';
 import DescriptionIcon from '@material-ui/icons/Description';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
-import { baseRoute, useAuth } from '../ProvideAuth';
+import { baseRoute, useAuth } from 'ProvideAuth';
 
 const useStyles = makeStyles((theme) => ({
     uploader: {

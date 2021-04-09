@@ -1,12 +1,12 @@
 import React, {useEffect} from 'react';
 import { HashRouter as Router, Switch, Route } from 'react-router-dom';
-import Homepage from './pages/Homepage';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import NoLogin from './pages/NoLogin';
-import { PrivateRoute } from './PrivateRoute';
-import NotFound from './pages/NotFound';
-import { useAuth } from './ProvideAuth';
+import Homepage from 'pages/Homepage';
+import Login from 'pages/Login';
+import Dashboard from 'pages/Dashboard';
+import NoLogin from 'pages/NoLogin';
+import { PrivateRoute } from 'PrivateRoute';
+import NotFound from 'pages/NotFound';
+import { useAuth } from 'ProvideAuth';
 
 function App() {
   const auth = useAuth();

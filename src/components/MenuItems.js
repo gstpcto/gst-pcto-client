@@ -18,17 +18,17 @@ import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import GroupIcon from '@material-ui/icons/Group';
 
 // Fragments
-import DashboardLevelZero from '../fragments/DashboardLevelZero';
-import SettingsLevelZero from '../fragments/SettingsLevelZero';
-import DashboardLevelOne from '../fragments/DashboardLevelOne';
-import TabellaLevelOne from '../fragments/TabellaLevelOne';
-import DashboardLevelTwo from '../fragments/DashboardLevelTwo';
-import ListaClassiLevelTwo from '../fragments/ListaClassiLevelTwo';
-import ProjectsLevelOne from '../fragments/ProjectsLevelOne';
-import DashboardLevelFour from '../fragments/DashboardLevelFour';
-import Classi from './admin/ClassiAdminQuattro'
-import Studenti from './admin/StudentiAdminQuattro'
-import Docenti from './admin/DocentiAdminQuattro'
+import DashboardLevelZero from 'fragments/DashboardLevelZero';
+import SettingsLevelZero from 'fragments/SettingsLevelZero';
+import DashboardLevelOne from 'fragments/DashboardLevelOne';
+import TabellaLevelOne from 'fragments/TabellaLevelOne';
+import DashboardLevelTwo from 'fragments/DashboardLevelTwo';
+import ListaClassiLevelTwo from 'fragments/ListaClassiLevelTwo';
+import ProjectsLevelOne from 'fragments/ProjectsLevelOne';
+import DashboardLevelFour from 'fragments/DashboardLevelFour';
+import Classi from 'components/admin/ClassiAdminQuattro'
+import Studenti from 'components/admin/StudentiAdminQuattro'
+import Docenti from 'components/admin/DocentiAdminQuattro'
 
 
 export default function MenuItems({ level, setFragment }) {

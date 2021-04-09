@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid } from '@material-ui/core';
-import Classi from '../components/Classi';
+import Classi from 'components/Classi';
 
 export default function ListaClassiLevelTwo() {
     return (

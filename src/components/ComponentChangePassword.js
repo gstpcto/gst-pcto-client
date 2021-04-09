@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import axios from 'axios';
-import { baseRoute, useAuth } from '../ProvideAuth';
+import { baseRoute, useAuth } from 'ProvideAuth';
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
