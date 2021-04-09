@@ -1,77 +1,76 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { FormControl, MenuItem, Typography } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import { baseRoute, useAuth } from "ProvideAuth";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
-import { CircularProgress } from "@material-ui/core";
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Button from "@material-ui/core/Button";
-import Modal from "@material-ui/core/Modal";
-import { Form, Field } from "react-final-form";
-import { Select, TextField } from "final-form-material-ui";
-import { green } from "@material-ui/core/colors";
-import Dialog from "@material-ui/core/Dialog";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { FormControl, MenuItem, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { baseRoute, useAuth } from 'ProvideAuth';
+import Grid from '@material-ui/core/Grid';
+import Box from '@material-ui/core/Box';
+import { CircularProgress } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Button from '@material-ui/core/Button';
+import Modal from '@material-ui/core/Modal';
+import { Form, Field } from 'react-final-form';
+import { Select, TextField } from 'final-form-material-ui';
+import { green } from '@material-ui/core/colors';
+import Dialog from '@material-ui/core/Dialog';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import Container from '@material-ui/core/Container';
-import { OnChange } from 'react-final-form-listeners'
-import { Transition} from "components/admin/StudentiAdminQuattro";
-import PWResetForm from "components/admin/PWResetForm";
-import { theme } from "theme";
+import { OnChange } from 'react-final-form-listeners';
+import { Transition } from 'components/admin/StudentiAdminQuattro';
+import PWResetForm from 'components/admin/PWResetForm';
+import { theme } from 'theme';
 import CSVDropzone from 'components/CSVDropzone';
-import ConfirmButton from "components/confirmDeleteButton";
-
+import ConfirmButton from 'components/confirmDeleteButton';
 
 const useStyles = makeStyles((theme) => ({
     modifyButton: {
         backgroundColor: green[500],
-        color: "white",
+        color: 'white',
     },
     modifyButtonHover: {
-        "&:hover": {
+        '&:hover': {
             backgroundColor: green[800],
-            color: "white",
+            color: 'white',
         },
     },
     formControl: {
         marginTop: theme.spacing(1),
         marginBottom: theme.spacing(1),
-        width: "100%",
+        width: '100%',
     },
     paperContainer: {
         padding: theme.spacing(2),
-        margin: theme.spacing(2)
+        margin: theme.spacing(2),
     },
     boxContainer: {
-        width: "100%",
+        width: '100%',
     },
     modal: {
-        width: "100vw",
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         padding: theme.spacing(2),
     },
     appBar: {
-        position: "relative",
+        position: 'relative',
     },
     title: {
         marginLeft: theme.spacing(2),
         flex: 1,
     },
     form: {
-        display: "inline-flex",
+        display: 'inline-flex',
     },
     heroContent: {
         padding: theme.spacing(4, 0, 6),
@@ -84,14 +83,14 @@ const useStyles = makeStyles((theme) => ({
     },
     marginBottom: {
         marginBottom: theme.spacing(4),
-    }
+    },
 }));
 
 const Docenti = () => {
     const classes = useStyles();
     const auth = useAuth();
     const [reloader, setReloader] = useState(null);
-    const [isLoading, setLoading] = useState(true)
+    const [isLoading, setLoading] = useState(true);
     const [docenti, setDocenti] = useState([]);
     const [docente, setDocente] = useState(null);
     const [open, setOpen] = useState(false);
@@ -104,15 +103,15 @@ const Docenti = () => {
 
     const handleClose = () => {
         setOpen(false);
-        setReloader(Math.random())
+        setReloader(Math.random());
     };
     //modal handlers
-    const handleOpenModal = () =>{
+    const handleOpenModal = () => {
         setOpenModal(true);
-    }
-    const handleCloseModal = () =>{
+    };
+    const handleCloseModal = () => {
         setOpenModal(false);
-    }
+    };
     //csv upload modal
     const [openCaricaCSV, setOpenCaricaCSV] = useState(false);
 
@@ -121,9 +120,8 @@ const Docenti = () => {
     };
     const handleCloseCaricaCSV = () => {
         setOpenCaricaCSV(false);
-        setReloader(Math.random())
+        setReloader(Math.random());
     };
-
 
     const cancellaDocente = async (id) => {
         await axios.delete(`${baseRoute}/docenti/delete/${id}`, { data: { token: auth.token } }).then((r) => {
@@ -135,43 +133,53 @@ const Docenti = () => {
     useEffect(() => {
         handleCloseModal();
         setOpenCaricaCSV(false);
-        console.log("CARICANDO LA GENKIDAMA");
-        const fetchData = async () =>{
-            return await axios.get(`${baseRoute}/docenti/all`, { params: { token: auth.token}})
-        }
+        console.log('CARICANDO LA GENKIDAMA');
+        const fetchData = async () => {
+            return await axios.get(`${baseRoute}/docenti/all`, { params: { token: auth.token } });
+        };
 
-        fetchData().then(res=>{
-            console.log(res.data);
-            setDocenti([...res?.data?.data?.map((d)=>{
-                const modifica = <Button
-                    variant="contained"
-                    className={`${classes.modifyButton} ${classes.modifyButtonHover}`}
-                    onClick={() => {
-                        console.log(d.id);
-                        setDocente(d.id);
-                        handleClickOpen()
-                    }}
-                >
-                    MODIFICA
-                </Button>;
-                const elimina = <ConfirmButton onClick={()=>{cancellaDocente(d.id)}} />
+        fetchData()
+            .then((res) => {
+                console.log(res.data);
+                setDocenti([
+                    ...res?.data?.data?.map((d) => {
+                        const modifica = (
+                            <Button
+                                variant="contained"
+                                className={`${classes.modifyButton} ${classes.modifyButtonHover}`}
+                                onClick={() => {
+                                    console.log(d.id);
+                                    setDocente(d.id);
+                                    handleClickOpen();
+                                }}
+                            >
+                                MODIFICA
+                            </Button>
+                        );
+                        const elimina = (
+                            <ConfirmButton
+                                onClick={() => {
+                                    cancellaDocente(d.id);
+                                }}
+                            />
+                        );
 
-                return {...d, modifica, elimina}
-            })])
-        })
-        .then(()=>{setLoading(false)})
+                        return { ...d, modifica, elimina };
+                    }),
+                ]);
+            })
+            .then(() => {
+                setLoading(false);
+            });
 
         // eslint-disable-next-line
     }, [auth, reloader]);
 
-    return ( isLoading? <CircularProgress /> : 
+    return isLoading ? (
+        <CircularProgress />
+    ) : (
         <>
-            <Dialog
-                fullScreen
-                open={open}
-                onClose={handleClose}
-                TransitionComponent={Transition}
-            >
+            <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
                 <StudenteDialogContent did={docente} closer={handleClose} />
             </Dialog>
 
@@ -190,11 +198,11 @@ const Docenti = () => {
                 <Typography component="h2" variant="h4" align="center" color="textPrimary" gutterBottom>
                     Docenti
                 </Typography>
-                <Box align="center">
-                    <Button variant="contained" color="primary" style={{marginRight:theme.spacing(2)}} onClick={handleOpenModal}>
+                <Box display="flex" justifyContent="center" flexDirection={{ xs: 'column', sm: 'row' }}>
+                    <Button variant="contained" color="primary" style={{ margin: theme.spacing(1) }} onClick={handleOpenModal} width={{ xs: 'fullwidth', sm: 'auto' }}>
                         Aggiungi un Docente
                     </Button>
-                    <Button variant="contained" color="primary" onClick={handleOpenCaricaCSV}>
+                    <Button variant="contained" color="primary" style={{ margin: theme.spacing(1) }} onClick={handleOpenCaricaCSV} width={{ xs: 'fullwidth', sm: 'auto' }}>
                         Importa Docenti
                     </Button>
                 </Box>
@@ -224,7 +232,7 @@ const Docenti = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {docenti.map(({ id, nome,cognome,  email, modifica, elimina}) => (
+                        {docenti.map(({ id, nome, cognome, email, modifica, elimina }) => (
                             <TableRow key={id}>
                                 <TableCell scope="row">{id}</TableCell>
                                 <TableCell scope="row">{nome}</TableCell>
@@ -239,8 +247,7 @@ const Docenti = () => {
             </TableContainer>
         </>
     );
-
-}
+};
 
 const StudenteDialogContent = ({ did, closer }) => {
     const classes = useStyles();
@@ -248,18 +255,16 @@ const StudenteDialogContent = ({ did, closer }) => {
     const [docente, setDocente] = useState(null);
     const [storico, setStorico] = useState([]);
     const [isLoading, setLoading] = useState(true);
-    const [updater, setUpdater] = useState(null)
+    const [updater, setUpdater] = useState(null);
     //frequentare
 
-
     const [modificaStoricoModal, setModificaStoricoModal] = useState(false);
-    const handleOpenModificaStorico = () =>{
+    const handleOpenModificaStorico = () => {
         setModificaStoricoModal(true);
-    }
-    const handleCloseModificaStorico = () =>{
+    };
+    const handleCloseModificaStorico = () => {
         setModificaStoricoModal(false);
-    }
-    
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -291,23 +296,21 @@ const StudenteDialogContent = ({ did, closer }) => {
     const onSubmit = async (data) => {
         console.log('form submitted');
         console.log(data);
-        axios.put(`${baseRoute}/docenti/updateAdmin`, { token: auth.token, idDocente: did, data })
-            .then(r => { console.log(r); })
-            .then(() => setUpdater(Math.random()))
+        axios
+            .put(`${baseRoute}/docenti/updateAdmin`, { token: auth.token, idDocente: did, data })
+            .then((r) => {
+                console.log(r);
+            })
+            .then(() => setUpdater(Math.random()));
     };
 
-    
-
-    return isLoading ? <CircularProgress /> :
+    return isLoading ? (
+        <CircularProgress />
+    ) : (
         <Grid spacing={2}>
             <AppBar className={classes.appBar}>
                 <Toolbar>
-                    <IconButton
-                        edge="start"
-                        color="inherit"
-                        onClick={closer}
-                        aria-label="close"
-                    >
+                    <IconButton edge="start" color="inherit" onClick={closer} aria-label="close">
                         <CloseIcon />
                     </IconButton>
 
@@ -317,34 +320,34 @@ const StudenteDialogContent = ({ did, closer }) => {
 
                     <Button autoFocus color="inherit" onClick={closer}>
                         OK
-                </Button>
+                    </Button>
                 </Toolbar>
             </AppBar>
-            <Grid container style={{ display: "flex" }}>
+            <Grid container style={{ display: 'flex' }}>
                 {/* modify data item */}
                 <Grid item md={6} xs={12}>
                     <Typography variant="h6" component="h1" className={classes.marginLeft}>
                         Informazioni utente
                     </Typography>
-                    <Paper className={classes.paperContainer} >
+                    <Paper className={classes.paperContainer}>
                         <Form
                             onSubmit={onSubmit}
                             initialValues={{ nome: docente.nome, cognome: docente.cognome, email: docente.email, codiceF: docente.codiceF, dataN: docente.dataN.split('T')[0] }}
                             render={({ handleSubmit, reset, submitting, pristine, values }) => (
                                 <form onSubmit={handleSubmit} noValidate>
-                                    <FormControl className={classes.formControl} >
+                                    <FormControl className={classes.formControl}>
                                         <Field fullWidth name="nome" component={TextField} type="text" label="Nome" />
                                     </FormControl>
-                                    <FormControl className={classes.formControl} >
+                                    <FormControl className={classes.formControl}>
                                         <Field fullWidth name="cognome" component={TextField} type="text" label="Cognome" />
                                     </FormControl>
-                                    <FormControl className={classes.formControl} >
+                                    <FormControl className={classes.formControl}>
                                         <Field fullWidth name="email" component={TextField} type="text" label="Email" />
                                     </FormControl>
-                                    <FormControl className={classes.formControl} >
+                                    <FormControl className={classes.formControl}>
                                         <Field fullWidth name="codiceF" component={TextField} type="text" label="Codice Fiscale" />
                                     </FormControl>
-                                    <FormControl className={classes.formControl} >
+                                    <FormControl className={classes.formControl}>
                                         <Field fullWidth name="dataN" component={TextField} type="date" label="Data di Nascita" />
                                     </FormControl>
 
@@ -401,9 +404,9 @@ const StudenteDialogContent = ({ did, closer }) => {
                                     <TableRow key={relID}>
                                         <TableCell scope="row">{relID}</TableCell>
                                         <TableCell scope="row">{annoScolastico}</TableCell>
-                                        <TableCell scope="row">{idClasse || "NO"}</TableCell>
-                                        <TableCell scope="row">{indirizzo || "NO"}</TableCell>
-                                        <TableCell scope="row">{(!(idClasse===indirizzo && indirizzo===null))? descrizione : descrizione.split(",")[0] }</TableCell>
+                                        <TableCell scope="row">{idClasse || 'NO'}</TableCell>
+                                        <TableCell scope="row">{indirizzo || 'NO'}</TableCell>
+                                        <TableCell scope="row">{!(idClasse === indirizzo && indirizzo === null) ? descrizione : descrizione.split(',')[0]}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -412,11 +415,10 @@ const StudenteDialogContent = ({ did, closer }) => {
                 </Grid>
             </Grid>
         </Grid>
-        ;
-}
+    );
+};
 
-
-const ModificaStorico = ({updater , did}) =>{
+const ModificaStorico = ({ updater, did }) => {
     console.log(did);
     const auth = useAuth();
     const classes = useStyles();
@@ -428,128 +430,131 @@ const ModificaStorico = ({updater , did}) =>{
     const onSubmit = async ({ annoScolastico, idclasse, indirizzo, ruolo }) => {
         console.log('form submitted');
         console.log(annoScolastico, idclasse, indirizzo, ruolo);
-        
-        
 
-        if(ruolo===1) {
+        if (ruolo === 1) {
             const req = {
                 as: annoScolastico,
                 idDocente: did,
-                idClasse: idclasse
-            }
-            await axios.put(`${baseRoute}/docenti/toReferenteClasse`, {token: auth.token, data: req }).then(res =>{
-                console.log("OH MY GAH", res);
-            })
+                idClasse: idclasse,
+            };
+            await axios.put(`${baseRoute}/docenti/toReferenteClasse`, { token: auth.token, data: req }).then((res) => {
+                console.log('OH MY GAH', res);
+            });
         }
-        if(ruolo===2) {
+        if (ruolo === 2) {
             const req = {
                 as: annoScolastico,
                 idDocente: did,
                 indirizzo,
-            }
-            await axios.put(`${baseRoute}/docenti/toReferenteIndirizzo`, {token: auth.token, data: req})
-            .then(res=>{ console.log("DOCENTE INDIRIZZO", res);})
+            };
+            await axios.put(`${baseRoute}/docenti/toReferenteIndirizzo`, { token: auth.token, data: req }).then((res) => {
+                console.log('DOCENTE INDIRIZZO', res);
+            });
         }
-        if (ruolo===3){
-            await axios.put(`${baseRoute}/docenti/toReferenteAlternanza`, {token: auth.token, idDocente: did});
+        if (ruolo === 3) {
+            await axios.put(`${baseRoute}/docenti/toReferenteAlternanza`, { token: auth.token, idDocente: did });
         }
 
         updater(Math.random());
     };
 
-
-    const changeOptions = async (value) =>{
+    const changeOptions = async (value) => {
         console.log(value);
-        switch(value){
+        switch (value) {
             case 1: {
-                setOptions(<FormControl key="salhd" className={classes.formControl}>
-                    <Field fullWidth name="idclasse" component={Select} label="Classe" formControlProps={{ fullWidth: true }} validate={required} >
-                        {classi}
-                    </Field>
-                </FormControl>)
+                setOptions(
+                    <FormControl key="salhd" className={classes.formControl}>
+                        <Field fullWidth name="idclasse" component={Select} label="Classe" formControlProps={{ fullWidth: true }} validate={required}>
+                            {classi}
+                        </Field>
+                    </FormControl>
+                );
                 break;
             }
             case 2: {
-                setOptions(<FormControl key="dfjsahfjlkda" className={classes.formControl}>
-                    <Field fullWidth name="indirizzo" component={Select} label="Indirizzo" formControlProps={{ fullWidth: true }} validate={required} >
-                        {indirizzi}
-                    </Field>
-                </FormControl>);
+                setOptions(
+                    <FormControl key="dfjsahfjlkda" className={classes.formControl}>
+                        <Field fullWidth name="indirizzo" component={Select} label="Indirizzo" formControlProps={{ fullWidth: true }} validate={required}>
+                            {indirizzi}
+                        </Field>
+                    </FormControl>
+                );
                 break;
             }
-            case 3:{
-                setOptions(<Typography color="secondary" >ATTENZIONE questa funzione è molto pericolosa</Typography>)
+            case 3: {
+                setOptions(<Typography color="secondary">ATTENZIONE questa funzione è molto pericolosa</Typography>);
                 break;
             }
             default: {
                 setOptions(null);
             }
         }
-    }
+    };
 
     const fetchData = async () => {
-        return await axios.get(`${baseRoute}/classi/all`)
-            .then((res) => {
-                setClassi([...res.data.data.map(item => (<MenuItem value={item.id}>{`${item.classe}${item.sezione} ${item.indirizzo}`}</MenuItem>))])
-            })
-    }
-    const fetchIndirizzi = async () =>{
-        return await axios.get(`${baseRoute}/classi/getIndirizzi`).then((res)=>{
-            console.log(res.data.data, "SADASJDASLHD");
-            setIndirizzi([...res.data.data.map(({indirizzo})=>(<MenuItem value={indirizzo}>{indirizzo}</MenuItem>))])
-        })
-    }
+        return await axios.get(`${baseRoute}/classi/all`).then((res) => {
+            setClassi([...res.data.data.map((item) => <MenuItem value={item.id}>{`${item.classe}${item.sezione} ${item.indirizzo}`}</MenuItem>)]);
+        });
+    };
+    const fetchIndirizzi = async () => {
+        return await axios.get(`${baseRoute}/classi/getIndirizzi`).then((res) => {
+            console.log(res.data.data, 'SADASJDASLHD');
+            setIndirizzi([...res.data.data.map(({ indirizzo }) => <MenuItem value={indirizzo}>{indirizzo}</MenuItem>)]);
+        });
+    };
 
     useEffect(() => {
         fetchData()
-        .then(fetchIndirizzi)
-        .then(() => {
-            setLoading(false);
-        })
+            .then(fetchIndirizzi)
+            .then(() => {
+                setLoading(false);
+            });
     }, [did, updater]);
 
+    const required = (value) => (value ? undefined : 'Required');
+    return isLoading ? (
+        <CircularProgress />
+    ) : (
+        <Box>
+            <Form
+                onSubmit={onSubmit}
+                render={({ handleSubmit, reset, submitting, pristine, values }) => (
+                    <form onSubmit={handleSubmit} noValidate>
+                        <Paper className={classes.paperContainer}>
+                            <Typography variant="h6" component="h1">
+                                Aggiungi allo storico
+                            </Typography>
+                            <FormControl className={classes.formControl}>
+                                <Field fullWidth required name="annoScolastico" component={TextField} type="text" label="Anno Scolastico" validate={required} />
+                            </FormControl>
 
-    const required = value => (value ? undefined : 'Required')
-    return (isLoading ? <CircularProgress /> : <Box>
-        <Form
-            onSubmit={onSubmit}
-            render={({ handleSubmit, reset, submitting, pristine, values }) => (
-                <form onSubmit={handleSubmit} noValidate>
-                    <Paper className={classes.paperContainer}>
-                        <Typography variant="h6" component="h1">
-                            Aggiungi allo storico
-                        </Typography>
-                        <FormControl className={classes.formControl}>
-                            <Field fullWidth required name="annoScolastico" component={TextField} type="text" label="Anno Scolastico" validate={required} /> 
-                        </FormControl>
+                            <FormControl className={classes.formControl}>
+                                <Field fullWidth required name="ruolo" component={Select} type="text" label="Ruolo" validate={required}>
+                                    <MenuItem value={1}>Docente, referente di Classe</MenuItem>
+                                    <MenuItem value={2}>Docente, referente di Indirizzo</MenuItem>
+                                    <MenuItem value={3}>Docente, referente di Alternanza</MenuItem>
+                                </Field>
+                            </FormControl>
+                            <OnChange name="ruolo">
+                                {(value, previous) => {
+                                    changeOptions(value);
+                                }}
+                            </OnChange>
 
-                        <FormControl className={classes.formControl}>
-                            <Field fullWidth required name="ruolo" component={Select} type="text" label="Ruolo" validate={required} >
-                                <MenuItem value={1}>Docente, referente di Classe</MenuItem>
-                                <MenuItem value={2}>Docente, referente di Indirizzo</MenuItem>
-                                <MenuItem value={3}>Docente, referente di Alternanza</MenuItem>
-                            </Field>
-                        </FormControl>
-                        <OnChange name="ruolo">
-                            {(value, previous) => {
-                                changeOptions(value)
-                            }}
-                        </OnChange>
-                        
-                        {options}
+                            {options}
 
-                        <Button variant="contained" color="primary" type="submit" >
-                            FATTO
-                        </Button>
-                    </Paper>
-                </form>
-            )}
-        />
-    </Box>);
-}
+                            <Button variant="contained" color="primary" type="submit">
+                                FATTO
+                            </Button>
+                        </Paper>
+                    </form>
+                )}
+            />
+        </Box>
+    );
+};
 
-
-const AggiungiDocente = ({updater}) =>{
+const AggiungiDocente = ({ updater }) => {
     const classes = useStyles();
     const auth = useAuth();
 
@@ -565,7 +570,6 @@ const AggiungiDocente = ({updater}) =>{
             });
     };
     const required = (value) => (value ? undefined : 'Required');
-    
 
     return (
         <Box>
@@ -604,26 +608,6 @@ const AggiungiDocente = ({updater}) =>{
             />
         </Box>
     );
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+};
 
 export default Docenti;
