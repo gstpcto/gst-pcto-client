@@ -1,30 +1,26 @@
-import React, { useState} from "react";
-import Button from "@material-ui/core/Button";
+import React, { useState } from 'react';
+import Button from '@material-ui/core/Button';
 
-
-
-const ConfirmButton = ({onClick}) =>{
-
+const ConfirmButton = ({ onClick }) => {
     const [click, setClick] = useState(0);
-    const [textDisplay, setTextDisplay] = useState("CANCELLA")
+    const [textDisplay, setTextDisplay] = useState('CANCELLA');
 
-    const handleClick = () =>{
-        if(click===0){
-            setClick(click+1);
-            setTextDisplay("SEI SICURO?")
-        }
-        else if(click===1){
+    const handleClick = () => {
+        if (click === 0) {
+            setClick(click + 1);
+            setTextDisplay('SEI SICURO?');
+        } else if (click === 1) {
             onClick();
-            setTextDisplay("CANCELLA");
-            setClick(0)
+            setTextDisplay('CANCELLA');
+            setClick(0);
         }
-    }
+    };
 
     return (
-      <Button variant="contained" color="secondary" onClick={handleClick}>
-        {textDisplay}
-      </Button>
+        <Button variant="contained" color="secondary" onClick={handleClick}>
+            {textDisplay}
+        </Button>
     );
-}
+};
 
 export default ConfirmButton;
