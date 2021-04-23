@@ -21,8 +21,7 @@ import Container from '@material-ui/core/Container';
 import { theme } from 'theme';
 import Error from 'components/ErrorHandler';
 import ConfirmButton from 'components/confirmDeleteButton';
-import { SuccessAlert } from 'components/snackbars';
-import { ErrorAlert } from 'components/snackbars';
+import { SuccessAlert, ErrorAlert } from 'components/snackbars';
 
 const useStyles = makeStyles((theme) => ({
     modifyButton: {

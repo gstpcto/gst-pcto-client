@@ -30,6 +30,7 @@ import { OnChange } from 'react-final-form-listeners';
 import PWResetForm from 'components/admin/PWResetForm';
 import CSVDropzone from 'components/CSVDropzone';
 import { theme } from 'theme';
+import genYears from 'fragments/genYears';
 
 const useStyles = makeStyles((theme) => ({
     modifyButton: {
@@ -315,6 +316,7 @@ const NewStudente = ({ updater }) => {
         <Box>
             <Form
                 onSubmit={onSubmit}
+                initialValues={{ date: new Date(Date.now()).toISOString().split('T')[0] }}
                 render={({ handleSubmit, reset, submitting, pristine, values }) => (
                     <form onSubmit={handleSubmit} noValidate>
                         <Paper className={classes.paperContainer}>
@@ -341,7 +343,9 @@ const NewStudente = ({ updater }) => {
                             </FormControl>
 
                             <FormControl className={classes.formControl}>
-                                <Field fullWidth name="annoScolastico" component={TextField} type="text" label="Anno Scolastico" validate={required} />
+                                <Field fullWidth name="annoScolastico" component={Select} type="text" label="Anno Scolastico" validate={required} >
+                                    {genYears().map(o => <MenuItem value={o}>{o}</MenuItem>)}
+                                </Field>
                             </FormControl>
 
                             <FormControl className={classes.formControl}>
