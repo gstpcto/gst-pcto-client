@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const PWResetForm = ({ id }) => {
-    console.log("L?ID DEL TIPO", id);
+  console.log("L?ID DEL TIPO", id);
   const auth = useAuth();
   const classes = useStyles();
 

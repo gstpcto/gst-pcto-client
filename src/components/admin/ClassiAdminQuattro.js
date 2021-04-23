@@ -19,6 +19,10 @@ import { Select, TextField } from 'final-form-material-ui';
 import { green } from '@material-ui/core/colors';
 import Container from '@material-ui/core/Container';
 import { theme } from 'theme';
+import Error from 'components/ErrorHandler';
+import ConfirmButton from 'components/confirmDeleteButton';
+import { SuccessAlert } from 'components/snackbars';
+import { ErrorAlert } from 'components/snackbars';
 
 const useStyles = makeStyles((theme) => ({
     modifyButton: {
@@ -64,17 +68,17 @@ export default function Classi() {
 }
 
 function TableBella() {
+    const auth = useAuth();
     const classes = useStyles();
     const [isLoading, setLoading] = useState(true);
     // eslint-disable-next-line
     const [isError, setError] = useState(false);
     const [cid, setCid] = useState(null);
-
+    const [toast, setToast] = useState(null);
     const [data, setData] = useState([]);
     const [reloader, setReloader] = useState(null);
     const [open, setOpen] = useState(false);
     const [openM, setOpenM] = useState(false);
-    const [openModalConfirm, setOpenModalConfirm] = useState(false);
 
     const handleOpen = () => {
         setOpen(true);
@@ -92,11 +96,23 @@ function TableBella() {
         setOpenM(false);
     };
 
-    const handleOpenConfirm = () => {
-        setOpenModalConfirm(true)
-    }
-    const handleCloseConfirm = () => {
-        setOpenModalConfirm(false)
+
+
+    const cancellaClasse = async (id) => {
+        await axios
+            .delete(`${baseRoute}/classi/delete`, {
+                data: {
+                    token: auth.token,
+                    idclasse: id,
+                },
+            })
+            .then((res) => {
+                console.log(res);
+                setToast(<SuccessAlert message={res.data.message} />)
+                setReloader(Math.random());
+            }).catch(err => {
+                setToast(<SuccessAlert message={err.response.data.cause} />)
+            })
     }
 
     const fetchData = async () => {
@@ -125,18 +141,12 @@ function TableBella() {
                                 </Button>
                             ),
                             cancella: (
-                                <Button
-                                    variant="contained"
-                                    color="secondary"
+                                <ConfirmButton
                                     onClick={() => {
-                                        console.log(d.id);
-                                        setCid(d.id);
-                                        handleOpenConfirm();
-
+                                        cancellaClasse(d.id);
                                     }}
-                                >
-                                    CANCELLA
-                                </Button>
+                                />
+
                             ),
                         };
                     }),
@@ -156,9 +166,9 @@ function TableBella() {
     useEffect(() => {
         setOpen(false);
         setOpenM(false);
-        setOpenModalConfirm(false)
         setError(false);
         setLoading(true);
+
         fetchData();
         // eslint-disable-next-line
     }, [reloader]);
@@ -186,16 +196,13 @@ function TableBella() {
                 aria-describedby="puoi aggiungere una nuova classe"
                 className={classes.modal}
             >
-                <AddClassForm updater={setReloader} />
+                <AddClassForm updater={setReloader} toaster={setToast} />
             </Modal>
 
             <Modal open={openM} onClose={handleCloseM} aria-labelledby="nuova classe" aria-describedby="puoi aggiungere una nuova classe" className={classes.modal}>
-                <ModifyClassForm cid={cid} updater={setReloader} />
+                <ModifyClassForm cid={cid} updater={setReloader} toaster={setToast} />
             </Modal>
 
-            <Modal open={openModalConfirm} onClose={handleCloseConfirm} aria-labelledby="cancella classe" aria-describedby="conferma cancella classe" className={classes.modal}>
-                <ConfirmDeleteForm cid={cid} updater={setReloader} />
-            </Modal>
 
             {isError}
             <TableContainer component={Paper}>
@@ -236,20 +243,31 @@ function TableBella() {
                     </TableBody>
                 </Table>
             </TableContainer>
+            {toast}
         </>
     );
 }
 
-export const AddClassForm = ({ updater }) => {
+export const AddClassForm = ({ updater, toaster }) => {
     const auth = useAuth();
     const classes = useStyles();
+    const [error, setError] = useState("");
+    //controlli form
+    const controlloClasse = (value) => (parseInt(value) < 1 || parseInt(value) > 5 ? 'la classe deve essere compresa tra 1 e 5' : undefined)
+    const controlloSezione = (value) => (value === undefined || value.length > 1 ? "La sezione deve essere una singola lettera maiuscola" : undefined)
+
     const onSubmit = async (data) => {
         console.log('form submitted');
         console.log(data);
         await axios.post(`${baseRoute}/classi/create`, { token: auth.token, data }).then((res) => {
             console.log(res);
             updater(Math.random());
-        });
+            toaster(<SuccessAlert message="classe aggiunta con successo" />)
+        }).catch(err => {
+            console.log(err.response.data.cause);
+            setError(err.response.data.cause);
+            toaster(<ErrorAlert message={err.response.data.cause} />)
+        })
     };
 
     return (
@@ -258,16 +276,16 @@ export const AddClassForm = ({ updater }) => {
                 onSubmit={onSubmit}
                 initialValues={{ classe: 3, indirizzo: 'SA', sezione: 'A' }}
                 render={({ handleSubmit, reset, submitting, pristine, values }) => (
-                    <form onSubmit={handleSubmit} noValidate>
+                    <form onSubmit={handleSubmit} >
                         <Paper className={classes.paperContainer}>
                             <Typography variant="h6" component="h1">
                                 Crea Nuova Classe
                             </Typography>
                             <FormControl className={classes.formControl}>
-                                <Field fullWidth required name="classe" component={TextField} type="text" label="Classe" />
+                                <Field fullWidth required name="classe" component={TextField} type="text" label="Classe" validate={controlloClasse} />
                             </FormControl>
                             <FormControl className={classes.formControl}>
-                                <Field fullWidth required name="sezione" component={TextField} type="text" label="Sezione" />
+                                <Field fullWidth required name="sezione" component={TextField} type="text" label="Sezione" validate={controlloSezione} />
                             </FormControl>
                             <FormControl className={classes.formControl}>
                                 <Field fullWidth name="indirizzo" component={Select} label="Indirizzo" formControlProps={{ fullWidth: true }}>
@@ -277,10 +295,10 @@ export const AddClassForm = ({ updater }) => {
                                     <MenuItem value={'GR'}>Grafico</MenuItem>
                                 </Field>
                             </FormControl>
-
                             <Button variant="contained" color="primary" type="submit" disabled={submitting}>
                                 Submit
                             </Button>
+                            <Error error={error} />
                         </Paper>
                     </form>
                 )}
@@ -289,12 +307,18 @@ export const AddClassForm = ({ updater }) => {
     );
 };
 
-export const ModifyClassForm = ({ cid, updater }) => {
+export const ModifyClassForm = ({ cid, updater, toaster }) => {
     console.log(cid);
     const auth = useAuth();
     const classes = useStyles();
     const [classe, setClasse] = useState(null);
+    const [error, setError] = useState("");
     const [isLoading, setLoading] = useState(true);
+
+
+    //controlli form
+    const controlloClasse = (value) => (parseInt(value) < 1 || parseInt(value) > 5 ? 'la classe deve essere compresa tra 1 e 5' : undefined)
+    const controlloSezione = (value) => (value === undefined || value.length > 1 ? "La sezione deve essere una singola lettera maiuscola" : undefined)
 
     const onSubmit = async (data) => {
         console.log('form submitted');
@@ -303,11 +327,15 @@ export const ModifyClassForm = ({ cid, updater }) => {
         axios.put(`${baseRoute}/classi/classe`, { token: auth.token, data: pipo }).then((res) => {
             console.log('update', res);
             updater(Math.random());
-        });
+            toaster(<SuccessAlert message={res.data.message} />)
+        }).catch(err => {
+            setError(err.response.data.cause);
+            toaster(<ErrorAlert message={err.response.data.cause} />)
+        })
     };
 
     useEffect(() => {
-        const fetchData = async () =>{
+        const fetchData = async () => {
             return await axios
                 .get(`${baseRoute}/classi/${cid}`)
         }
@@ -322,85 +350,41 @@ export const ModifyClassForm = ({ cid, updater }) => {
     return isLoading ? (
         <CircularProgress />
     ) : (
-            <Box>
-                <Form
-                    onSubmit={onSubmit}
-                    initialValues={{ classe: classe.classe, indirizzo: classe.indirizzo, sezione: classe.sezione }}
-                    render={({ handleSubmit, reset, submitting, pristine, values }) => (
-                        <form onSubmit={handleSubmit} noValidate>
-                            <Paper className={classes.paperContainer}>
-                                <Typography variant="h6" component="h1">
-                                    Modifica classe
+        <Box>
+            <Form
+                onSubmit={onSubmit}
+                initialValues={{ classe: classe.classe, indirizzo: classe.indirizzo, sezione: classe.sezione }}
+                render={({ handleSubmit, reset, submitting, pristine, values }) => (
+                    <form onSubmit={handleSubmit} >
+                        <Paper className={classes.paperContainer}>
+                            <Typography variant="h6" component="h1">
+                                Modifica classe
                             </Typography>
-                                <FormControl className={classes.formControl}>
-                                    <Field fullWidth required name="classe" component={TextField} type="text" label="Classe" />
-                                </FormControl>
-                                <FormControl className={classes.formControl}>
-                                    <Field fullWidth required name="sezione" component={TextField} type="text" label="Sezione" />
-                                </FormControl>
-                                <FormControl className={classes.formControl}>
-                                    <Field fullWidth name="indirizzo" component={Select} label="Indirizzo" formControlProps={{ fullWidth: true }}>
-                                        <MenuItem value={'SA'}>Scienze Applicate</MenuItem>
-                                        <MenuItem value={'INF'}>Informatico</MenuItem>
-                                        <MenuItem value={'REL'}>Relazioni Internazionali</MenuItem>
-                                        <MenuItem value={'GR'}>Grafico</MenuItem>
-                                    </Field>
-                                </FormControl>
+                            <FormControl className={classes.formControl}>
+                                <Field fullWidth required name="classe" component={TextField} type="text" label="Classe" validate={controlloClasse} />
+                            </FormControl>
+                            <FormControl className={classes.formControl}>
+                                <Field fullWidth required name="sezione" component={TextField} type="text" label="Sezione" validate={controlloSezione} />
+                            </FormControl>
+                            <FormControl className={classes.formControl}>
+                                <Field fullWidth name="indirizzo" component={Select} label="Indirizzo" formControlProps={{ fullWidth: true }}>
+                                    <MenuItem value={'SA'}>Scienze Applicate</MenuItem>
+                                    <MenuItem value={'INF'}>Informatico</MenuItem>
+                                    <MenuItem value={'REL'}>Relazioni Internazionali</MenuItem>
+                                    <MenuItem value={'GR'}>Grafico</MenuItem>
+                                </Field>
+                            </FormControl>
 
-                                <Button variant="contained" color="primary" type="submit" disabled={submitting}>
-                                    Submit
+                            <Button variant="contained" color="primary" type="submit" disabled={submitting}>
+                                Submit
                             </Button>
-                            </Paper>
-                        </form>
-                    )}
-                />
-            </Box>
-        );
+                            <Error error={error} />
+                        </Paper>
+                    </form>
+                )}
+            />
+        </Box>
+    );
 };
 
 
-
-const ConfirmDeleteForm = ({ cid, updater }) => {
-    console.log(cid);
-    const auth = useAuth();
-    const classes = useStyles();
-
-    const deleteFromTable = (id) => {
-        console.log(auth.token, id);
-        axios
-            .delete(`${baseRoute}/classi/delete`, {
-                data: {
-                    token: auth.token,
-                    idclasse: id,
-                },
-            })
-            .then((res) => {
-                console.log(res);
-                if (res.data.status === 'rejected') {
-                    //setError(res.data.cause);
-                    console.error(res.data.cause);
-                } else updater(Math.random());
-            });
-    };
-
-
-
-    return (
-        <Box>
-            <Paper className={classes.paperContainer}>
-                <Typography variant="h6" component="h1">
-                    Sei sicuro di voler cancellare questa classe?
-                </Typography>
-                <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => {
-                        deleteFromTable(cid)
-                    }}
-                >
-                    CANCELLA
-                </Button>
-            </Paper>
-        </Box>
-    );
-}
