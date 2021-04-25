@@ -28,8 +28,18 @@ import { Form, Field } from 'react-final-form';
 import { FormControl, MenuItem, CircularProgress } from '@material-ui/core';
 import { Select, TextField } from 'final-form-material-ui';
 import DialogProgettoLivelloQuattro from "components/admin/DialogProgettoLivelloQuattro"
+import { red, yellow, green } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme) => ({
+    bgRed: {
+        backgroundColor: red[500],
+    },
+    bgYellow: {
+        backgroundColor: yellow[800],
+    },
+    bgGreen: {
+        backgroundColor: green[500],
+    },
     modal: {
         width: '100vw',
         height: '100vh',
@@ -90,9 +100,10 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 //TODO: add the powerful modal here
 //this is the card
 export default function ComponentProject({ nome, descrizione, id, linkValutazioni, annoScolastico }) {
-    
-    
+
+
     console.log('progetto', id);
+    const [cardColor, setColor] = useState(true); //true se mancano dei voti, false se sono tutti. 
     const classes = useStyles();
     const auth = useAuth();
     console.log(auth.user["livello"]);
@@ -111,6 +122,27 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
         //setPid(null);
     };
 
+    useEffect(() => {
+        const fetchData = async () => {
+            return await axios
+                .get(`${baseRoute}/progetti/classiAlunni/${id}`, { params: { token: auth.token } })
+        }
+
+        fetchData()
+            .then(r => {
+                const al = r.data.progetti.alunni;
+                console.log("RISULTATOOO", al);
+                al.forEach(a => {
+                    if (a.voto === null) {
+                        setColor(false);
+                        return;
+                    }
+                });
+            })
+
+    }, [])
+
+
     return (
         <>
             <Grid item xs={12} md={6}>
@@ -118,14 +150,14 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
                     <CardActionArea
                         onClick={handleOpen}
                     >
-                        <Card className={cardRoot}>
+                        <Card className={`${cardRoot} ${classes.bgRed}`} style={{ color: "white" }}>
                             <div className={fixedSizeCardDetails}>
                                 <CardContent className={classes.textWrap}>
                                     <Typography variant="h6">{nome}</Typography>
-                                    <Typography variant="subtitle1" color="textSecondary">
+                                    <Typography variant="subtitle1" >
                                         {descrizione}
                                     </Typography>
-                                    <Typography variant="subtitle1" color="textSecondary">
+                                    <Typography variant="subtitle1" >
                                         {annoScolastico}
                                     </Typography>
                                 </CardContent>
@@ -137,8 +169,9 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
                     </CardActionArea>
                 </Box>
             </Grid>
+
             <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-                {auth.user["livello"] === 4 ? <DialogProgettoLivelloQuattro pid={pid} closer={handleClose} /> : <ProjectTableDialog pid={pid} closer={handleClose} /> }
+                {auth.user["livello"] === 4 ? <DialogProgettoLivelloQuattro pid={pid} closer={handleClose} /> : <ProjectTableDialog pid={pid} closer={handleClose} link={linkValutazioni} />}
             </Dialog>
         </>
     );
@@ -146,7 +179,7 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
 
 //level 2 things
 //this is the table for a single project
-const ProjectTableDialog = ({ pid, closer }) => {
+const ProjectTableDialog = ({ pid, closer, link }) => {
     const classes = useStyles();
     const auth = useAuth();
     const [reloader, setReloader] = useState(null);
@@ -160,7 +193,7 @@ const ProjectTableDialog = ({ pid, closer }) => {
         data: '',
     });
 
-    const fetchData = async () =>{
+    const fetchData = async () => {
         return await axios
             .get(`${baseRoute}/progetti/classiAlunni/${pid}`, { params: { token: auth.token } })
     }
@@ -172,7 +205,7 @@ const ProjectTableDialog = ({ pid, closer }) => {
         setOpen(true);
     };
     const [openEditValutation, setOpenEditValutation] = useState(false);
-    
+
     useEffect(() => {
         setOpen(false);
         setOpenEditValutation(false);
@@ -234,6 +267,9 @@ const ProjectTableDialog = ({ pid, closer }) => {
                 </Toolbar>
             </AppBar>
             <Grid container>
+                <Paper className={classes.paperContainer} style={{ marginLeft: "25px", marginLeft: "25px", marginTop: "25px" }}>
+                    {link ? <a href={link} >Link al form</a> : "link non ancora creato"}
+                </Paper>
                 <TableContainer style={{ margin: '25px' }} component={Paper}>
                     <Table size="small">
                         <TableHead>
@@ -402,7 +438,7 @@ const AddValutation = ({ infoVoto, updater }) => {
             .catch(function (error) {
                 console.log(error);
             });
-    // updater(Math.random());
+        // updater(Math.random());
     };
 
     return (

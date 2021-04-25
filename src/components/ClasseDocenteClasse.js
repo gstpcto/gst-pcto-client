@@ -45,9 +45,6 @@ export default function ClasseDocenteClasse() {
                 <TableHead>
                     <TableRow>
                         <TableCell scope="col" component="th">
-                            Classe
-                        </TableCell>
-                        <TableCell scope="col" component="th">
                             Nome
                         </TableCell>
                         <TableCell scope="col" component="th">
@@ -58,9 +55,7 @@ export default function ClasseDocenteClasse() {
                 <TableBody>
                     {data.map(({ iduser, nome, cognome, idclasse, ...rest }, index) => (
                         <TableRow key={index}>
-                            <TableCell scope="row">
-                                {idclasse} 
-                            </TableCell>
+
                             <TableCell scope="row">
                                 {nome}
                             </TableCell>
