@@ -63,8 +63,9 @@ export default function VotiWrapper() {
                 Voti
             </Typography>
             <Box className={classes.boxContainer} mx={1}>
-                {data.map(({ nome, data, descrizione, valutazione }, index) => {
-                    return <ComponentVoti key={index} Nome={nome} Data={data.split('T')[0]} Descrizione={descrizione} Valutazione={valutazione} />;
+                {data.map((d, index) => {
+                    console.log("LI DATIIIIIIII", d);
+                    return <ComponentVoti key={index} dati={d} />;
                 })}
             </Box>
         </>

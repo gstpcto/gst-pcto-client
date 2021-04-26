@@ -8,6 +8,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import clsx from 'clsx';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import Warning from '@material-ui/icons/Warning';
 import Paper from '@material-ui/core/Paper';
 import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
@@ -29,6 +30,7 @@ import { FormControl, MenuItem, CircularProgress } from '@material-ui/core';
 import { Select, TextField } from 'final-form-material-ui';
 import DialogProgettoLivelloQuattro from "components/admin/DialogProgettoLivelloQuattro"
 import { red, yellow, green } from '@material-ui/core/colors';
+
 
 const useStyles = makeStyles((theme) => ({
     bgRed: {
@@ -62,21 +64,27 @@ const useStyles = makeStyles((theme) => ({
     card: {
         display: 'flex',
         flexDirection: 'row',
-        height: 150,
-        overflow: 'auto',
+        minHeight: 200
     },
     cardMedia: {
         width: 150,
         color: 'white',
     },
     maxWidth: {
-        width: 300,
+        width: 450,
         overflow: 'auto',
     },
     chevronAligner: {
         display: 'flex',
         flex: 1,
         justifyContent: 'space-between',
+        alignItems: 'space-between',
+    },
+    warnAligner: {
+        display: 'inline-flex',
+        flex: 1,
+        justifyContent: 'space-between',
+        verticalAlign: "top",
         alignItems: 'space-between',
     },
     chevron: {
@@ -103,7 +111,7 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
 
 
     console.log('progetto', id);
-    const [cardColor, setColor] = useState(true); //true se mancano dei voti, false se sono tutti. 
+    const [cardColor, setColor] = useState(false); //false se mancano dei voti, true se sono tutti. 
     const classes = useStyles();
     const auth = useAuth();
     console.log(auth.user["livello"]);
@@ -134,7 +142,7 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
                 console.log("RISULTATOOO", al);
                 al.forEach(a => {
                     if (a.voto === null) {
-                        setColor(false);
+                        setColor(true);
                         return;
                     }
                 });
@@ -150,7 +158,7 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
                     <CardActionArea
                         onClick={handleOpen}
                     >
-                        <Card className={`${cardRoot} ${classes.bgRed}`} style={{ color: "white" }}>
+                        <Card className={`${cardRoot} ${cardColor ? classes.bgRed : classes.bgGreen}`} style={{ color: "white" }}>
                             <div className={fixedSizeCardDetails}>
                                 <CardContent className={classes.textWrap}>
                                     <Typography variant="h6">{nome}</Typography>
@@ -160,6 +168,12 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
                                     <Typography variant="subtitle1" >
                                         {annoScolastico}
                                     </Typography>
+                                    <Typography variant="subtitle1" >
+                                        {
+                                            cardColor ? <><span className={classes.warnAligner}> <Warning /></span> Devi ancora inserire alcuni voti...</> : null
+                                        }
+                                    </Typography>
+
                                 </CardContent>
                             </div>
                             <Box className={classes.chevron} display="flex" justifyContent="center" alignItems="center">

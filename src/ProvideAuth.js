@@ -29,6 +29,7 @@ function useProvideAuth() {
             .then(function (response) {
                 //console.log(response);
                 const responseData = response.data;
+                console.log(response.data);
                 const { data } = responseData; // JWT
                 console.log("pippolone", data);
                 localStorage.setItem('token', data);
@@ -43,13 +44,13 @@ function useProvideAuth() {
     const logout = () => {
         localStorage.setItem('token', '');
     }
-    const checkLogin = () =>{
-        if (isAuthenticated()){
+    const checkLogin = () => {
+        if (isAuthenticated()) {
             const jwtToken = localStorage.getItem('token');
             setUser(JSON.parse(atob(jwtToken.split('.')[1])));
             setToken(jwtToken)
         }
-    } 
+    }
 
 
     const isAuthenticated = () => {
