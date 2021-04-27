@@ -107,10 +107,21 @@ function TableBella() {
             })
             .then((res) => {
                 console.log(res);
-                setToast(<SuccessAlert message={res.data.message} />)
+                const resetter = async () => {
+                    setToast(null);
+                }
+                resetter().then(() => {
+                    setToast(<SuccessAlert message={res.data.message} />)
+                })
                 setReloader(Math.random());
             }).catch(err => {
-                setToast(<SuccessAlert message={err.response.data.cause} />)
+                const resetter = async () => {
+                    setToast(null);
+                }
+                resetter().then(() => {
+
+                    setToast(<SuccessAlert message={err.response.data.cause} />)
+                })
             })
     }
 
@@ -261,11 +272,21 @@ export const AddClassForm = ({ updater, toaster }) => {
         await axios.post(`${baseRoute}/classi/create`, { token: auth.token, data }).then((res) => {
             console.log(res);
             updater(Math.random());
-            toaster(<SuccessAlert message="classe aggiunta con successo" />)
+            const resetter = async () => {//TODO: SOLUZIONE MAXIMA
+                toaster(null);
+            }
+            resetter().then(() => {
+                toaster(<SuccessAlert message="classe aggiunta con successo" />)
+            })
         }).catch(err => {
             console.log(err.response.data.cause);
             setError(err.response.data.cause);
-            toaster(<ErrorAlert message={err.response.data.cause} />)
+            const resetter = async () => {//TODO: SOLUZIONE MAXIMA
+                toaster(null);
+            }
+            resetter().then(() => {
+                toaster(<ErrorAlert message={err.response.data.cause} />)
+            })
         })
     };
 
@@ -326,10 +347,20 @@ export const ModifyClassForm = ({ cid, updater, toaster }) => {
         axios.put(`${baseRoute}/classi/classe`, { token: auth.token, data: pipo }).then((res) => {
             console.log('update', res);
             updater(Math.random());
-            toaster(<SuccessAlert message={res.data.message} />)
+            const resetter = async () => {//TODO: SOLUZIONE MAXIMA
+                toaster(null);
+            }
+            resetter().then(() => {
+                toaster(<SuccessAlert message={res.data.message} />)
+            })
         }).catch(err => {
             setError(err.response.data.cause);
-            toaster(<ErrorAlert message={err.response.data.cause} />)
+            const resetter = async () => {//TODO: SOLUZIONE MAXIMA
+                toaster(null);
+            }
+            resetter().then(() => {
+                toaster(<ErrorAlert message={err.response.data.cause} />)
+            })
         })
     };
 

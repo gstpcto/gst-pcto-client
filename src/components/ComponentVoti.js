@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { Box } from '@material-ui/core';
+import { Box, TextField } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import clsx from 'clsx';
@@ -10,6 +10,9 @@ import { red, yellow, green } from '@material-ui/core/colors';
 import { FormControl } from '@material-ui/core';
 import { Form, Field } from 'react-final-form';
 import { Select, Input } from 'final-form-material-ui';
+import { baseRoute, useAuth } from 'ProvideAuth';
+import { SuccessAlert, ErrorAlert } from 'components/snackbars';
+import axios from 'axios';
 const useStyles = makeStyles({
     bgRed: {
         backgroundColor: red[500],
@@ -53,13 +56,29 @@ const useStyles = makeStyles({
         display: "grid",
         gridTemplateColumns: "repeat(3, minmax(0, 1fr))"
     },
+    input: {
+        padding: 0,
+        width: "80%",
+        outline: "none",
+        border: "none",
+        borderBottom: "1px solid black",
+        transition: "border 1s, height 1s",
+        "&:focus": {
+            borderBottom: "2px solid #1976d2"
+        }
+    },
+    inputError: {
+        borderBottom: `2xp solid ${red[500]}`
+    }
 
 });
 
-export default function ComponentVoti({ dati: { nome, valutazione, descrizione, data, oreEffettive, oreTotali } }) {
-
+export default function ComponentVoti({ dati: { id, nome, valutazione, descrizione, data, oreEffettive, oreTotali } }) {
+    const auth = useAuth();
     const classes = useStyles();
-
+    const [ore, setOre] = useState(oreEffettive);
+    const [toast, toaster] = useState(null);
+    const [error, setError] = useState(false);
     const getCurrentColor = () => {
         if (valutazione >= 6) {
             return classes.bgGreen;
@@ -73,8 +92,47 @@ export default function ComponentVoti({ dati: { nome, valutazione, descrizione, 
 
     const fixedSizeCardMedia = clsx(classes.card, classes.cardMedia, getCurrentColor());
     const fixedSizeCardDetails = clsx(classes.card, classes.maxWidth);
-    const validateOre = (value) => (value !== undefined && !parseInt(value) || value >= oreTotali);
-    return (
+
+
+    const changeOre = (data) => {
+        console.log("ASDASDASD", data.target.value);
+        setOre(data.target.value);
+    }
+
+    const onUpdateOre = async () => {
+        console.log("ODDIOOOOOOOOOOOOOOOOOO");
+        if (ore === undefined || ore == null || !parseInt(ore) || oreTotali < ore) {
+            const resetter = async () => {//TODO: SOLUZIONE MAXIMA
+                toaster(null);
+            }
+            resetter().then(() => {
+                toaster(<ErrorAlert message={"Troppe ore"} />)
+            })
+            console.log("ERRORE PRESO DAL CLIENT");
+            return;
+        }
+        await axios.put(`${baseRoute}/voti/updateOreEffettive/${id}`, { token: auth.token, data: { oreEffettive: ore } }).then(r => {
+            console.log(r);
+            const resetter = async () => {//TODO: SOLUZIONE MAXIMA
+                toaster(null);
+            }
+            resetter().then(() => {
+                toaster(<SuccessAlert message={r.data.message} />)
+            })
+        })
+            .catch(e => {
+                console.log(e);
+                const resetter = async () => {//TODO: SOLUZIONE MAXIMA
+                    toaster(null);
+                }
+                resetter().then(() => {
+                    toaster(<ErrorAlert message={e.response.data.cause} />)
+                })
+
+            })
+    }
+
+    return (<>
         <Box mx={1}>
             <Card className={classes.card}>
                 <Box className={fixedSizeCardMedia} display="flex" justifyContent="center" alignItems="center">
@@ -91,23 +149,18 @@ export default function ComponentVoti({ dati: { nome, valutazione, descrizione, 
                         </Typography>
                         {/* TODO: ANDRE AGGIUSTA STO LAYOUT */}
                         <Box variant="subtitle1" color="textSecondary" className={classes.form}>
-                            <Box style={{ paddingRight: 5 }}>Ore fatte:</Box> <Form
-                                onSubmit={() => { }}
-                                initialValues={{ oreEffettive }}
-                                render={({ handleSubmit, reset, submitting, pristine, values }) => (
-                                    <form onSubmit={() => { }} >
-
-                                        <FormControl className={classes.formControl}>
-                                            <Field required name="oreEffettive" component={Input} type="text" label="oreEffettive" placeholder="Ore" validate={validateOre} />
-                                        </FormControl>
-                                    </form>
-                                )}
-                            /> /{oreTotali}
+                            <Box style={{ paddingRight: 5 }}>Ore fatte:</Box>
+                            <input name="oreEffettive" value={ore} onChange={changeOre} className={`${classes.input} `} onKeyPress={(o) => {
+                                if (o.key === "Enter") onUpdateOre();
+                            }} />
+                            <Box> / {oreTotali}</Box>
                         </Box>
                     </CardContent>
                 </div>
             </Card>
         </Box>
+        {toast}
+    </>
     );
 }
 
