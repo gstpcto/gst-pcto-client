@@ -30,6 +30,8 @@ import { FormControl, MenuItem, CircularProgress } from '@material-ui/core';
 import { Select, TextField } from 'final-form-material-ui';
 import DialogProgettoLivelloQuattro from "components/admin/DialogProgettoLivelloQuattro"
 import { red, yellow, green } from '@material-ui/core/colors';
+import { SuccessAlert } from './snackbars';
+import { ErrorAlert } from './snackbars';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -199,7 +201,7 @@ const ProjectTableDialog = ({ pid, closer, link }) => {
     const [reloader, setReloader] = useState(null);
     const [datiProgetto, setDatiProgetto] = useState({});
     const [alunniProgetto, setAlunniProgetto] = useState([]);
-
+    const [toast, toaster] = useState(null);
     const [infoVoto, setInfoVoto] = useState({
         iduser: '',
         nome: '',
@@ -263,11 +265,12 @@ const ProjectTableDialog = ({ pid, closer, link }) => {
 
     return (
         <>
+
             <Modal open={openEditValutation} onClose={handleCloseEditValutation} className={classes.modal}>
-                <EditValutation vid={votoEdit} updater={setReloader} />
+                <EditValutation vid={votoEdit} updater={setReloader} toaster={toaster} />
             </Modal>
             <Modal open={open} onClose={handleModalClose} className={classes.modal}>
-                <AddValutation infoVoto={infoVoto} updater={setReloader} />
+                <AddValutation infoVoto={infoVoto} updater={setReloader} toaster={toaster} />
             </Modal>
             <AppBar className={classes.appBar}>
                 <Toolbar>
@@ -332,17 +335,22 @@ const ProjectTableDialog = ({ pid, closer, link }) => {
                     </Table>
                 </TableContainer>
             </Grid>
+            {toast}
         </>
     );
 };
 
 
-const EditValutation = ({ vid, updater }) => {
+const EditValutation = ({ vid, updater, toaster }) => {
     const classes = useStyles();
     const auth = useAuth();
     const [infoTutto, SetInfoTutto] = useState();
     const [loading, setLoading] = useState(true);
     const { idvoto, nome, cognome } = vid;
+    const resetter = async () => {
+        toaster(null);
+    }
+
 
     useEffect(() => {
         axios
@@ -351,6 +359,7 @@ const EditValutation = ({ vid, updater }) => {
                 console.log('EDIT VOTOOOOOOOOOOO> ', res.data.data);
                 SetInfoTutto(res.data.data);
                 setLoading(false);
+
             })
             .catch((err) => {
                 console.error(err);
@@ -370,11 +379,18 @@ const EditValutation = ({ vid, updater }) => {
             .put(`${baseRoute}/voti/voti/${idvoto}`, { token: auth.token, data: req })
             .then((res) => {
                 console.log(res);
+                resetter().then(() => {
+                    toaster(<SuccessAlert message={res.data.message} />)
+                })
+                updater(Math.random());
             })
             .catch((err) => {
+                resetter().then(() => {
+                    toaster(<ErrorAlert message={err.response.data.cause} />)
+                })
                 console.error(err);
             });
-        updater(Math.random());
+
     };
 
     return (
@@ -430,9 +446,12 @@ const EditValutation = ({ vid, updater }) => {
 };
 
 //edit valutation modal
-const AddValutation = ({ infoVoto, updater }) => {
+const AddValutation = ({ infoVoto, updater, toaster }) => {
     const classes = useStyles();
     const auth = useAuth();
+    const resetter = async () => {
+        toaster(null);
+    }
     const onSubmit = async (data) => {
         axios
             .post(`${baseRoute}/voti/voto`, {
@@ -447,10 +466,16 @@ const AddValutation = ({ infoVoto, updater }) => {
             })
             .then(function (response) {
                 console.log(response);
+                resetter().then(() => {
+                    toaster(<SuccessAlert message={response.data.message} />)
+                })
                 updater(Math.random())
             })
             .catch(function (error) {
                 console.log(error);
+                resetter().then(() => {
+                    toaster(<ErrorAlert message={error.response.data.cause} />)
+                })
             });
         // updater(Math.random());
     };
@@ -494,7 +519,7 @@ const AddValutation = ({ infoVoto, updater }) => {
                                 <Field fullWidth name="dataV" component={TextField} type="date" label="Data Voto" />
                             </FormControl>
                             <Button variant="contained" color="primary" type="submit" disabled={submitting}>
-                                Modifica Valutazione
+                                Aggiungi Valutazione
                             </Button>
                         </Paper>
                     </form>
@@ -504,5 +529,7 @@ const AddValutation = ({ infoVoto, updater }) => {
     );
 };
 
+export {
+    AddValutation, EditValutation
+}
 
-//level 4 things

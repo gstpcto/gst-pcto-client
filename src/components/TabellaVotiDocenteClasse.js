@@ -17,6 +17,7 @@ import { useAuth } from 'ProvideAuth';
 import { makeStyles } from '@material-ui/core/styles';
 import { Form, Field } from 'react-final-form';
 import { TextField } from 'final-form-material-ui';
+import { AddValutation, EditValutation } from './ComponentProject';
 
 const useStyles = makeStyles((theme) => ({
     modal: {
@@ -46,6 +47,7 @@ export default function TabellaVotiDocenteClasse() {
     const [isError, setError] = useState(false);
     const [nomiProgetti, setNomiProgetti] = useState([]);
     const [data, setData] = useState([]);
+    const [toast, toaster] = useState(null);
     const [openAddValutation, setOpenAddValutation] = useState(false);
     const [openEditValutation, setOpenEditValutation] = useState(false);
     const [reloader, setReloader] = useState(null);
@@ -124,11 +126,12 @@ export default function TabellaVotiDocenteClasse() {
     ) : (
         <>
             <Modal open={openEditValutation} onClose={handleCloseEditValutation} className={classes.modal}>
-                <EditValutation vid={votoEdit} updater={setReloader} />
+                <EditValutation vid={votoEdit} updater={setReloader} toaster={toaster} />
             </Modal>
             <Modal open={openAddValutation} onClose={handleCloseAddValutation} className={classes.modal}>
-                <AddValutation infoVoto={infoVoto} updater={setReloader} />
+                <AddValutation infoVoto={infoVoto} updater={setReloader} toaster={toaster} />
             </Modal>
+
             <TableContainer component={Paper}>
                 <Table size="small">
                     <TableHead>
@@ -178,10 +181,11 @@ export default function TabellaVotiDocenteClasse() {
                     </TableBody>
                 </Table>
             </TableContainer>
+            {toast}
         </>
     );
 }
-
+/*
 const EditValutation = ({ vid, updater }) => {
     const classes = useStyles();
     const auth = useAuth();
@@ -345,3 +349,4 @@ const AddValutation = ({ infoVoto, updater }) => {
         </Box>
     );
 };
+*/
