@@ -32,7 +32,9 @@ import DialogProgettoLivelloQuattro from "components/admin/DialogProgettoLivello
 import { red, yellow, green } from '@material-ui/core/colors';
 import { SuccessAlert } from './snackbars';
 import { ErrorAlert } from './snackbars';
-
+import Tooltip from '@material-ui/core/Tooltip';
+import WarningIcon from '@material-ui/icons/Warning';
+import Done from '@material-ui/icons/Done';
 
 const useStyles = makeStyles((theme) => ({
     bgRed: {
@@ -297,10 +299,13 @@ const ProjectTableDialog = ({ pid, closer, link }) => {
                                 <TableCell scope="col" component="th">
                                     {datiProgetto.nome}
                                 </TableCell>
+                                <TableCell scope="col" component="th">
+                                    Stato
+                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {alunniProgetto.map(({ iduser, nome, cognome, voto, idvalutazione }, index) => (
+                            {alunniProgetto.map(({ iduser, nome, cognome, voto, idvalutazione, oreEffettive }, index) => (
                                 <TableRow key={index}>
                                     <TableCell scope="row">{`${nome} ${cognome}`}</TableCell>
                                     <TableCell scope="row">
@@ -328,6 +333,18 @@ const ProjectTableDialog = ({ pid, closer, link }) => {
                                                 Aggiungi voto
                                             </Button>
                                         )}
+                                    </TableCell>
+                                    <TableCell scope="row">
+                                        {
+                                            !oreEffettive ? <Tooltip title="Ore Mancanti">
+                                                <IconButton aria-label="warning">
+                                                    <WarningIcon style={{ color: red[500] }} />
+                                                </IconButton>
+
+                                            </Tooltip> : <Tooltip title="Tutto ok">
+                                                <Done style={{ color: green[500] }} />
+                                            </Tooltip>
+                                        }
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -528,6 +545,17 @@ const AddValutation = ({ infoVoto, updater, toaster }) => {
         </Box>
     );
 };
+
+
+const SendAlertModal = () => {
+    return (<div>
+
+    </div>);
+}
+
+
+
+
 
 export {
     AddValutation, EditValutation
