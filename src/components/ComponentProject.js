@@ -35,7 +35,9 @@ import { ErrorAlert } from './snackbars';
 import Tooltip from '@material-ui/core/Tooltip';
 import WarningIcon from '@material-ui/icons/Warning';
 import Done from '@material-ui/icons/Done';
-
+import SendAlertModal from 'components/sendAlertModal'
+import { theme } from 'theme';
+import { DoneAll } from '@material-ui/icons';
 const useStyles = makeStyles((theme) => ({
     bgRed: {
         backgroundColor: red[500],
@@ -102,6 +104,19 @@ const useStyles = makeStyles((theme) => ({
         wordBreak: 'normal',
         hyphens: 'auto',
         width: '90%',
+    },
+    button: {
+        margin: theme.spacing(1)
+    },
+    modifyButton: {
+        backgroundColor: green[500],
+        color: 'white',
+    },
+    modifyButtonHover: {
+        '&:hover': {
+            backgroundColor: green[800],
+            color: 'white',
+        },
     },
 }));
 
@@ -210,11 +225,21 @@ const ProjectTableDialog = ({ pid, closer, link }) => {
         cognome: '',
         data: '',
     });
+    const [sendButton, setSendButton] = useState(false);
 
-    const fetchData = async () => {
-        return await axios
-            .get(`${baseRoute}/progetti/classiAlunni/${pid}`, { params: { token: auth.token } })
+    const [openSendAlert, setOpenSendAlert] = useState(false);
+    const [usersToSend, setUsersToSend] = useState([]);
+    const handleOpenSendAlert = async () => { //raccogliere i dati sugli utenti da passare
+        setOpenSendAlert(true);
     }
+    const handleCloseSendAlert = () => {
+        setOpenSendAlert(false);
+    }
+    const updateUsersToSend = async (users) => {
+        setUsersToSend(users);
+    }
+
+
 
     const [votoEdit, setVotoEdit] = useState(null);
     const [open, setOpen] = useState(false);
@@ -225,8 +250,14 @@ const ProjectTableDialog = ({ pid, closer, link }) => {
     const [openEditValutation, setOpenEditValutation] = useState(false);
 
     useEffect(() => {
+        const fetchData = async () => {
+            return await axios
+                .get(`${baseRoute}/progetti/classiAlunni/${pid}`, { params: { token: auth.token } })
+        }
         setOpen(false);
         setOpenEditValutation(false);
+        setOpenSendAlert(false)
+        setSendButton(false);
         fetchData()
             .then((res) => {
                 console.log('OMG', res.data.progetti);
@@ -234,6 +265,17 @@ const ProjectTableDialog = ({ pid, closer, link }) => {
                 else {
                     setDatiProgetto(res.data['progetti'].infoProgetto);
                     setAlunniProgetto(res.data['progetti']['alunni']);
+                }
+                return res.data["progetti"]["alunni"]
+            })
+            .then((d) => {
+                console.log("SDADASDASDASDAS", d);
+                for (let i = 0; i < d.length; i++) {
+                    console.log(d[i]);
+                    if (d[i].oreEffettive == null) {
+                        setSendButton(true);
+                        return;
+                    }
                 }
             })
             .catch((err) => {
@@ -267,6 +309,9 @@ const ProjectTableDialog = ({ pid, closer, link }) => {
 
     return (
         <>
+            <Modal open={openSendAlert} onClose={handleCloseSendAlert} className={classes.modal}>
+                <SendAlertModal updater={setReloader} toaster={toaster} users={usersToSend} />
+            </Modal>
 
             <Modal open={openEditValutation} onClose={handleCloseEditValutation} className={classes.modal}>
                 <EditValutation vid={votoEdit} updater={setReloader} toaster={toaster} />
@@ -286,9 +331,33 @@ const ProjectTableDialog = ({ pid, closer, link }) => {
                 </Toolbar>
             </AppBar>
             <Grid container>
-                <Paper className={classes.paperContainer} style={{ marginLeft: "25px", marginLeft: "25px", marginTop: "25px" }}>
-                    {link ? <a href={link} >Link al form</a> : "link non ancora creato"}
-                </Paper>
+
+                <Box display="flex" justifyContent="center" flexDirection={{ xs: 'column', sm: 'row' }} style={{ marginTop: theme.spacing(1), marginLeft: theme.spacing(1) }}>
+                    <Paper className={classes.paperContainer}>
+                        {link ? <a href={link} >Link al form</a> : "link non ancora creato"}
+                    </Paper>
+                    {sendButton ?
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            className={classes.button}
+                            startIcon={<WarningIcon />}
+                            onClick={handleOpenSendAlert}
+                        >
+                            Manda Alert
+                    </Button> :
+                        <Button
+                            variant="outlined" color="primary"
+                            className={`${classes.button}`}
+                            startIcon={<DoneAll />}
+
+                        >
+                            Tutto ok
+                    </Button>
+                    }
+
+
+                </Box>
                 <TableContainer style={{ margin: '25px' }} component={Paper}>
                     <Table size="small">
                         <TableHead>
@@ -545,16 +614,6 @@ const AddValutation = ({ infoVoto, updater, toaster }) => {
         </Box>
     );
 };
-
-
-const SendAlertModal = () => {
-    return (<div>
-
-    </div>);
-}
-
-
-
 
 
 export {
