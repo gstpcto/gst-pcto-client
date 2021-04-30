@@ -230,7 +230,12 @@ const ProjectTableDialog = ({ pid, closer, link }) => {
     const [openSendAlert, setOpenSendAlert] = useState(false);
     const [usersToSend, setUsersToSend] = useState([]);
     const handleOpenSendAlert = async () => { //raccogliere i dati sugli utenti da passare
-        setOpenSendAlert(true);
+        updateUsersToSend([...alunniProgetto.filter((item) => {
+            if (item.oreEffettive == null) return true;
+            return false;
+        })]).then(() => {
+            setOpenSendAlert(true);
+        })
     }
     const handleCloseSendAlert = () => {
         setOpenSendAlert(false);
@@ -344,7 +349,7 @@ const ProjectTableDialog = ({ pid, closer, link }) => {
                             startIcon={<WarningIcon />}
                             onClick={handleOpenSendAlert}
                         >
-                            Manda Alert
+                            Manda Avviso
                     </Button> :
                         <Button
                             variant="outlined" color="primary"

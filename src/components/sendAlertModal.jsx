@@ -106,25 +106,58 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const SendAlertModal = ({ toaster, users, updater }) => {
+  console.log("====================================");
+  console.log("ALUNNI RICEVUTI", users);
+  console.log("====================================");
   const classes = useStyles();
   const auth = useAuth();
+  const [error, setError] = useState("");
+
   const resetter = async () => {
     toaster(null);
   };
-  const onSubmit = async (data) => {
-    // updater(Math.random());
+
+  const onSubmit = async () => {
+    const emails = [...users.map((u) => u.email)];
+    await axios
+      .post(`${baseRoute}/sendAlert`, {
+        token: auth.token,
+        users: emails,
+      })
+      .then((res) => {
+        console.log(res.data);
+        updater(Math.random());
+      })
+      .catch((err) => {
+        console.log("====================================");
+        console.log(err.response.data);
+        resetter().then(() => {
+          toaster(<ErrorAlert message={err.response.data.cause} />);
+        });
+        setError(err.response.data.cause);
+        console.log("====================================");
+      });
   };
 
   return (
     <Box>
       <Form
         onSubmit={onSubmit}
-        initialValues={{}}
         render={({ handleSubmit, reset, submitting, pristine, values }) => (
           <form onSubmit={handleSubmit} noValidate>
             <Paper className={classes.paperContainer}>
-              <Typography variant="h6" component="h1" color="initial">
-                Aggiungi un voto allo studente
+              <Typography
+                variant="h6"
+                align="center"
+                component="h1"
+                color="initial"
+              >
+                Manda un avviso agli studenti mancanti
+              </Typography>
+              <Typography variant="h6" color="textSecondary" component="p">
+                Questi alunni non hanno ancora confermato le ore partecipate al
+                progetto.
+                <br /> Mandare un Avviso a {users.length} studenti?
               </Typography>
 
               <Button
@@ -133,8 +166,18 @@ const SendAlertModal = ({ toaster, users, updater }) => {
                 type="submit"
                 disabled={submitting}
               >
-                Aggiungi Valutazione
+                Manda Avviso
               </Button>
+              <Typography color="secondary">
+                {error != "" ? (
+                  <>
+                    <br />
+                    {error}
+                  </>
+                ) : (
+                  ""
+                )}
+              </Typography>
             </Paper>
           </form>
         )}
