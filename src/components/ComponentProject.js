@@ -229,8 +229,14 @@ const ProjectTableDialog = ({ pid, closer, link }) => {
 
     const [openSendAlert, setOpenSendAlert] = useState(false);
     const [usersToSend, setUsersToSend] = useState([]);
-    const handleOpenSendAlert = async () => { //raccogliere i dati sugli utenti da passare
+
+    const handleOpenSendAlert = async (id) => { //raccogliere i dati sugli utenti da passare
         updateUsersToSend([...alunniProgetto.filter((item) => {
+            console.log("CASDASDASDASDSDASDASD", id);
+            if (typeof id == "number") {
+                if (item.iduser == id) return true
+                return false;
+            }
             if (item.oreEffettive == null) return true;
             return false;
         })]).then(() => {
@@ -315,7 +321,7 @@ const ProjectTableDialog = ({ pid, closer, link }) => {
     return (
         <>
             <Modal open={openSendAlert} onClose={handleCloseSendAlert} className={classes.modal}>
-                <SendAlertModal updater={setReloader} toaster={toaster} users={usersToSend} />
+                <SendAlertModal updater={setReloader} toaster={toaster} users={usersToSend} progetto={pid} />
             </Modal>
 
             <Modal open={openEditValutation} onClose={handleCloseEditValutation} className={classes.modal}>
@@ -373,7 +379,7 @@ const ProjectTableDialog = ({ pid, closer, link }) => {
                                 <TableCell scope="col" component="th">
                                     {datiProgetto.nome}
                                 </TableCell>
-                                <TableCell scope="col" component="th">
+                                <TableCell scope="col" component="th" align="center">
                                     Stato
                                 </TableCell>
                             </TableRow>
@@ -408,10 +414,10 @@ const ProjectTableDialog = ({ pid, closer, link }) => {
                                             </Button>
                                         )}
                                     </TableCell>
-                                    <TableCell scope="row">
+                                    <TableCell scope="row" align="center">
                                         {
                                             !oreEffettive ? <Tooltip title="Ore Mancanti">
-                                                <IconButton aria-label="warning">
+                                                <IconButton aria-label="warning" onClick={() => { handleOpenSendAlert(iduser) }}>
                                                     <WarningIcon style={{ color: red[500] }} />
                                                 </IconButton>
 

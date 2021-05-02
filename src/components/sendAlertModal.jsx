@@ -105,7 +105,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SendAlertModal = ({ toaster, users, updater }) => {
+const SendAlertModal = ({ toaster, users, updater, progetto }) => {
   console.log("====================================");
   console.log("ALUNNI RICEVUTI", users);
   console.log("====================================");
@@ -123,9 +123,13 @@ const SendAlertModal = ({ toaster, users, updater }) => {
       .post(`${baseRoute}/sendAlert`, {
         token: auth.token,
         users: emails,
+        progetto,
       })
       .then((res) => {
         console.log(res.data);
+        resetter().then(() => {
+          toaster(<SuccessAlert message={"le mail saranno inviate"} />);
+        });
         updater(Math.random());
       })
       .catch((err) => {
