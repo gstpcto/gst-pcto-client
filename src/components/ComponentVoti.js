@@ -101,12 +101,12 @@ export default function ComponentVoti({ dati: { id, nome, valutazione, descrizio
 
     const onUpdateOre = async () => {
         console.log("ODDIOOOOOOOOOOOOOOOOOO");
-        if (ore === undefined || ore == null || !parseInt(ore) || oreTotali < ore) {
+        if (ore === undefined || ore === null || !parseInt(ore) || ore > oreTotali || ore < 0) {
             const resetter = async () => {//TODO: SOLUZIONE MAXIMA
                 toaster(null);
             }
             resetter().then(() => {
-                toaster(<ErrorAlert message={"Troppe ore"} />)
+                toaster(<ErrorAlert message={"Il numero inserito di ore non è valido."} />)
             })
             console.log("ERRORE PRESO DAL CLIENT");
             return;

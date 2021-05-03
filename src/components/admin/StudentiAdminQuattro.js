@@ -741,8 +741,13 @@ const AggiungiAnnoModal = ({ updater, studenteid }) => {
                             <Typography variant="h6" component="h1">
                                 Aggiungi allo storico
                             </Typography>
+
                             <FormControl className={classes.formControl}>
-                                <Field fullWidth required name="annoScolastico" component={TextField} type="text" label="Anno Scolastico" />
+                                <Field fullWidth name="annoScolastico" component={Select} type="text" label="Anno Scolastico">
+                                    {genYears().map((o) => (
+                                        <MenuItem value={o}>{o}</MenuItem>
+                                    ))}
+                                </Field>
                             </FormControl>
 
                             <FormControl className={classes.formControl}>

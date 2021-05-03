@@ -30,6 +30,7 @@ import PWResetForm from 'components/admin/PWResetForm';
 import { theme } from 'theme';
 import CSVDropzone from 'components/CSVDropzone';
 import ConfirmButton from 'components/confirmDeleteButton';
+import genYears from 'fragments/genYears';
 
 const useStyles = makeStyles((theme) => ({
     modifyButton: {
@@ -525,7 +526,11 @@ const ModificaStorico = ({ updater, did }) => {
                                 Aggiungi allo storico
                             </Typography>
                             <FormControl className={classes.formControl}>
-                                <Field fullWidth required name="annoScolastico" component={TextField} type="text" label="Anno Scolastico" validate={required} />
+                                <Field fullWidth name="annoScolastico" component={Select} type="text" label="Anno Scolastico" validate={required}>
+                                    {genYears().map((o) => (
+                                        <MenuItem value={o}>{o}</MenuItem>
+                                    ))}
+                                </Field>
                             </FormControl>
 
                             <FormControl className={classes.formControl}>

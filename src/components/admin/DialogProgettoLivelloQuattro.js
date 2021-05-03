@@ -24,6 +24,7 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import ConfirmButton from "../confirmDeleteButton";
 import Container from '@material-ui/core/Container';
+import genYears from 'fragments/genYears';
 
 const useStyles = makeStyles((theme) => ({
     modifyButton: {
@@ -161,7 +162,6 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
 
     return (
         <>
-            
             <AppBar className={classes.appBar}>
                 <Toolbar>
                     <IconButton edge="start" color="inherit" onClick={closer} aria-label="close">
@@ -175,18 +175,18 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
                         OK
                     </Button>
                 </Toolbar>
-                
             </AppBar>
-            {   isLoading ? <CircularProgress />
-                : 
-                <Grid container style={{display: "flex"}} className={classes.marginBottom}>
+            {isLoading ? (
+                <CircularProgress />
+            ) : (
+                <Grid container style={{ display: 'flex' }} className={classes.marginBottom}>
                     {/*progetto titolo e descrizione */}
                     <Container maxWidth="md" component="main" className={classes.heroContent}>
                         <Typography component="h2" variant="h4" align="center" color="textPrimary" gutterBottom>
                             {progetto.nome}
                         </Typography>
                         <Typography variant="h5" align="center" color="textSecondary" component="p">
-                            Descrizione <br/>
+                            Descrizione <br />
                             {progetto.descrizione}
                         </Typography>
                     </Container>
@@ -195,43 +195,48 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
                         <Typography variant="h6" component="h1" className={classes.margin}>
                             Informazioni Progetto
                         </Typography>
-                        <Paper className={classes.paperContainer} >
+                        <Paper className={classes.paperContainer}>
                             <Form
                                 onSubmit={onSubmit}
-                                initialValues={{nome: progetto.nome, 
-                                    descrizione: progetto.descrizione, 
+                                initialValues={{
+                                    nome: progetto.nome,
+                                    descrizione: progetto.descrizione,
                                     durata: progetto.durata,
                                     ente: progetto.ente,
                                     linkValutazioni: progetto.linkValutazioni,
                                     annoScolastico: progetto.annoScolastico,
-                                    startDate: progetto.startDate.split("T")[0],
-                                    endDate: progetto.endDate.split("T")[0],
+                                    startDate: progetto.startDate.split('T')[0],
+                                    endDate: progetto.endDate.split('T')[0],
                                 }}
                                 render={({ handleSubmit, reset, submitting, pristine, values }) => (
                                     <form onSubmit={handleSubmit} noValidate>
-                                        <FormControl className={classes.formControl} >
+                                        <FormControl className={classes.formControl}>
                                             <Field fullWidth name="nome" component={TextField} type="text" label="Nome" validate={required} />
                                         </FormControl>
-                                        <FormControl className={classes.formControl} >
+                                        <FormControl className={classes.formControl}>
                                             <Field fullWidth name="descrizione" component={TextField} type="text" label="Descrizione" validate={required} />
                                         </FormControl>
-                                        <FormControl className={classes.formControl} >
+                                        <FormControl className={classes.formControl}>
                                             <Field fullWidth name="durata" component={TextField} type="text" label="Durata in Ore" validate={required} />
                                         </FormControl>
-                                        <FormControl className={classes.formControl} >
-                                            <Field fullWidth name="ente" component={TextField} type="text" label="Ente" validate={required}  />
+                                        <FormControl className={classes.formControl}>
+                                            <Field fullWidth name="ente" component={TextField} type="text" label="Ente" validate={required} />
                                         </FormControl>
-                                        <FormControl className={classes.formControl} >
-                                            <Field fullWidth name="annoScolastico" component={TextField} type="text" label="Anno Scolastico" validate={required} />
+                                        <FormControl className={classes.formControl}>
+                                            <Field fullWidth name="annoScolastico" component={Select} type="text" label="Anno Scolastico" validate={required}>
+                                                {genYears().map((o) => (
+                                                    <MenuItem value={o}>{o}</MenuItem>
+                                                ))}
+                                            </Field>
                                         </FormControl>
-                                        <FormControl className={classes.formControl} >
+                                        <FormControl className={classes.formControl}>
                                             <Field fullWidth name="startDate" component={TextField} type="date" label="Data di Inizio" validate={required} />
                                         </FormControl>
-                                        <FormControl className={classes.formControl} >
+                                        <FormControl className={classes.formControl}>
                                             <Field fullWidth name="endDate" component={TextField} type="date" label="Data di Fine" validate={required} />
                                         </FormControl>
 
-                                        <FormControl className={classes.formControl} >
+                                        <FormControl className={classes.formControl}>
                                             <Field fullWidth name="linkValutazioni" component={TextField} type="text" label="Link Valutazioni" />
                                         </FormControl>
                                         <Button variant="contained" color="primary" type="submit" disabled={submitting}>
@@ -247,13 +252,7 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
                         <Typography variant="h6" component="h1" className={classes.margin}>
                             Classi partecipanti al progetto
                         </Typography>
-                        <Modal
-                            open={openAggiungiClasse}
-                            onClose={handleCloseAggiungiClasse}
-                            aria-labelledby="nuova classe"
-                            aria-describedby="puoi aggiungere una nuova classe"
-                            className={classes.modal}
-                        >
+                        <Modal open={openAggiungiClasse} onClose={handleCloseAggiungiClasse} aria-labelledby="nuova classe" aria-describedby="puoi aggiungere una nuova classe" className={classes.modal}>
                             <AggiungiClasse updater={setReloader} pid={pid} ceStanno={classiProgetto} />
                         </Modal>
                         <Button variant="contained" color="primary" className={classes.marginLeft} onClick={handleOpenAggiungiClasse}>
@@ -281,17 +280,17 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {
-                                        classiProgetto.map(({id, classe, sezione, indirizzo, cancella})=>{
-                                            return <TableRow key={id}>
+                                    {classiProgetto.map(({ id, classe, sezione, indirizzo, cancella }) => {
+                                        return (
+                                            <TableRow key={id}>
                                                 <TableCell scope="row">{id}</TableCell>
                                                 <TableCell scope="row">{classe}</TableCell>
                                                 <TableCell scope="row">{sezione}</TableCell>
                                                 <TableCell scope="row">{indirizzo}</TableCell>
                                                 <TableCell scope="row">{cancella}</TableCell>
                                             </TableRow>
-                                        })
-                                    }
+                                        );
+                                    })}
                                 </TableBody>
                             </Table>
                         </TableContainer>
@@ -333,24 +332,24 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {
-                                        docenti.map(({ id, nome, cognome, classe, indirizzo, descrizione }) => {
-                                            return <TableRow key={id}>
+                                    {docenti.map(({ id, nome, cognome, classe, indirizzo, descrizione }) => {
+                                        return (
+                                            <TableRow key={id}>
                                                 <TableCell scope="row">{id}</TableCell>
                                                 <TableCell scope="row">{nome}</TableCell>
                                                 <TableCell scope="row">{cognome}</TableCell>
-                                                <TableCell scope="row">{classe || "NO"}</TableCell>
+                                                <TableCell scope="row">{classe || 'NO'}</TableCell>
                                                 <TableCell scope="row">{indirizzo}</TableCell>
                                                 <TableCell scope="row">{descrizione}</TableCell>
                                             </TableRow>
-                                        })
-                                    }
+                                        );
+                                    })}
                                 </TableBody>
                             </Table>
                         </TableContainer>
                     </Grid>
                 </Grid>
-            }
+            )}
         </>
     );
 };
