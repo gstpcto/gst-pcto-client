@@ -5,6 +5,7 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import axios from 'axios';
 import { baseRoute, useAuth } from 'ProvideAuth';
+import { SuccessAlert, ErrorAlert } from 'components/snackbars';
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -31,6 +32,7 @@ export default function ComponentChangePassword() {
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [newPasswordError, setNewPasswordError] = useState(false);
     const [oldPasswordError, setOldPasswordError] = useState(false);
+    const [toast, setToast] = useState(null);
     const [password, setPassword] = useState({
         oldPassword: '',
         newPassword: '',
@@ -53,16 +55,33 @@ export default function ComponentChangePassword() {
                 if (password.oldPassword === "") setOldPasswordError(true);
                 if (password.newPassword === "") setNewPasswordError(true)
             }else{
-                await axios.put(`${baseRoute}/resetPassword`, {
-                    token: auth.token,
-                    oldPass: password.oldPassword,
-                    newPass: password.newPassword
-                }).then(res => {
-                    console.log(res);
-                }).then(()=>{
-                    setNewPasswordError(false);
-                    setOldPasswordError(false);
-                })
+                await axios
+                    .put(`${baseRoute}/resetPassword`, {
+                        token: auth.token,
+                        oldPass: password.oldPassword,
+                        newPass: password.newPassword,
+                    })
+                    .then((res) => {
+                        const resetter = async () => {
+                            setToast(null);
+                        };
+                        resetter().then(() => {
+                            setToast(<SuccessAlert message={res.data.message} />);
+                        });
+                        console.log(res);
+                    })
+                    .then(() => {
+                        setNewPasswordError(false);
+                        setOldPasswordError(false);
+                    })
+                    .catch((err) => {
+                        const resetter = async () => {
+                            setToast(null);
+                        };
+                        resetter().then(() => {
+                            setToast(<ErrorAlert message={err.response.data.cause} />);
+                        });
+                    });
             }
         }
 
@@ -89,56 +108,59 @@ export default function ComponentChangePassword() {
     };
 
     return (
-        <Paper className={classes.paperContainer}>
-            <Box className={classes.boxContainer}>
-                <Typography variant="h6" component="h1">
-                    Cambia Password
-                </Typography>
-                <FormControl fullWidth variant="outlined" error={oldPasswordError} className={classes.formControl}>
-                    <InputLabel>Vecchia Password</InputLabel>
-                    <OutlinedInput
-                        id="oldPassword"
-                        type={showOldPassword ? 'text' : 'password'}
-                        onChange={handleTextChange}
-                        value={password.oldPassword}
-                        endAdornment={
-                            <InputAdornment position="end">
-                                <IconButton onClick={handleClickShowOldPassword} onMouseDown={handleMouseDownPassword} edge="end">
-                                    {showOldPassword ? <Visibility /> : <VisibilityOff />}
-                                </IconButton>
-                            </InputAdornment>
-                        }
-                        label="Vecchia Password"
-                    />
-                </FormControl>
-                <FormControl fullWidth variant="outlined" error={newPasswordError} className={classes.formControl}>
-                    <InputLabel>Nuova Password</InputLabel>
-                    <OutlinedInput
-                        id="newPassword"
-                        type={showNewPassword ? 'text' : 'password'}
-                        onChange={handleTextChange}
-                        value={password.newPassword}
-                        endAdornment={
-                            <InputAdornment position="end">
-                                <IconButton onClick={handleClickShowNewPassword} onMouseDown={handleMouseDownPassword} edge="end">
-                                    {showNewPassword ? <Visibility /> : <VisibilityOff />}
-                                </IconButton>
-                            </InputAdornment>
-                        }
-                        label="Nuova Password"
-                    />
-                </FormControl>
-                <FormControl fullWidth variant="outlined" error={newPasswordError} className={classes.formControl}>
-                    <InputLabel>Conferma Password</InputLabel>
-                    <OutlinedInput id="confirmPassword" type={showNewPassword ? 'text' : 'password'} onChange={handleTextChange} value={password.confirmPassword} label="Conferma Password" />
-                </FormControl>
-            </Box>
+        <>
+            <Paper className={classes.paperContainer}>
+                <Box className={classes.boxContainer}>
+                    <Typography variant="h6" component="h1">
+                        Cambia Password
+                    </Typography>
+                    <FormControl fullWidth variant="outlined" error={oldPasswordError} className={classes.formControl}>
+                        <InputLabel>Vecchia Password</InputLabel>
+                        <OutlinedInput
+                            id="oldPassword"
+                            type={showOldPassword ? 'text' : 'password'}
+                            onChange={handleTextChange}
+                            value={password.oldPassword}
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton onClick={handleClickShowOldPassword} onMouseDown={handleMouseDownPassword} edge="end">
+                                        {showOldPassword ? <Visibility /> : <VisibilityOff />}
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                            label="Vecchia Password"
+                        />
+                    </FormControl>
+                    <FormControl fullWidth variant="outlined" error={newPasswordError} className={classes.formControl}>
+                        <InputLabel>Nuova Password</InputLabel>
+                        <OutlinedInput
+                            id="newPassword"
+                            type={showNewPassword ? 'text' : 'password'}
+                            onChange={handleTextChange}
+                            value={password.newPassword}
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton onClick={handleClickShowNewPassword} onMouseDown={handleMouseDownPassword} edge="end">
+                                        {showNewPassword ? <Visibility /> : <VisibilityOff />}
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                            label="Nuova Password"
+                        />
+                    </FormControl>
+                    <FormControl fullWidth variant="outlined" error={newPasswordError} className={classes.formControl}>
+                        <InputLabel>Conferma Password</InputLabel>
+                        <OutlinedInput id="confirmPassword" type={showNewPassword ? 'text' : 'password'} onChange={handleTextChange} value={password.confirmPassword} label="Conferma Password" />
+                    </FormControl>
+                </Box>
 
-            <Box className={classes.boxContainer}>
-                <Button variant="contained" color="secondary" fullWidth onClick={submitHandler}>
-                    Cambia Password
-                </Button>
-            </Box>
-        </Paper>
+                <Box className={classes.boxContainer}>
+                    <Button variant="contained" color="secondary" fullWidth onClick={submitHandler}>
+                        Cambia Password
+                    </Button>
+                </Box>
+            </Paper>
+            {toast} 
+        </>
     );
 }
