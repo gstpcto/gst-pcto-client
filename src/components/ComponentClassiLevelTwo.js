@@ -162,10 +162,12 @@ const DialogProgettiClasse = ({ classe, sezione, idClasse, indirizzo, closer }) 
             </AppBar>
             <Box className={classes.paperContainer}>
                 <Grid item container xs={12} spacing={1}>
-                    {progettiClasse &&
+                    {progettiClasse.length !== 0 ? 
                         progettiClasse.map(({ id, nome, descrizione, linkValutazioni, annoScolastico }, index) => {
                             return <ComponentProject key={index} nome={nome} descrizione={descrizione} id={id} linkValutazioni={linkValutazioni} annoScolastico={annoScolastico} />;
-                        })}
+                        }) :
+                        "Nessun progetto disponibile"
+                    }
                 </Grid>
             </Box>
         </>
