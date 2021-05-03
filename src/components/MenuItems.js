@@ -22,8 +22,10 @@ import DashboardLevelZero from 'fragments/DashboardLevelZero';
 import SettingsLevelZero from 'fragments/SettingsLevelZero';
 import DashboardLevelOne from 'fragments/DashboardLevelOne';
 import TabellaLevelOne from 'fragments/TabellaLevelOne';
+import SettingsLevelOne from 'fragments/SettingsLevelOne';
 import DashboardLevelTwo from 'fragments/DashboardLevelTwo';
 import ListaClassiLevelTwo from 'fragments/ListaClassiLevelTwo';
+import SettingsLevelTwo from 'fragments/SettingsLevelTwo';
 import ProjectsLevelOne from 'fragments/ProjectsLevelOne';
 import DashboardLevelFour from 'fragments/DashboardLevelFour';
 import Classi from 'components/admin/ClassiAdminQuattro'
@@ -127,6 +129,20 @@ export default function MenuItems({ level, setFragment }) {
                             </ListItemIcon>
                             <ListItemText primary="Progetti" />
                         </ListItem>
+                        <ListItem
+                            button
+                            onClick={() => {
+                                setFragment({
+                                    titolo: 'Impostazioni Profilo',
+                                    component: <SettingsLevelOne />,
+                                });
+                            }}
+                        >
+                            <ListItemIcon>
+                                <SettingsIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Impostazioni Profilo" />
+                        </ListItem>
                     </>
                 );
 
@@ -160,6 +176,20 @@ export default function MenuItems({ level, setFragment }) {
                                 <GroupIcon />
                             </ListItemIcon>
                             <ListItemText primary="Classi" />
+                        </ListItem>
+                        <ListItem
+                            button
+                            onClick={() => {
+                                setFragment({
+                                    titolo: 'Impostazioni Profilo',
+                                    component: <SettingsLevelTwo />,
+                                });
+                            }}
+                        >
+                            <ListItemIcon>
+                                <SettingsIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Impostazioni Profilo" />
                         </ListItem>
                     </>
                 );
