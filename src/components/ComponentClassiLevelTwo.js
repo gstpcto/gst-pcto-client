@@ -16,8 +16,18 @@ import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
 import axios from 'axios';
 import ComponentProject from 'components/ComponentProject';
-
+import { red, yellow, green } from '@material-ui/core/colors';
+import { Warning } from '@material-ui/icons';
 const useStyles = makeStyles((theme) => ({
+    bgRed: {
+        backgroundColor: red[500],
+    },
+    bgYellow: {
+        backgroundColor: yellow[800],
+    },
+    bgGreen: {
+        backgroundColor: green[500],
+    },
     modal: {
         width: '100vw',
         height: '100vh',
@@ -69,6 +79,13 @@ const useStyles = makeStyles((theme) => ({
         hyphens: 'auto',
         width: '90%',
     },
+    warnAligner: {
+        display: 'inline-flex',
+        flex: 1,
+        justifyContent: 'space-between',
+        verticalAlign: "top",
+        alignItems: 'space-between',
+    },
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -76,12 +93,14 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function ComponentClassiLevelTwo({ classe, sezione, idClasse, indirizzo }) {
+    const auth = useAuth();
     const classes = useStyles();
     const fixedSizeCardDetails = clsx(classes.card, classes.maxWidth);
     const cardRoot = clsx(classes.card, classes.chevronAligner);
 
     const [openClasse, setOpenClasse] = useState(false);
     const [cid, setCid] = useState(null); // id Class3
+    const [errorColor, setErrorColor] = useState(false);
 
     const handleOpenClasse = () => {
         setOpenClasse(true);
@@ -92,13 +111,49 @@ export default function ComponentClassiLevelTwo({ classe, sezione, idClasse, ind
         setOpenClasse(false);
         setCid(null);
     };
+    useEffect(() => {
+        const fetchData = async () => {
+            return await axios.get(`${baseRoute}/progetti/progettiPerClasse/${idClasse}`, { params: { token: auth.token } });
+        };
+
+        fetchData()
+            .then(function (response) {
+                return response["data"]["data"];
+            })
+            .then(data => {
+                data.map(({ id }) => {
+                    const fetchDataa = async () => {
+                        return await axios
+                            .get(`${baseRoute}/progetti/classiAlunni/${id}`, { params: { token: auth.token } })
+                    }
+                    fetchDataa()
+                        .then(r => {
+                            const al = r.data.progetti.alunni;
+                            console.log("RISULTATOOO", al);
+                            al.forEach(a => {
+                                if (a.voto === null) {
+                                    setErrorColor(true);
+                                    return;
+                                }
+                            });
+                        })
+                })
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+
+
+        // eslint-disable-next-line
+    }, []);
 
     return (
         <>
             <Grid item xs={12} md={6}>
                 <Box>
                     <CardActionArea onClick={handleOpenClasse}>
-                        <Card className={cardRoot}>
+                        <Card className={cardRoot} className={`${cardRoot} ${errorColor ? classes.bgRed : classes.bgGreen}`} style={{ color: "white" }}>
                             <div className={fixedSizeCardDetails}>
                                 <CardContent className={classes.textWrap}>
                                     <Typography variant="h6">
@@ -106,7 +161,12 @@ export default function ComponentClassiLevelTwo({ classe, sezione, idClasse, ind
                                         {sezione}
                                     </Typography>
                                     <Typography variant="subtitle1" color="textSecondary">
-                                        {`${idClasse} - ${indirizzo}`}
+                                        {`${indirizzo}`}
+                                    </Typography>
+                                    <Typography variant="subtitle1" color="white">
+                                        {
+                                            errorColor ? <><span className={classes.warnAligner}> <Warning /></span> Devi ancora inserire alcuni voti...</> : null
+                                        }
                                     </Typography>
                                 </CardContent>
                             </div>
@@ -118,13 +178,13 @@ export default function ComponentClassiLevelTwo({ classe, sezione, idClasse, ind
                 </Box>
             </Grid>
             <Dialog fullScreen open={openClasse} onClose={handleCloseClasse} TransitionComponent={Transition}>
-                <DialogProgettiClasse closer={handleCloseClasse} classe={classe} sezione={sezione} idClasse={idClasse} indirizzo={indirizzo} />
+                <DialogProgettiClasse closer={handleCloseClasse} classe={classe} sezione={sezione} idClasse={idClasse} indirizzo={indirizzo} setColor={setErrorColor} />
             </Dialog>
         </>
     );
 }
 
-const DialogProgettiClasse = ({ classe, sezione, idClasse, indirizzo, closer }) => {
+const DialogProgettiClasse = ({ classe, sezione, idClasse, indirizzo, closer, setColor }) => {
     const classes = useStyles();
     const auth = useAuth();
 
@@ -140,10 +200,14 @@ const DialogProgettiClasse = ({ classe, sezione, idClasse, indirizzo, closer }) 
                 // console.log('questi sono i progetti della classe ', idClasse, ' PROGETTI ', response);
                 // console.log('progetti', response['data']['data']);
                 setProgettiClasse(response['data']['data']);
+                return response["data"]["data"];
             })
             .catch(function (error) {
                 console.log(error);
             });
+
+
+
         // eslint-disable-next-line
     }, []);
 
@@ -162,7 +226,7 @@ const DialogProgettiClasse = ({ classe, sezione, idClasse, indirizzo, closer }) 
             </AppBar>
             <Box className={classes.paperContainer}>
                 <Grid item container xs={12} spacing={1}>
-                    {progettiClasse.length !== 0 ? 
+                    {progettiClasse.length !== 0 ?
                         progettiClasse.map(({ id, nome, descrizione, linkValutazioni, annoScolastico }, index) => {
                             return <ComponentProject key={index} nome={nome} descrizione={descrizione} id={id} linkValutazioni={linkValutazioni} annoScolastico={annoScolastico} />;
                         }) :

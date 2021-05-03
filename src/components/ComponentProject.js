@@ -345,7 +345,7 @@ const ProjectTableDialog = ({ pid, closer, link }) => {
 
                 <Box display="flex" justifyContent="center" flexDirection={{ xs: 'column', sm: 'row' }} style={{ marginTop: theme.spacing(1), marginLeft: theme.spacing(1) }}>
                     <Paper className={classes.paperContainer}>
-                        {link ? <a href={link} >Link al form</a> : "link non ancora creato"}
+                        {link ? <a href={link} target="blank" >Link al form</a> : "link non ancora creato"}
                     </Paper>
                     {sendButton ?
                         <Button
