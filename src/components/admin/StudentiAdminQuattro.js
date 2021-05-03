@@ -31,6 +31,8 @@ import PWResetForm from 'components/admin/PWResetForm';
 import CSVDropzone from 'components/CSVDropzone';
 import { theme } from 'theme';
 import genYears from 'fragments/genYears';
+import { SuccessAlert } from 'components/snackbars';
+import { ErrorAlert } from 'components/snackbars';
 
 const useStyles = makeStyles((theme) => ({
     modifyButton: {
@@ -87,11 +89,24 @@ export default function Studenti() {
     const [data, setData] = useState(null);
     const [isLoading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
+    const [toast, toaster] = useState(null);
+
+    const resetter = async () => {
+        toaster(null);
+    }
 
     const cancellaStudente = async (id) => {
-        await axios.delete(`${baseRoute}/studenti/delete/${id}`, { data: { token: auth.token } }).then((r) => {
-            console.log(r);
-        });
+        await axios.delete(`${baseRoute}/studenti/delete/${id}`, { data: { token: auth.token } })
+            .then((r) => {
+                resetter().then(() => {
+                    toaster(<SuccessAlert message={r.data.message} />)
+                })
+            })
+            .catch(err => {
+                resetter().then(() => {
+                    toaster(<ErrorAlert message={err.response.data.cause} />)
+                })
+            })
         setReloader(Math.random());
     };
 
@@ -193,7 +208,7 @@ export default function Studenti() {
                 aria-describedby="puoi aggiungere un nuovo studente"
                 className={classes.modal}
             >
-                <NewStudente updater={setReloader} />
+                <NewStudente updater={setReloader} toaster={toaster} />
             </Modal>
 
             <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
@@ -275,15 +290,20 @@ export default function Studenti() {
                     </TableBody>
                 </Table>
             </TableContainer>
+            {toast}
         </>
     );
 }
 
-const NewStudente = ({ updater }) => {
+const NewStudente = ({ updater, toaster }) => {
     const classes = useStyles();
     const auth = useAuth();
     const [classi, setClassi] = useState([]);
     const [isLoading, setLoading] = useState(true);
+    const resetter = async () => {
+        toaster(null);
+    }
+
 
     const onSubmit = async ({ mail, pass, name, surname, codiceF, date, annoScolastico: as, idclasse }) => {
         const req = { mail, pass, name, surname, codiceF, date, as, idclasse };
@@ -291,12 +311,20 @@ const NewStudente = ({ updater }) => {
             .post(`${baseRoute}/studenti/create`, { token: auth.token, data: req })
             .then((res) => {
                 console.log(res);
+                resetter().then(() => {
+                    toaster(<SuccessAlert message={res.data.message} />)
+                })
             })
             .then(() => {
                 updater(Math.random());
-            });
+            })
+            .catch(err => {
+                resetter().then(() => {
+                    toaster(<ErrorAlert message={err.response.data.cause} />)
+                })
+            })
     };
-    const required = (value) => (value ? undefined : 'Required');
+    const required = (value) => (value ? undefined : 'Richiesto');
     useEffect(() => {
         const fetchData = async () => {
             return await axios.get(`${baseRoute}/classi/allconcat`);
