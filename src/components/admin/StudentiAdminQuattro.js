@@ -212,7 +212,7 @@ export default function Studenti() {
             </Modal>
 
             <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-                <StudenteDialogContent uid={uid} updater={setReloader} closer={handleClose} reloader={reloader} />
+                <StudenteDialogContent uid={uid} updater={setReloader} closer={handleClose} reloader={reloader} toaster={toaster} />
             </Dialog>
 
             <Container maxWidth="md" component="main" className={classes.heroContent}>
@@ -393,7 +393,8 @@ const NewStudente = ({ updater, toaster }) => {
     );
 };
 
-const StudenteDialogContent = ({ uid, updater, closer, reloader }) => {
+const StudenteDialogContent = ({ uid, updater, closer, reloader, toaster }) => {
+    const required = (value) => (value ? undefined : 'Richiesto');
     const [studente, setStudente] = useState(null);
     const [isLoading, setLoading] = useState(true);
     //frequentare
@@ -439,6 +440,10 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader }) => {
         setOpenAggiungiVoto(false);
     };
 
+    const resetter = async () => {
+        toaster(null);
+    }
+
     const onSubmit = async (data) => {
         console.log('form submitted');
         console.log(data);
@@ -446,8 +451,16 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader }) => {
             .put(`${baseRoute}/studenti/updateAdmin`, { token: auth.token, idstudente: studente.id, data })
             .then((r) => {
                 console.log(r);
+                resetter().then(() => {
+                    toaster(<SuccessAlert message={r.data.message} />)
+                })
             })
-            .then(() => updater(Math.random()));
+            .then(() => updater(Math.random()))
+            .catch(err => {
+                resetter().then(() => {
+                    toaster(<ErrorAlert message={err.response.data.cause} />)
+                })
+            })
     };
 
     useEffect(() => {
@@ -569,19 +582,19 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader }) => {
                             render={({ handleSubmit, reset, submitting, pristine, values }) => (
                                 <form onSubmit={handleSubmit} noValidate>
                                     <FormControl className={classes.formControl}>
-                                        <Field fullWidth name="nome" component={TextField} type="text" label="Nome" />
+                                        <Field fullWidth name="nome" component={TextField} type="text" label="Nome" validate={required} />
                                     </FormControl>
                                     <FormControl className={classes.formControl}>
-                                        <Field fullWidth name="cognome" component={TextField} type="text" label="Cognome" />
+                                        <Field fullWidth name="cognome" component={TextField} type="text" label="Cognome" validate={required} />
                                     </FormControl>
                                     <FormControl className={classes.formControl}>
-                                        <Field fullWidth name="email" component={TextField} type="text" label="Email" />
+                                        <Field fullWidth name="email" component={TextField} type="text" label="Email" validate={required} />
                                     </FormControl>
                                     <FormControl className={classes.formControl}>
-                                        <Field fullWidth name="codiceF" component={TextField} type="text" label="Codice Fiscale" />
+                                        <Field fullWidth name="codiceF" component={TextField} type="text" label="Codice Fiscale" validate={required} />
                                     </FormControl>
                                     <FormControl className={classes.formControl}>
-                                        <Field fullWidth name="dataN" component={TextField} type="date" label="Data di Nascita" />
+                                        <Field fullWidth name="dataN" component={TextField} type="date" label="Data di Nascita" validate={required} />
                                     </FormControl>
 
                                     <Button variant="contained" color="primary" type="submit" disabled={submitting}>
@@ -593,7 +606,7 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader }) => {
                     </Paper>
                 </Grid>
                 {/* password admin reset component */}
-                <PWResetForm id={uid} />
+                <PWResetForm id={uid} toaster={toaster} />
                 {/**storico delle classi frequentate */}
                 <Grid item md={12} xs={12}>
                     <Typography variant="h6" className={classes.title}>
@@ -609,7 +622,7 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader }) => {
                         aria-describedby="puoi aggiungere una nuova classe"
                         className={classes.modal}
                     >
-                        <AggiungiAnnoModal updater={updater} studenteid={studente.id} />
+                        <AggiungiAnnoModal updater={updater} studenteid={studente.id} toaster={toaster} />
                     </Modal>
                     <Modal open={openModificaAnnoModal} onClose={handleCloseModificaModal} aria-labelledby="modifica relazione" aria-describedby="modifica la relazione" className={classes.modal}>
                         <ConfirmDeleteForm rid={rid} updater={updater} />
@@ -795,6 +808,7 @@ const AggiungiAnnoModal = ({ updater, studenteid }) => {
     );
 };
 
+//da togliere
 const ConfirmDeleteForm = ({ rid, updater }) => {
     console.log(rid);
     const auth = useAuth();

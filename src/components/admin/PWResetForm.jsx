@@ -9,6 +9,8 @@ import Button from "@material-ui/core/Button";
 import { Form, Field } from "react-final-form";
 import { TextField } from "final-form-material-ui";
 import { green } from "@material-ui/core/colors";
+import { ErrorAlert } from "components/snackbars";
+import { SuccessAlert } from "components/snackbars";
 
 const useStyles = makeStyles((theme) => ({
   modifyButton: {
@@ -52,10 +54,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PWResetForm = ({ id }) => {
+const PWResetForm = ({ id, toaster }) => {
+  const required = (value) => (value ? undefined : "Richiesto");
   console.log("L?ID DEL TIPO", id);
   const auth = useAuth();
   const classes = useStyles();
+
+  const resetter = async () => {
+    toaster(null);
+  };
 
   const onSubmitPass = async ({ nuovaPass }) => {
     if (nuovaPass !== undefined && nuovaPass !== null && nuovaPass !== "") {
@@ -66,6 +73,14 @@ const PWResetForm = ({ id }) => {
         })
         .then((r) => {
           console.log(r);
+          resetter().then(() => {
+            toaster(<SuccessAlert message={r.data.message} />);
+          });
+        })
+        .catch((err) => {
+          resetter().then(() => {
+            toaster(<ErrorAlert message={err.response.data.cause} />);
+          });
         });
     }
   };
@@ -82,7 +97,15 @@ const PWResetForm = ({ id }) => {
           render={({ handleSubmit, reset, submitting, pristine, values }) => (
             <form
               onSubmit={async (event) => {
-                handleSubmit(event).then(reset);
+                try {
+                  handleSubmit(event)
+                    .then(reset)
+                    .catch(() => {
+                      console.log("A");
+                    });
+                } catch (error) {
+                  return;
+                }
               }}
             >
               <FormControl className={classes.formControl}>
@@ -92,7 +115,7 @@ const PWResetForm = ({ id }) => {
                   component={TextField}
                   type="text"
                   label="Nuova Password"
-                  required
+                  validate={required}
                 />
               </FormControl>
               <Button variant="contained" color="secondary" type="submit">
