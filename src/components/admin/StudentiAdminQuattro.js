@@ -463,6 +463,26 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader, toaster }) => {
             })
     };
 
+    const cancella = async (id) => {
+        console.log(auth.token, id);
+        await axios
+            .delete(`${baseRoute}/studenti/frequentare/${id}`, {
+                data: { token: auth.token },
+            })
+            .then((res) => {
+                console.log(res);
+                resetter().then(() => {
+                    toaster(<SuccessAlert message={res.data.message} />)
+                })
+                updater(Math.random())
+            })
+            .catch(err => {
+                resetter().then(() => {
+                    toaster(<ErrorAlert message={err.response.data.cause} />)
+                })
+            })
+    };
+
     useEffect(() => {
         setLoading(true);
         console.log(`${baseRoute}/studenti/${uid}`);
@@ -480,16 +500,11 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader, toaster }) => {
                         console.log(temp);
                         const tabella = temp.map(({ annoScolastico, id, classe, sezione, indirizzo, idrelazione }) => {
                             const elimina = (
-                                <Button
-                                    variant="contained"
-                                    color="secondary"
+                                <ConfirmButton
                                     onClick={() => {
-                                        setRid(idrelazione);
-                                        handleOpenModificaModal();
+                                        cancella(idrelazione);
                                     }}
-                                >
-                                    CANCELLA
-                                </Button>
+                                />
                             );
 
                             return {
@@ -624,9 +639,6 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader, toaster }) => {
                     >
                         <AggiungiAnnoModal updater={updater} studenteid={studente.id} toaster={toaster} />
                     </Modal>
-                    <Modal open={openModificaAnnoModal} onClose={handleCloseModificaModal} aria-labelledby="modifica relazione" aria-describedby="modifica la relazione" className={classes.modal}>
-                        <ConfirmDeleteForm rid={rid} updater={updater} />
-                    </Modal>
                     {/* tabella con le relazioni */}
                     <TableContainer component={Paper}>
                         <Table size="small">
@@ -683,11 +695,11 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader, toaster }) => {
                         aria-describedby="puoi aggiungere una nuova classe"
                         className={classes.modal}
                     >
-                        <ModificaVoto updater={updater} vid={vid} />
+                        <ModificaVoto updater={updater} vid={vid} toaster={toaster} />
                     </Modal>
 
                     <Modal open={openAggiungiVoto} onClose={handleCloseAggiungiVoto} aria-labelledby="nuova classe" aria-describedby="puoi aggiungere una nuova classe" className={classes.modal}>
-                        <AggiungiVoto updater={updater} uid={uid} />
+                        <AggiungiVoto updater={updater} uid={uid} toaster={toaster} />
                     </Modal>
 
                     <TableContainer component={Paper}>
@@ -735,12 +747,17 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader, toaster }) => {
 };
 
 //questo aggiunge una relazione
-const AggiungiAnnoModal = ({ updater, studenteid }) => {
+const AggiungiAnnoModal = ({ updater, studenteid, toaster }) => {
+    const required = (value) => (value ? undefined : 'Richiesto');
     console.log(studenteid);
     const auth = useAuth();
     const classes = useStyles();
     const [classi, setClassi] = useState([]);
     const [isLoading, setLoading] = useState(true);
+
+    const resetter = async () => {
+        toaster(null);
+    }
 
     const onSubmit = async (data) => {
         console.log('form submitted');
@@ -751,11 +768,20 @@ const AggiungiAnnoModal = ({ updater, studenteid }) => {
             idclasse,
             idstudente: studenteid,
         };
-        await axios.put(`${baseRoute}/studenti/cambiaClasse`, { token: auth.token, data: req }).then((res) => {
-            console.log(res);
-        });
+        await axios.put(`${baseRoute}/studenti/cambiaClasse`, { token: auth.token, data: req })
+            .then((res) => {
+                console.log(res);
+                resetter().then(() => {
+                    toaster(<SuccessAlert message={res.data.message} />)
+                })
+                updater(Math.random());
+            })
+            .catch(err => {
+                resetter().then(() => {
+                    toaster(<ErrorAlert message={err.response.data.cause} />)
+                })
+            })
 
-        updater(Math.random());
     };
 
     const fetchData = async () => {
@@ -784,7 +810,7 @@ const AggiungiAnnoModal = ({ updater, studenteid }) => {
                             </Typography>
 
                             <FormControl className={classes.formControl}>
-                                <Field fullWidth name="annoScolastico" component={Select} type="text" label="Anno Scolastico">
+                                <Field fullWidth name="annoScolastico" component={Select} type="text" label="Anno Scolastico" validate={required}>
                                     {genYears().map((o) => (
                                         <MenuItem value={o}>{o}</MenuItem>
                                     ))}
@@ -792,7 +818,7 @@ const AggiungiAnnoModal = ({ updater, studenteid }) => {
                             </FormControl>
 
                             <FormControl className={classes.formControl}>
-                                <Field fullWidth name="idclasse" component={Select} label="Classe" formControlProps={{ fullWidth: true }}>
+                                <Field fullWidth name="idclasse" component={Select} label="Classe" formControlProps={{ fullWidth: true }} validate={required}>
                                     {classi}
                                 </Field>
                             </FormControl>
@@ -808,53 +834,17 @@ const AggiungiAnnoModal = ({ updater, studenteid }) => {
     );
 };
 
-//da togliere
-const ConfirmDeleteForm = ({ rid, updater }) => {
-    console.log(rid);
-    const auth = useAuth();
-    const classes = useStyles();
 
-    const deleteFromTable = (id) => {
-        console.log(auth.token, id);
-        axios
-            .delete(`${baseRoute}/studenti/frequentare/${id}`, {
-                data: { token: auth.token },
-            })
-            .then((res) => {
-                console.log(res);
-                if (res.data.status === 'rejected') {
-                    //setError(res.data.cause);
-                    console.error(res.data.cause);
-                } else updater(Math.random());
-            });
-    };
-
-    return (
-        <Box>
-            <Paper className={classes.paperContainer}>
-                <Typography variant="h6" component="h1">
-                    Sei sicuro di voler cancellare questa classe?
-                </Typography>
-                <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => {
-                        deleteFromTable(rid);
-                    }}
-                >
-                    CANCELLA
-                </Button>
-            </Paper>
-        </Box>
-    );
-};
-
-const ModificaVoto = ({ updater, vid }) => {
+const ModificaVoto = ({ updater, vid, toaster }) => {
     const auth = useAuth();
     const classes = useStyles();
     const [voto, setVoto] = useState(null);
     const [isLoading, setLoading] = useState(true);
+    const resetter = async () => {
+        toaster(null);
+    }
 
+    const required = (value) => (value ? undefined : 'Richiesto');
     const onSubmit = async ({ dataN: data, descrizione, voto }) => {
         console.log('form submitted');
 
@@ -864,18 +854,36 @@ const ModificaVoto = ({ updater, vid }) => {
             data,
         };
 
-        await axios.put(`${baseRoute}/voti/voti/${vid}`, { token: auth.token, data: req }).then((res) => {
-            console.log(res);
-        });
+        await axios.put(`${baseRoute}/voti/voti/${vid}`, { token: auth.token, data: req })
+            .then((res) => {
+                console.log(res);
+                resetter().then(() => {
+                    toaster(<SuccessAlert message={res.data.message} />)
+                })
+                updater(Math.random());
+            }).catch(err => {
+                console.log(err);
+                resetter().then(() => {
+                    toaster(<ErrorAlert message={err.response.data.cause} />)
+                })
+            })
 
-        updater(Math.random());
     };
 
     const deleteVoto = async () => {
-        await axios.delete(`${baseRoute}/voti/voto/${vid}`, { data: { token: auth.token } }).then((r) => {
-            console.log('CANCELLAZIONE', r);
-            updater(Math.random());
-        });
+        await axios.delete(`${baseRoute}/voti/voto/${vid}`, { data: { token: auth.token } })
+            .then((res) => {
+                console.log(res);
+                resetter().then(() => {
+                    toaster(<SuccessAlert message={res.data.message} />)
+                })
+                updater(Math.random());
+            }).catch(err => {
+                console.log(err);
+                resetter().then(() => {
+                    toaster(<ErrorAlert message={err.response.data.cause} />)
+                })
+            })
     };
 
     useEffect(() => {
@@ -906,7 +914,7 @@ const ModificaVoto = ({ updater, vid }) => {
                                 Modifica Voto
                             </Typography>
                             <FormControl className={classes.formControl}>
-                                <Field fullWidth name="dataN" component={TextField} type="date" label="Data" />
+                                <Field fullWidth name="dataN" component={TextField} type="date" label="Data" validate={required} />
                             </FormControl>
                             <FormControl className={classes.formControl}>
                                 <Field fullWidth name="docente" component={TextField} type="text" label="Docente" disabled />
@@ -915,10 +923,10 @@ const ModificaVoto = ({ updater, vid }) => {
                                 <Field fullWidth name="progetto" component={TextField} type="text" label="Progetto" disabled />
                             </FormControl>
                             <FormControl className={classes.formControl}>
-                                <Field fullWidth name="descrizione" component={TextField} type="text" label="Descrizione voto" />
+                                <Field fullWidth name="descrizione" component={TextField} type="text" label="Descrizione voto" validate={required} />
                             </FormControl>
                             <FormControl className={classes.formControl}>
-                                <Field fullWidth name="voto" component={Select} label="Voto" formControlProps={{ fullWidth: true }}>
+                                <Field fullWidth name="voto" component={Select} label="Voto" formControlProps={{ fullWidth: true }} validate={required}>
                                     <MenuItem value={3}>3</MenuItem>
                                     <MenuItem value={3.5}>3.5</MenuItem>
                                     <MenuItem value={4}>4</MenuItem>
@@ -952,13 +960,17 @@ const ModificaVoto = ({ updater, vid }) => {
     );
 };
 
-const AggiungiVoto = ({ updater, uid }) => {
+const AggiungiVoto = ({ updater, uid, toaster }) => {
     const auth = useAuth();
     const classes = useStyles();
     const [isLoading, setLoading] = useState(true);
     const [progettiData, setProgettiData] = useState(null);
     const [progettiOptions, setProgettiOptions] = useState(null);
     const [docentiOptions, setDocentiOptions] = useState('');
+
+    const resetter = async () => {
+        toaster(null);
+    }
 
     const onSubmit = async ({ data, descrizione, docente, progetto, voto }) => {
         const req = {
@@ -970,14 +982,22 @@ const AggiungiVoto = ({ updater, uid }) => {
             idDocente: docente,
         };
 
-        await axios.post(`${baseRoute}/voti/voto`, { token: auth.token, data: req }).then((res) => {
-            console.log(res);
-        });
-
-        updater(Math.random());
+        await axios.post(`${baseRoute}/voti/voto`, { token: auth.token, data: req })
+            .then((res) => {
+                console.log(res);
+                resetter().then(() => {
+                    toaster(<SuccessAlert message={res.data.message} />)
+                })
+                updater(Math.random());
+            }).catch(err => {
+                console.log(err);
+                resetter().then(() => {
+                    toaster(<ErrorAlert message={err.response.data.cause} />)
+                })
+            })
     };
 
-    const required = (value) => (value ? undefined : 'Required');
+    const required = (value) => (value ? undefined : 'Richiesto');
     const changeOptions = (id) => {
         const docenti = progettiData.filter((item) => {
             return item.progetto.id === id;
