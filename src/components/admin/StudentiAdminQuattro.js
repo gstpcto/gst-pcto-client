@@ -399,6 +399,7 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader, toaster }) => {
     const [storico, setStorico] = useState([]);
     // const [rid, setRid] = useState(null);
     const [openAggiungiAnnoModal, setOpenAggiungiAnnoModal] = useState(false);
+    // eslint-disable-next-line
     const [openModificaAnnoModal, setOpenModificaAnnoModal] = useState(false);
     //voti
     const [voti, setVoti] = useState([]);
@@ -553,6 +554,7 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader, toaster }) => {
         setOpenModificaAnnoModal(false);
         setOpenModficaVoto(false);
         setOpenAggiungiVoto(false);
+        // eslint-disable-next-line
     }, [uid, auth, reloader]);
 
     return isLoading ? (
