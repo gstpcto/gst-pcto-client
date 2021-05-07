@@ -9,10 +9,6 @@ function Alert(props) {
 const SuccessAlert = ({ message }) => {
   const [open, setOpen] = useState(true);
 
-  const handleClick = () => {
-    setOpen(true);
-  };
-
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -31,10 +27,6 @@ const SuccessAlert = ({ message }) => {
 
 const ErrorAlert = ({ message }) => {
   const [open, setOpen] = useState(true);
-
-  const handleClick = () => {
-    setOpen(true);
-  };
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {

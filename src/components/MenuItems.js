@@ -18,6 +18,7 @@ import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import GroupIcon from '@material-ui/icons/Group';
 
 // Fragments
+import DownloadDossier from 'fragments/DownloadDossier';
 import DashboardLevelZero from 'fragments/DashboardLevelZero';
 import SettingsLevelZero from 'fragments/SettingsLevelZero';
 import DashboardLevelOne from 'fragments/DashboardLevelOne';
@@ -58,7 +59,7 @@ export default function MenuItems({ level, setFragment }) {
                             onClick={() => {
                                 setFragment({
                                     titolo: 'Dossier',
-                                    component: <>Dossier Studente</>,
+                                    component: <DownloadDossier />,
                                 });
                             }}
                         >

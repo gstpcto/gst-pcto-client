@@ -27,10 +27,8 @@ const useStyles = makeStyles((theme) => ({
     modifyButton: {
         backgroundColor: green[500],
         color: 'white',
-    },
-    modifyButtonHover: {
         '&:hover': {
-            backgroundColor: green[800],
+            backgroundColor: green[600],
             color: 'white',
         },
     },
@@ -140,7 +138,7 @@ function TableBella() {
                             modifica: (
                                 <Button
                                     variant="contained"
-                                    className={`${classes.modifyButton} ${classes.modifyButtonHover}`}
+                                    className={`${classes.modifyButton}`}
                                     onClick={() => {
                                         console.log(d.id);
                                         setCid(d.id);

@@ -38,10 +38,8 @@ const useStyles = makeStyles((theme) => ({
     modifyButton: {
         backgroundColor: green[500],
         color: 'white',
-    },
-    modifyButtonHover: {
         '&:hover': {
-            backgroundColor: green[800],
+            backgroundColor: green[600],
             color: 'white',
         },
     },
@@ -163,7 +161,7 @@ export default function Studenti() {
                                     modifica: (
                                         <Button
                                             variant="contained"
-                                            className={`${classes.modifyButton} ${classes.modifyButtonHover}`}
+                                            className={`${classes.modifyButton}`}
                                             onClick={() => {
                                                 console.log(obj.id);
                                                 setUid(obj.id);
@@ -399,7 +397,7 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader, toaster }) => {
     const [isLoading, setLoading] = useState(true);
     //frequentare
     const [storico, setStorico] = useState([]);
-    const [rid, setRid] = useState(null);
+    // const [rid, setRid] = useState(null);
     const [openAggiungiAnnoModal, setOpenAggiungiAnnoModal] = useState(false);
     const [openModificaAnnoModal, setOpenModificaAnnoModal] = useState(false);
     //voti
@@ -413,14 +411,6 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader, toaster }) => {
     //frequentare
     const handleOpenAggiungiModal = () => {
         setOpenAggiungiAnnoModal(true);
-    };
-
-    const handleOpenModificaModal = () => {
-        setOpenModificaAnnoModal(true);
-    };
-
-    const handleCloseModificaModal = () => {
-        setOpenModificaAnnoModal(false);
     };
 
     const handleCloseAggiungiModal = () => {

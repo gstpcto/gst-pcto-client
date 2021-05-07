@@ -2,14 +2,11 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { Box, TextField } from '@material-ui/core';
+import { Box } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import clsx from 'clsx';
 import { red, yellow, green } from '@material-ui/core/colors';
-import { FormControl } from '@material-ui/core';
-import { Form, Field } from 'react-final-form';
-import { Select, Input } from 'final-form-material-ui';
 import { baseRoute, useAuth } from 'ProvideAuth';
 import { SuccessAlert, ErrorAlert } from 'components/snackbars';
 import axios from 'axios';
@@ -78,7 +75,7 @@ export default function ComponentVoti({ dati: { id, nome, valutazione, descrizio
     const classes = useStyles();
     const [ore, setOre] = useState(oreEffettive);
     const [toast, toaster] = useState(null);
-    const [error, setError] = useState(false);
+    // const [error, setError] = useState(false);
     const getCurrentColor = () => {
         if (valutazione >= 6) {
             return classes.bgGreen;

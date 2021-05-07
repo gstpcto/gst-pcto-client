@@ -1,8 +1,7 @@
 import { makeStyles } from "@material-ui/core";
 import React from "react";
-import { theme } from "theme";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   error: {
     color: "#f52222",
   },

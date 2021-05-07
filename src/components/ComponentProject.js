@@ -166,7 +166,7 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
                     }
                 });
             })
-
+            // eslint-disable-next-line
     }, [])
 
 
@@ -234,7 +234,7 @@ const ProjectTableDialog = ({ pid, closer, link }) => {
         updateUsersToSend([...alunniProgetto.filter((item) => {
             console.log("CASDASDASDASDSDASDASD", id);
             if (typeof id == "number") {
-                if (item.iduser == id) return true
+                if (item.iduser === id) return true
                 return false;
             }
             if (item.oreEffettive == null) return true;

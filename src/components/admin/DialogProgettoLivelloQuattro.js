@@ -29,43 +29,41 @@ import genYears from 'fragments/genYears';
 const useStyles = makeStyles((theme) => ({
     modifyButton: {
         backgroundColor: green[500],
-        color: "white",
-    },
-    modifyButtonHover: {
-        "&:hover": {
-            backgroundColor: green[800],
-            color: "white",
+        color: 'white',
+        '&:hover': {
+            backgroundColor: green[600],
+            color: 'white',
         },
     },
     formControl: {
         marginTop: theme.spacing(1),
         marginBottom: theme.spacing(1),
-        width: "100%",
+        width: '100%',
     },
     paperContainer: {
         padding: theme.spacing(2),
-        margin: theme.spacing(2)
+        margin: theme.spacing(2),
     },
     boxContainer: {
-        width: "100%",
+        width: '100%',
     },
     modal: {
-        width: "100vw",
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         padding: theme.spacing(2),
     },
     appBar: {
-        position: "relative",
+        position: 'relative',
     },
     title: {
         marginLeft: theme.spacing(2),
         flex: 1,
     },
     form: {
-        display: "inline-flex",
+        display: 'inline-flex',
     },
     heroContent: {
         padding: theme.spacing(4, 0, 6),
@@ -74,11 +72,11 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(2),
     },
     marginLeft: {
-        marginLeft: theme.spacing(2),  
+        marginLeft: theme.spacing(2),
     },
     marginBottom: {
         marginBottom: theme.spacing(8),
-    }
+    },
 }));
 
 

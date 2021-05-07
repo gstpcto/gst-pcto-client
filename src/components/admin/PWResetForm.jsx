@@ -13,45 +13,43 @@ import { ErrorAlert } from "components/snackbars";
 import { SuccessAlert } from "components/snackbars";
 
 const useStyles = makeStyles((theme) => ({
-  modifyButton: {
-    backgroundColor: green[500],
-    color: "white",
-  },
-  modifyButtonHover: {
-    "&:hover": {
-      backgroundColor: green[800],
-      color: "white",
+    modifyButton: {
+        backgroundColor: green[500],
+        color: 'white',
+        '&:hover': {
+            backgroundColor: green[600],
+            color: 'white',
+        },
     },
-  },
-  formControl: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-    width: "100%",
-  },
-  paperContainer: {
-    padding: theme.spacing(2),
-  },
-  boxContainer: {
-    width: "100%",
-  },
-  modal: {
-    width: "100vw",
-    height: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: theme.spacing(2),
-  },
-  appBar: {
-    position: "relative",
-  },
-  title: {
-    marginLeft: theme.spacing(2),
-    flex: 1,
-  },
-  form: {
-    display: "inline-flex",
-  },
+    formControl: {
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+        width: '100%',
+    },
+    paperContainer: {
+        padding: theme.spacing(2),
+    },
+    boxContainer: {
+        width: '100%',
+    },
+    modal: {
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: theme.spacing(2),
+    },
+    appBar: {
+        position: 'relative',
+    },
+    title: {
+        marginLeft: theme.spacing(2),
+        flex: 1,
+    },
+    form: {
+        display: 'inline-flex',
+    },
 }));
 
 const PWResetForm = ({ id, toaster }) => {

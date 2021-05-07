@@ -153,7 +153,7 @@ export default function ComponentClassiLevelTwo({ classe, sezione, idClasse, ind
             <Grid item xs={12} md={6}>
                 <Box>
                     <CardActionArea onClick={handleOpenClasse}>
-                        <Card className={cardRoot} className={`${cardRoot} ${errorColor ? classes.bgRed : classes.bgGreen}`} style={{ color: "white" }}>
+                        <Card className={`${cardRoot} ${errorColor ? classes.bgRed : classes.bgGreen}`} style={{ color: "white" }}>
                             <div className={fixedSizeCardDetails}>
                                 <CardContent className={classes.textWrap}>
                                     <Typography variant="h6">
