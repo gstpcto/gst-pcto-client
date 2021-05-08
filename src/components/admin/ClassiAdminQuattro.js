@@ -118,7 +118,7 @@ function TableBella() {
                 }
                 resetter().then(() => {
 
-                    setToast(<SuccessAlert message={err.response.data.cause} />)
+                    setToast(<ErrorAlert message={err.response.data.cause} />)
                 })
             })
     }
