@@ -44,4 +44,23 @@ const ErrorAlert = ({ message }) => {
   );
 };
 
-export { SuccessAlert, ErrorAlert };
+const InfoAlert = ({ message }) => {
+    const [open, setOpen] = useState(true);
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+    };
+    return (
+        <Snackbar open={open} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="info">
+                {message}
+            </Alert>
+        </Snackbar>
+    );
+};
+
+export { SuccessAlert, ErrorAlert, InfoAlert };

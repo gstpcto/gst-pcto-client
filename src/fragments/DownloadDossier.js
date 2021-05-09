@@ -6,7 +6,7 @@ import { green } from '@material-ui/core/colors';
 import axios from 'axios';
 import { baseRoute, useAuth } from 'ProvideAuth';
 import download from 'downloadjs';
-import { SuccessAlert, ErrorAlert } from 'components/snackbars';
+import { SuccessAlert, ErrorAlert, InfoAlert } from 'components/snackbars';
 
 const useStyles = makeStyles((theme) => ({
     downloadButton: {
@@ -29,7 +29,7 @@ export default function DownloadDossier() {
             setToast(null);
         };
         resetter().then(() => {
-            setToast(<SuccessAlert message={'Download avviato.'} />);
+            setToast(<InfoAlert message={'Download in corso...'} />);
         });
         await axios({
             method: 'GET',
