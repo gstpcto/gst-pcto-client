@@ -31,6 +31,8 @@ import { theme } from 'theme';
 import CSVDropzone from 'components/CSVDropzone';
 import ConfirmButton from 'components/confirmDeleteButton';
 import genYears from 'fragments/genYears';
+import { SuccessAlert } from 'components/snackbars';
+import { ErrorAlert } from 'components/snackbars';
 
 const useStyles = makeStyles((theme) => ({
     modifyButton: {
@@ -94,7 +96,11 @@ const Docenti = () => {
     const [docente, setDocente] = useState(null);
     const [open, setOpen] = useState(false);
     const [openModal, setOpenModal] = useState(false);
+    const [toast, toaster] = useState(null);
 
+    const resetter = async () => {
+        toaster(null);
+    };
     //dialog handlers
     const handleClickOpen = () => {
         setOpen(true);
@@ -123,8 +129,16 @@ const Docenti = () => {
     };
 
     const cancellaDocente = async (id) => {
-        await axios.delete(`${baseRoute}/docenti/delete/${id}`, { data: { token: auth.token } }).then((r) => {
+        await axios.delete(`${baseRoute}/docenti/delete/${id}`, { data: { token: auth.token } })
+        .then((r) => {
             console.log(r);
+            resetter().then(() => {
+                toaster(<SuccessAlert message={r.data.message} />)
+            })
+        }).catch((err) => {
+            resetter().then(() => {
+                toaster(<ErrorAlert message={err.response.data.cause} />)
+            })
         });
         setReloader(Math.random());
     };
@@ -178,8 +192,9 @@ const Docenti = () => {
         <CircularProgress />
     ) : (
         <>
+            {toast}
             <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-                <StudenteDialogContent did={docente} closer={handleClose} />
+                <StudenteDialogContent did={docente} closer={handleClose} toaster={toaster} />
             </Dialog>
 
             <Modal //add classe modal
@@ -189,10 +204,10 @@ const Docenti = () => {
                 aria-describedby="puoi aggiungere un nuovo docente"
                 className={classes.modal}
             >
-                <AggiungiDocente updater={setReloader} />
+                <AggiungiDocente updater={setReloader} toaster={toaster}/>
             </Modal>
 
-            <CSVDropzone isopen={openCaricaCSV} opener={handleOpenCaricaCSV} closer={handleCloseCaricaCSV} reloader={setReloader} route={`${baseRoute}/docenti/createMore`} />
+            <CSVDropzone isopen={openCaricaCSV} opener={handleOpenCaricaCSV} closer={handleCloseCaricaCSV} reloader={setReloader} route={`${baseRoute}/docenti/createMore`} toaster={toaster} />
             <Container maxWidth="md" component="main" className={classes.heroContent}>
                 <Typography component="h2" variant="h4" align="center" color="textPrimary" gutterBottom>
                     Docenti
@@ -248,7 +263,7 @@ const Docenti = () => {
     );
 };
 
-const StudenteDialogContent = ({ did, closer }) => {
+const StudenteDialogContent = ({ did, closer, toaster }) => {
     const classes = useStyles();
     const auth = useAuth();
     const [docente, setDocente] = useState(null);
@@ -256,7 +271,9 @@ const StudenteDialogContent = ({ did, closer }) => {
     const [isLoading, setLoading] = useState(true);
     const [updater, setUpdater] = useState(null);
     //frequentare
-
+    const resetter = async () => {
+        toaster(null);
+    };
     const [modificaStoricoModal, setModificaStoricoModal] = useState(false);
     const handleOpenModificaStorico = () => {
         setModificaStoricoModal(true);
@@ -297,10 +314,17 @@ const StudenteDialogContent = ({ did, closer }) => {
         console.log(data);
         axios
             .put(`${baseRoute}/docenti/updateAdmin`, { token: auth.token, idDocente: did, data })
-            .then((r) => {
-                console.log(r);
+            .then((res) => {
+                resetter().then(() => {
+                    toaster(<SuccessAlert message={res.data.message} />)
+                })
             })
-            .then(() => setUpdater(Math.random()));
+            .then(() => setUpdater(Math.random()))
+            .catch((err)=>{
+                resetter().then(() => {
+                    toaster(<ErrorAlert message={err.response.data.cause} />)
+                })
+            });
     };
 
     return isLoading ? (
@@ -358,7 +382,7 @@ const StudenteDialogContent = ({ did, closer }) => {
                         />
                     </Paper>
                 </Grid>
-                <PWResetForm id={did} />
+                <PWResetForm id={did} toaster={toaster}/>
                 {/* tabella storico */}
                 <Grid item md={12} xs={12}>
                     <Typography variant="h6" className={classes.title}>
@@ -374,7 +398,7 @@ const StudenteDialogContent = ({ did, closer }) => {
                         aria-describedby="puoi aggiungere una nuova classe"
                         className={classes.modal}
                     >
-                        <ModificaStorico updater={setUpdater} did={did} />
+                        <ModificaStorico updater={setUpdater} did={did} toaster={toaster} />
                     </Modal>
                     {/* tabella con le relazioni */}
                     <TableContainer component={Paper}>
@@ -417,7 +441,7 @@ const StudenteDialogContent = ({ did, closer }) => {
     );
 };
 
-const ModificaStorico = ({ updater, did }) => {
+const ModificaStorico = ({ updater, did, toaster }) => {
     console.log(did);
     const auth = useAuth();
     const classes = useStyles();
@@ -425,6 +449,9 @@ const ModificaStorico = ({ updater, did }) => {
     const [indirizzi, setIndirizzi] = useState([]);
     const [isLoading, setLoading] = useState(true);
     const [options, setOptions] = useState(null);
+    const resetter = async () => {
+        toaster(null);
+    };
 
     const onSubmit = async ({ annoScolastico, idclasse, indirizzo, ruolo }) => {
         console.log('form submitted');
@@ -438,6 +465,16 @@ const ModificaStorico = ({ updater, did }) => {
             };
             await axios.put(`${baseRoute}/docenti/toReferenteClasse`, { token: auth.token, data: req }).then((res) => {
                 console.log('OH MY GAH', res);
+            })
+            .then((res) => {
+                resetter().then(() => {
+                    toaster(<SuccessAlert message={res.data.message} />)
+                })
+            })
+            .catch((err)=> {
+                resetter().then(() => {
+                    toaster(<ErrorAlert message={err.response.data.cause} />)
+                })
             });
         }
         if (ruolo === 2) {
@@ -446,12 +483,35 @@ const ModificaStorico = ({ updater, did }) => {
                 idDocente: did,
                 indirizzo,
             };
-            await axios.put(`${baseRoute}/docenti/toReferenteIndirizzo`, { token: auth.token, data: req }).then((res) => {
-                console.log('DOCENTE INDIRIZZO', res);
-            });
+            await axios
+                .put(`${baseRoute}/docenti/toReferenteIndirizzo`, { token: auth.token, data: req })
+                .then((res) => {
+                    console.log('DOCENTE INDIRIZZO', res);
+                })
+                .then((res) => {
+                    resetter().then(() => {
+                        toaster(<SuccessAlert message={res.data.message} />);
+                    });
+                })
+                .catch((err) => {
+                    resetter().then(() => {
+                        toaster(<ErrorAlert message={err.response.data.cause} />);
+                    });
+                });;
         }
         if (ruolo === 3) {
-            await axios.put(`${baseRoute}/docenti/toReferenteAlternanza`, { token: auth.token, idDocente: did });
+            await axios
+                .put(`${baseRoute}/docenti/toReferenteAlternanza`, { token: auth.token, idDocente: did })
+                .then((res) => {
+                    resetter().then(() => {
+                        toaster(<SuccessAlert message={res.data.message} />);
+                    });
+                })
+                .catch((err) => {
+                    resetter().then(() => {
+                        toaster(<ErrorAlert message={err.response.data.cause} />);
+                    });
+                });;
         }
 
         updater(Math.random());
@@ -496,10 +556,22 @@ const ModificaStorico = ({ updater, did }) => {
         });
     };
     const fetchIndirizzi = async () => {
-        return await axios.get(`${baseRoute}/classi/getIndirizzi`).then((res) => {
-            console.log(res.data.data, 'SADASJDASLHD');
-            setIndirizzi([...res.data.data.map(({ indirizzo }) => <MenuItem value={indirizzo}>{indirizzo}</MenuItem>)]);
-        });
+        return await axios
+            .get(`${baseRoute}/classi/getIndirizzi`)
+            .then((res) => {
+                console.log(res.data.data, 'SADASJDASLHD');
+                setIndirizzi([...res.data.data.map(({ indirizzo }) => <MenuItem value={indirizzo}>{indirizzo}</MenuItem>)]);
+            })
+            .then((res) => {
+                resetter().then(() => {
+                    toaster(<SuccessAlert message={res.data.message} />);
+                });
+            })
+            .catch((err) => {
+                resetter().then(() => {
+                    toaster(<ErrorAlert message={err.response.data.cause} />);
+                });
+            });;
     };
 
     useEffect(() => {
@@ -508,6 +580,7 @@ const ModificaStorico = ({ updater, did }) => {
             .then(() => {
                 setLoading(false);
             });
+    // eslint-disable-next-line
     }, [did, updater]);
 
     const required = (value) => (value ? undefined : 'Required');
@@ -557,9 +630,12 @@ const ModificaStorico = ({ updater, did }) => {
     );
 };
 
-const AggiungiDocente = ({ updater }) => {
+const AggiungiDocente = ({ updater, toaster }) => {
     const classes = useStyles();
     const auth = useAuth();
+    const resetter = async () => {
+        toaster(null);
+    };
 
     const onSubmit = async ({ mail, pass, name, surname, codiceF, date, annoScolastico: as, idclasse }) => {
         const req = { mail, pass, name, surname, codiceF, date, as, idclasse };
@@ -568,9 +644,19 @@ const AggiungiDocente = ({ updater }) => {
             .then((res) => {
                 console.log(res);
             })
+            .then((res) => {
+                resetter().then(() => {
+                    toaster(<SuccessAlert message={res.data.message} />);
+                });
+            })
             .then(() => {
                 updater(Math.random());
-            });
+            })
+            .catch((err) => {
+                resetter().then(() => {
+                    toaster(<ErrorAlert message={err.response.data.cause} />);
+                });
+            });;
     };
     const required = (value) => (value ? undefined : 'Required');
 
