@@ -25,6 +25,8 @@ import CloseIcon from "@material-ui/icons/Close";
 import ConfirmButton from "../confirmDeleteButton";
 import Container from '@material-ui/core/Container';
 import genYears from 'fragments/genYears';
+import { SuccessAlert } from 'components/snackbars';
+import { ErrorAlert } from 'components/snackbars';
 
 const useStyles = makeStyles((theme) => ({
     modifyButton: {
@@ -88,7 +90,12 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
     const [progetto, setProgetto] = useState(null);
     const [classiProgetto, setClassiProgetto] = useState({});
     const [docenti, setDocenti] = useState([]);
-    
+    const [toast, toaster] = useState(null);
+
+    const resetter = async () => {
+        toaster(null);
+    };
+
     const [openAggiungiClasse, setOpenAggiungiClasse] = useState(false);
     const handleOpenAggiungiClasse = () => {
         setOpenAggiungiClasse(true);
@@ -98,10 +105,18 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
     }
 
     const remove = async (id) =>{
-        await axios.delete(`${baseRoute}/progetti/stage/${id}`, {data: {token: auth.token}}).catch(err =>{
-            console.log(err);
-        })
-
+        await axios
+            .delete(`${baseRoute}/progetti/stage/${id}`, { data: { token: auth.token } })
+            .then((r) => {
+                resetter().then(() => {
+                    toaster(<SuccessAlert message={r.data.message} />);
+                });
+            })
+            .catch((err) => {
+                resetter().then(() => {
+                    toaster(<ErrorAlert message={err.response.data.cause} />);
+                });
+            });
         setReloader(Math.random());
     }
 
@@ -147,19 +162,25 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
             nome, descrizione, durata, periodo: annoScolastico, ente, start: startDate, end: endDate, link: linkValutazioni
         }
         
-        await axios.put(`${baseRoute}/progetti/modifica/${pid}`, { token: auth.token, data: req })
-            .then(res => {
-                console.log(res);
+        await axios
+            .put(`${baseRoute}/progetti/modifica/${pid}`, { token: auth.token, data: req })
+            .then((r) => {
+                resetter().then(() => {
+                    toaster(<SuccessAlert message={r.data.message} />);
+                });
             })
-            .catch(err =>{
-                console.log(err);
-            })
+            .catch((err) => {
+                resetter().then(() => {
+                    toaster(<ErrorAlert message={err.response.data.cause} />);
+                });
+            });
 
         setReloader(Math.random());
     };
 
     return (
         <>
+            {toast}
             <AppBar className={classes.appBar}>
                 <Toolbar>
                     <IconButton edge="start" color="inherit" onClick={closer} aria-label="close">
@@ -251,7 +272,7 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
                             Classi partecipanti al progetto
                         </Typography>
                         <Modal open={openAggiungiClasse} onClose={handleCloseAggiungiClasse} aria-labelledby="nuova classe" aria-describedby="puoi aggiungere una nuova classe" className={classes.modal}>
-                            <AggiungiClasse updater={setReloader} pid={pid} ceStanno={classiProgetto} />
+                            <AggiungiClasse updater={setReloader} pid={pid} ceStanno={classiProgetto} toaster={toaster}/>
                         </Modal>
                         <Button variant="contained" color="primary" className={classes.marginLeft} onClick={handleOpenAggiungiClasse}>
                             Aggiungi Classe
@@ -354,19 +375,29 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
 
 
 
-const AggiungiClasse = ({ updater, pid, ceStanno }) => {
+const AggiungiClasse = ({ updater, pid, ceStanno, toaster }) => {
     const auth = useAuth();
     const classes = useStyles();
     const [isLoading, setLoading] = useState(true);
     const [classi, setClassi] = useState([]);
-    
+    const resetter = async () => {
+        toaster(null);
+    };
 
     const onSubmit = async ({classe}) => {
         
-        await axios.put(`${baseRoute}/progetti/addClass`, { token: auth.token, data: { idclasse: classe, idprogetto: pid } }).catch((err) => {
-            console.log(err);
-
-        })
+        await axios
+            .put(`${baseRoute}/progetti/addClass`, { token: auth.token, data: { idclasse: classe, idprogetto: pid } })
+            .then((r) => {
+                resetter().then(() => {
+                    toaster(<SuccessAlert message={r.data.message} />);
+                });
+            })
+            .catch((err) => {
+                resetter().then(() => {
+                    toaster(<ErrorAlert message={err.response.data.cause} />);
+                });
+            });
 
         updater(Math.random());
     };
@@ -375,7 +406,7 @@ const AggiungiClasse = ({ updater, pid, ceStanno }) => {
 
     const required = value => (value ? undefined : 'Required')
     const fetchData = async () => {
-       return await axios.get(`${baseRoute}/classi/allconcat`)
+        return await axios.get(`${baseRoute}/classi/allconcat`)
     }
 
     useEffect(() => {

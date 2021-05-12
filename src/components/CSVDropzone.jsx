@@ -4,6 +4,8 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import { useAuth } from 'ProvideAuth';
+import { SuccessAlert } from 'components/snackbars';
+import { ErrorAlert } from 'components/snackbars';
 
 const useStyles = makeStyles((theme) => ({
     uploader: {
@@ -18,9 +20,12 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function CSVDropzone({isopen, opener, closer, reloader, route}) {
+export default function CSVDropzone({isopen, opener, closer, reloader, route, toaster}) {
     const classes = useStyles();
     const auth = useAuth();
+    const resetter = async () => {
+        toaster(null);
+    };
     const handleSubmitCaricaCSV = async (files) => {
         console.log('OLLARE I FILESSSSSSSSSSSSSSSSS');
         console.log(files[0]);
@@ -34,12 +39,16 @@ export default function CSVDropzone({isopen, opener, closer, reloader, route}) {
                     'Content-Type': 'multipart/form-data',
                 },
             })
-            .then((res) => {
-                console.log(res);
+            .then((r) => {
                 reloader(Math.random());
+                resetter().then(() => {
+                    toaster(<SuccessAlert message={r.data.message} />)
+                })
             })
-            .catch((res) => {
-                console.log(res);
+            .catch((err) => {
+                resetter().then(() => {
+                    toaster(<ErrorAlert message={err.response.data.cause} />)
+                })
             });
 
         closer();
