@@ -135,6 +135,15 @@ const SendAlertModal = ({ toaster, users, updater, progetto }) => {
                   ? "Manda un avviso al referente di classe"
                   : "Manda un avviso agli studenti mancanti"}
               </Typography>
+              {auth.user.livello == 2 ? (
+                ""
+              ) : (
+                <Typography variant="h6" color="textSecondary" component="p">
+                  Questi alunni non hanno ancora confermato le ore partecipate
+                  al progetto.
+                  <br /> Mandare un Avviso a {users.length} studenti?
+                </Typography>
+              )}
 
               <Button
                 variant="contained"
