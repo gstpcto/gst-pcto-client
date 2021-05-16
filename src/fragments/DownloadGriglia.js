@@ -94,7 +94,7 @@ export default function DownloadGriglia() {
                                             ))}
                                         </Field>
                                     </FormControl>
-                                    {auth.user.livello === 4 ? (
+                                    {auth.user.livello === 4 || auth.user.livello === 3 ? (
                                         <FormControl fullWidth variant="outlined" className={classes.formControl}>
                                             <Field fullWidth name="indirizzo" component={Select} type="text" label="Indirizzo" validate={required}>
                                                 <MenuItem value={'SA'}>Scienze Applicate</MenuItem>
