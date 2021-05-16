@@ -19,6 +19,7 @@ import GroupIcon from '@material-ui/icons/Group';
 
 // Fragments
 import DownloadDossier from 'fragments/DownloadDossier';
+import DownloadGriglia from 'fragments/DownloadGriglia';
 import DashboardLevelZero from 'fragments/DashboardLevelZero';
 import SettingsLevelZero from 'fragments/SettingsLevelZero';
 import DashboardLevelOne from 'fragments/DashboardLevelOne';
@@ -120,6 +121,20 @@ export default function MenuItems({ level, setFragment }) {
                             button
                             onClick={() => {
                                 setFragment({
+                                    titolo: 'Griglia',
+                                    component: <DownloadGriglia />,
+                                });
+                            }}
+                        >
+                            <ListItemIcon>
+                                <DescriptionIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Griglia" />
+                        </ListItem>
+                        <ListItem
+                            button
+                            onClick={() => {
+                                setFragment({
                                     titolo: 'Progetti',
                                     component: <ProjectsLevelOne />,
                                 });
@@ -177,6 +192,20 @@ export default function MenuItems({ level, setFragment }) {
                                 <GroupIcon />
                             </ListItemIcon>
                             <ListItemText primary="Classi" />
+                        </ListItem>
+                        <ListItem
+                            button
+                            onClick={() => {
+                                setFragment({
+                                    titolo: 'Griglia',
+                                    component: <DownloadGriglia />,
+                                });
+                            }}
+                        >
+                            <ListItemIcon>
+                                <DescriptionIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Griglia" />
                         </ListItem>
                         <ListItem
                             button
@@ -241,7 +270,7 @@ export default function MenuItems({ level, setFragment }) {
                             </ListItemIcon>
                             <ListItemText primary="Classi" />
                         </ListItem>
-                        
+
                         {/* studenti */}
                         <ListItem
                             button
@@ -285,6 +314,21 @@ export default function MenuItems({ level, setFragment }) {
                                 <WidgetsIcon />
                             </ListItemIcon>
                             <ListItemText primary="Progetti" />
+                        </ListItem>
+
+                        <ListItem
+                            button
+                            onClick={() => {
+                                setFragment({
+                                    titolo: 'Griglia',
+                                    component: <DownloadGriglia />,
+                                });
+                            }}
+                        >
+                            <ListItemIcon>
+                                <DescriptionIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Griglia" />
                         </ListItem>
                     </>
                 );
