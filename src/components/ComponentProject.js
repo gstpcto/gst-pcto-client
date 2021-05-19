@@ -126,7 +126,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 //TODO: add the powerful modal here
 //this is the card
-export default function ComponentProject({ nome, descrizione, id, linkValutazioni, annoScolastico }) {
+export default function ComponentProject({ nome, descrizione, id, linkValutazioni, annoScolastico, livelloUp, idClasse }) {
 
 
     console.log('progetto', id);
@@ -166,7 +166,7 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
                     }
                 });
             })
-            // eslint-disable-next-line
+        // eslint-disable-next-line
     }, [])
 
 
@@ -204,7 +204,7 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
             </Grid>
 
             <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-                {auth.user["livello"] === 4 ? <DialogProgettoLivelloQuattro pid={pid} closer={handleClose} /> : <ProjectTableDialog pid={pid} closer={handleClose} link={linkValutazioni} />}
+                {livelloUp === 4 ? <DialogProgettoLivelloQuattro pid={pid} closer={handleClose} /> : <ProjectTableDialog pid={pid} closer={handleClose} link={linkValutazioni} idClasse={idClasse} />}
             </Dialog>
         </>
     );
@@ -212,7 +212,7 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
 
 //level 2 things
 //this is the table for a single project
-const ProjectTableDialog = ({ pid, closer, link }) => {
+const ProjectTableDialog = ({ pid, closer, link, idClasse }) => {
     const classes = useStyles();
     const auth = useAuth();
     const [reloader, setReloader] = useState(null);
@@ -263,7 +263,7 @@ const ProjectTableDialog = ({ pid, closer, link }) => {
     useEffect(() => {
         const fetchData = async () => {
             return await axios
-                .get(`${baseRoute}/progetti/classiAlunni/${pid}`, { params: { token: auth.token } })
+                .get(`${baseRoute}/progetti/classiAlunni/${pid}`, { params: { token: auth.token, idclasse: idClasse } })
         }
         setOpen(false);
         setOpenEditValutation(false);

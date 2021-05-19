@@ -84,6 +84,7 @@ export default function Studenti() {
     const [reloader, setReloader] = useState(null);
     const [uid, setUid] = useState(null);
     const [filter, setFilter] = useState('');
+    const [filterClasse, setFilterClasse] = useState('');
     const [data, setData] = useState(null);
     const [isLoading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
@@ -108,10 +109,11 @@ export default function Studenti() {
         setReloader(Math.random());
     };
 
-    const onSubmit = async ({ filtro }) => {
+    const onSubmit = async ({ filtro, filtro2 }) => {
         console.log('form submitted');
         console.log(filtro);
         setFilter(filtro);
+        setFilterClasse(filtro2);
     };
 
 
@@ -158,6 +160,7 @@ export default function Studenti() {
                                     id: obj.id,
                                     email: obj.email,
                                     nome: `${obj.nome} ${obj.cognome}`,
+                                    classe: obj.classe,
                                     modifica: (
                                         <Button
                                             variant="contained"
@@ -191,7 +194,7 @@ export default function Studenti() {
         };
         fetchData();
         // eslint-disable-next-line
-    }, [reloader, filter]);
+    }, [reloader, filter, filterClasse]);
 
     return isLoading ? (
         <CircularProgress />
@@ -236,6 +239,7 @@ export default function Studenti() {
                         <form onSubmit={handleSubmit} noValidate className={classes.form} onChange={handleSubmit}>
                             <FormControl className={classes.formControl} xs={9}>
                                 <Field fullWidth name="filtro" component={TextField} type="text" label="Filtra studenti" />
+                                <Field fullWidth name="filtro2" component={TextField} type="text" label="Filtra classi" />
                             </FormControl>
                         </form>
                     )}
@@ -249,7 +253,10 @@ export default function Studenti() {
                                 ID
                             </TableCell>
                             <TableCell scope="col" component="th">
-                                classe
+                                Nome
+                            </TableCell>
+                            <TableCell scope="col" component="th">
+                                Classe
                             </TableCell>
                             <TableCell scope="col" component="th">
                                 Email
@@ -265,21 +272,16 @@ export default function Studenti() {
                     <TableBody>
                         {data
                             .filter((item) => {
-                                if (filter === undefined) return true;
-                                if (filter[0] === '#') {
-                                    const temp = filter.substring(1);
-                                    if (item.id === temp) return true;
-                                    else return false;
-                                } else {
-                                    if (filter === null || filter === '') return true;
-                                    if (item.nome.includes(filter)) return true;
-                                    else return false;
-                                }
+                                if (filter === undefined && filterClasse === undefined) return true;
+                                if ((filter === null && filterClasse === null) || (filter === '' && filter === '')) return true;
+                                if (item.nome.includes(filter) && item.classe.includes(filterClasse)) return true;
+                                else return false;
                             })
-                            .map(({ id, nome, email, modifica, cancella }) => (
+                            .map(({ id, nome, email, modifica, cancella, classe }) => (
                                 <TableRow key={id}>
                                     <TableCell scope="row">{id}</TableCell>
                                     <TableCell scope="row">{nome}</TableCell>
+                                    <TableCell scope="row">{classe}</TableCell>
                                     <TableCell scope="row">{email}</TableCell>
                                     <TableCell scope="row">{modifica}</TableCell>
                                     <TableCell scope="row">{cancella}</TableCell>

@@ -315,7 +315,20 @@ export default function MenuItems({ level, setFragment }) {
                             </ListItemIcon>
                             <ListItemText primary="Progetti" />
                         </ListItem>
-
+                        <ListItem
+                            button
+                            onClick={() => {
+                                setFragment({
+                                    titolo: 'Classi',
+                                    component: <ListaClassiLevelTwo />,
+                                });
+                            }}
+                        >
+                            <ListItemIcon>
+                                <GroupIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Classi" />
+                        </ListItem>
                         <ListItem
                             button
                             onClick={() => {

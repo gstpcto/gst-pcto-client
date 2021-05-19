@@ -92,7 +92,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function ComponentClassiLevelTwo({ classe, sezione, idClasse, indirizzo }) {
+export default function ComponentClassiLevelTwo({ classe, sezione, idClasse, indirizzo, livelloUp }) {
     const auth = useAuth();
     const classes = useStyles();
     const fixedSizeCardDetails = clsx(classes.card, classes.maxWidth);
@@ -178,13 +178,13 @@ export default function ComponentClassiLevelTwo({ classe, sezione, idClasse, ind
                 </Box>
             </Grid>
             <Dialog fullScreen open={openClasse} onClose={handleCloseClasse} TransitionComponent={Transition}>
-                <DialogProgettiClasse closer={handleCloseClasse} classe={classe} sezione={sezione} idClasse={idClasse} indirizzo={indirizzo} setColor={setErrorColor} />
+                <DialogProgettiClasse closer={handleCloseClasse} classe={classe} sezione={sezione} idClasse={idClasse} indirizzo={indirizzo} setColor={setErrorColor} livelloUp={livelloUp} />
             </Dialog>
         </>
     );
 }
 
-const DialogProgettiClasse = ({ classe, sezione, idClasse, indirizzo, closer, setColor }) => {
+const DialogProgettiClasse = ({ classe, sezione, idClasse, indirizzo, closer, setColor, livelloUp }) => {
     const classes = useStyles();
     const auth = useAuth();
 
@@ -228,7 +228,7 @@ const DialogProgettiClasse = ({ classe, sezione, idClasse, indirizzo, closer, se
                 <Grid item container xs={12} spacing={1}>
                     {progettiClasse.length !== 0 ?
                         progettiClasse.map(({ id, nome, descrizione, linkValutazioni, annoScolastico }, index) => {
-                            return <ComponentProject key={index} nome={nome} descrizione={descrizione} id={id} linkValutazioni={linkValutazioni} annoScolastico={annoScolastico} />;
+                            return <ComponentProject key={index} nome={nome} descrizione={descrizione} id={id} linkValutazioni={linkValutazioni} annoScolastico={annoScolastico} livellpUp={livelloUp} idClasse={idClasse} />;
                         }) :
                         "Nessun progetto disponibile"
                     }
