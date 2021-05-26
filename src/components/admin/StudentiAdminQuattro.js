@@ -274,7 +274,7 @@ export default function Studenti() {
                             .filter((item) => {
                                 if (filter === undefined && filterClasse === undefined) return true;
                                 if ((filter === null && filterClasse === null) || (filter === '' && filter === '')) return true;
-                                if (item.nome.includes(filter) && item.classe.includes(filterClasse)) return true;
+                                if (item.nome.includes(filter) || item.classe.includes(filterClasse)) return true;
                                 else return false;
                             })
                             .map(({ id, nome, email, modifica, cancella, classe }) => (
