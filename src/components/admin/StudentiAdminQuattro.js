@@ -272,9 +272,13 @@ export default function Studenti() {
                     <TableBody>
                         {data
                             .filter((item) => {
-                                if (filter === undefined && filterClasse === undefined) return true;
-                                if ((filter === null && filterClasse === null) || (filter === '' && filter === '')) return true;
-                                if (item.nome.includes(filter) || item.classe.includes(filterClasse)) return true;
+                                if (filter === null || filter === '' || filter === undefined) return true;
+                                if (item.nome.includes(filter)) return true;
+                                else return false;
+                            })
+                            .filter((item) => {
+                                if (filterClasse === null || filterClasse === '' || filterClasse === undefined) return true;
+                                if (item.classe.includes(filterClasse)) return true;
                                 else return false;
                             })
                             .map(({ id, nome, email, modifica, cancella, classe }) => (
