@@ -273,12 +273,12 @@ export default function Studenti() {
                         {data
                             .filter((item) => {
                                 if (filter === null || filter === '' || filter === undefined) return true;
-                                if (item.nome.includes(filter)) return true;
+                                if (item.nome.toLowerCase().includes(filter.toLowerCase())) return true;
                                 else return false;
                             })
                             .filter((item) => {
                                 if (filterClasse === null || filterClasse === '' || filterClasse === undefined) return true;
-                                if (item.classe.includes(filterClasse)) return true;
+                                if (item.classe.toLowerCase().includes(filterClasse.toLowerCase())) return true;
                                 else return false;
                             })
                             .map(({ id, nome, email, modifica, cancella, classe }) => (
