@@ -40,7 +40,7 @@ export default function ClassiWrapper() {
             {
                 data.map(({ classe, sezione, id, indirizzo }, index) => {
                     // returna ogni classe di quell'indirizzo su cui lavora
-                    return <ComponentClassiLevelTwo key={index} classe={classe} sezione={sezione} idClasse={id} indirizzo={indirizzo} livelloUp={auth.livello} />;
+                    return <ComponentClassiLevelTwo key={index} classe={classe} sezione={sezione} idClasse={id} indirizzo={indirizzo} livelloUp={2} />;
                 })
             }
         </>

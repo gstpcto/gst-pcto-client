@@ -121,7 +121,7 @@ export default function ComponentClassiLevelTwo({ classe, sezione, idClasse, ind
                 return response["data"]["data"];
             })
             .then(data => {
-                data.map(({ id }) => {
+                data.forEach(({ id }) => {
                     const fetchDataa = async () => {
                         return await axios
                             .get(`${baseRoute}/progetti/classiAlunni/${id}`, { params: { token: auth.token } })
@@ -228,7 +228,7 @@ const DialogProgettiClasse = ({ classe, sezione, idClasse, indirizzo, closer, se
                 <Grid item container xs={12} spacing={1}>
                     {progettiClasse.length !== 0 ?
                         progettiClasse.map(({ id, nome, descrizione, linkValutazioni, annoScolastico }, index) => {
-                            return <ComponentProject key={index} nome={nome} descrizione={descrizione} id={id} linkValutazioni={linkValutazioni} annoScolastico={annoScolastico} livellpUp={livelloUp} idClasse={idClasse} />;
+                            return <ComponentProject key={index} nome={nome} descrizione={descrizione} id={id} linkValutazioni={linkValutazioni} annoScolastico={annoScolastico} livelloUp={livelloUp} idClasse={idClasse} />;
                         }) :
                         "Nessun progetto disponibile"
                     }

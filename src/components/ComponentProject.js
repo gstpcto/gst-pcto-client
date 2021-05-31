@@ -127,7 +127,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 //TODO: add the powerful modal here
 //this is the card
 export default function ComponentProject({ nome, descrizione, id, linkValutazioni, annoScolastico, livelloUp, idClasse }) {
-
+    console.log("LIVELLO UP", livelloUp);
 
     console.log('progetto', id);
     const [cardColor, setColor] = useState(false); //false se mancano dei voti, true se sono tutti. 
@@ -204,7 +204,7 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
             </Grid>
 
             <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-                {livelloUp === 4 ? <DialogProgettoLivelloQuattro pid={pid} closer={handleClose} /> : <ProjectTableDialog pid={pid} closer={handleClose} link={linkValutazioni} idClasse={idClasse} />}
+                {livelloUp === undefined ? <DialogProgettoLivelloQuattro pid={pid} closer={handleClose} /> : <ProjectTableDialog pid={pid} closer={handleClose} link={linkValutazioni} idClasse={idClasse} />}
             </Dialog>
         </>
     );
