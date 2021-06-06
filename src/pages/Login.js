@@ -66,7 +66,7 @@ export default function Login(props) {
         if (auth.isAuthenticated()) {
             history.push('/dashboard');
         } else {
-            setErrorMessage('Accesso fallito (come te)');
+            setErrorMessage('Accesso fallito');
         }
     };
 
