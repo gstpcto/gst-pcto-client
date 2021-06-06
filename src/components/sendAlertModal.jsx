@@ -131,11 +131,11 @@ const SendAlertModal = ({ toaster, users, updater, progetto }) => {
                 component="h1"
                 color="initial"
               >
-                {auth.user.livello == 2
+                {auth.user.livello === 2
                   ? "Manda un avviso al referente di classe"
                   : "Manda un avviso agli studenti mancanti"}
               </Typography>
-              {auth.user.livello == 2 ? (
+              {auth.user.livello === 2 ? (
                 ""
               ) : (
                 <Typography variant="h6" color="textSecondary" component="p">
