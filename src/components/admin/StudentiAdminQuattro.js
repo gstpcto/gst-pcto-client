@@ -376,7 +376,7 @@ const NewStudente = ({ updater, toaster }) => {
 
                             <FormControl className={classes.formControl}>
                                 <Field fullWidth name="annoScolastico" component={Select} type="text" label="Anno Scolastico" validate={required} >
-                                    {genYears().map(o => <MenuItem value={o}>{o}</MenuItem>)}
+                                    {genYears().map((o, index) => <MenuItem key={index} value={o}>{o}</MenuItem>)}
                                 </Field>
                             </FormControl>
 
@@ -809,8 +809,8 @@ const AggiungiAnnoModal = ({ updater, studenteid, toaster }) => {
 
                             <FormControl className={classes.formControl}>
                                 <Field fullWidth name="annoScolastico" component={Select} type="text" label="Anno Scolastico" validate={required}>
-                                    {genYears().map((o) => (
-                                        <MenuItem value={o}>{o}</MenuItem>
+                                    {genYears().map((o, index) => (
+                                        <MenuItem key={index} value={o}>{o}</MenuItem>
                                     ))}
                                 </Field>
                             </FormControl>
