@@ -3,7 +3,6 @@ import axios from "axios";
 import { FormControl, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { baseRoute, useAuth } from "ProvideAuth";
-import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import { Form, Field } from "react-final-form";
@@ -28,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
     },
     paperContainer: {
         padding: theme.spacing(2),
+        margin: theme.spacing(2),
     },
     boxContainer: {
         width: '100%',
@@ -84,11 +84,10 @@ const PWResetForm = ({ id, toaster }) => {
   };
 
   return (
-    <Grid item md={6} xs={12}>
-      <Typography variant="h6" component="h1">
-        Password Reset
-      </Typography>
       <Paper className={classes.paperContainer}>
+        <Typography variant="h6" component="h1">
+          Password Reset
+        </Typography>
         <Form
           onSubmit={onSubmitPass}
           initialValues={{ nuovaPass: "" }}
@@ -123,7 +122,6 @@ const PWResetForm = ({ id, toaster }) => {
           )}
         />
       </Paper>
-    </Grid>
   );
 };
 

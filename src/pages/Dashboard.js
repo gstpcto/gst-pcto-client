@@ -22,9 +22,9 @@ import { useHistory } from 'react-router-dom';
 
 // Default Dashboards
 import DashboardLevelZero from '../fragments/DashboardLevelZero';
-import DashboardLevelOne from '../fragments/DashboardLevelOne';
-import DashboardLevelTwo from '../fragments/DashboardLevelTwo';
-import DashboardLevelFour from '../fragments/DashboardLevelFour';
+import TabellaLevelOne from '../fragments/TabellaLevelOne';
+import ListaClassiLevelTwo from '../fragments/ListaClassiLevelTwo';
+import ClassiAdminQuattro from '../components/admin/ClassiAdminQuattro';
 
 const drawerWidth = 240;
 
@@ -131,15 +131,28 @@ export default function Dashboard(props) {
             case 0:
                 return <DashboardLevelZero />;
             case 1:
-                return <DashboardLevelOne />;
+                return <TabellaLevelOne />;
             case 2:
-                return <DashboardLevelTwo />;
-            case 3:
-                return <>Dashboard liv3</>;
+                return <ListaClassiLevelTwo />;
             case 4:
-                return <DashboardLevelFour />;
+                return <ClassiAdminQuattro />;
             default:
                 return <>bruhhhh</>;
+        }
+    };
+
+    const defaultTitle = () => {
+        switch (auth.user['livello']) {
+            case 0:
+                return "Dashboard";
+            case 1:
+                return "Tabella Classe";
+            case 2:
+                return "Classi";
+            case 4:
+                return "Classi";
+            default:
+                return "????";
         }
     };
 
@@ -151,7 +164,7 @@ export default function Dashboard(props) {
 
     useEffect(() => {
         if (auth.user) {
-            setFragment({ titolo: 'Dashboard', component: defaultComponent() });
+            setFragment({ titolo: defaultTitle(), component: defaultComponent() });
         } else {
             setFragment({ titolo: 'Dashboard', component: <CircularProgress /> });
         }

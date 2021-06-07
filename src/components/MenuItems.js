@@ -22,14 +22,11 @@ import DownloadDossier from 'fragments/DownloadDossier';
 import DownloadGriglia from 'fragments/DownloadGriglia';
 import DashboardLevelZero from 'fragments/DashboardLevelZero';
 import SettingsLevelZero from 'fragments/SettingsLevelZero';
-import DashboardLevelOne from 'fragments/DashboardLevelOne';
 import TabellaLevelOne from 'fragments/TabellaLevelOne';
 import SettingsLevelOne from 'fragments/SettingsLevelOne';
-import DashboardLevelTwo from 'fragments/DashboardLevelTwo';
 import ListaClassiLevelTwo from 'fragments/ListaClassiLevelTwo';
 import SettingsLevelTwo from 'fragments/SettingsLevelTwo';
 import ProjectsLevelOne from 'fragments/ProjectsLevelOne';
-import DashboardLevelFour from 'fragments/DashboardLevelFour';
 import Classi from 'components/admin/ClassiAdminQuattro'
 import Studenti from 'components/admin/StudentiAdminQuattro'
 import Docenti from 'components/admin/DocentiAdminQuattro'
@@ -89,20 +86,6 @@ export default function MenuItems({ level, setFragment }) {
             case 1:
                 return (
                     <>
-                        <ListItem
-                            button
-                            onClick={() => {
-                                setFragment({
-                                    titolo: 'Dashboard',
-                                    component: <DashboardLevelOne />,
-                                });
-                            }}
-                        >
-                            <ListItemIcon>
-                                <DashboardIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Dashboard" />
-                        </ListItem>
                         <ListItem
                             button
                             onClick={() => {
@@ -169,20 +152,6 @@ export default function MenuItems({ level, setFragment }) {
                             button
                             onClick={() => {
                                 setFragment({
-                                    titolo: 'Dashboard',
-                                    component: <DashboardLevelTwo />,
-                                });
-                            }}
-                        >
-                            <ListItemIcon>
-                                <DashboardIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Dashboard" /> {/* Voti */}
-                        </ListItem>
-                        <ListItem
-                            button
-                            onClick={() => {
-                                setFragment({
                                     titolo: 'Classi',
                                     component: <ListaClassiLevelTwo />,
                                 });
@@ -224,37 +193,9 @@ export default function MenuItems({ level, setFragment }) {
                     </>
                 );
 
-            case 3:
-                return (
-                    <>
-                        <ListItem button>
-                            <ListItemIcon>
-                                <DashboardIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Dashboard" /> {/* Voti */}
-                        </ListItem>
-                    </>
-                );
-
             case 4:
                 return (
                     <>
-                        {/* dashboard */}
-                        <ListItem
-                            button
-                            onClick={() => {
-                                setFragment({
-                                    titolo: 'Dashboard',
-                                    component: <DashboardLevelFour />,
-                                });
-                            }}
-                        >
-                            <ListItemIcon>
-                                <DashboardIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Dashboard" />
-                        </ListItem>
-
                         {/* classi */}
                         <ListItem
                             button

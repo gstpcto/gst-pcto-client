@@ -79,6 +79,9 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: {
         marginBottom: theme.spacing(8),
     },
+    notHundred: {
+        width: 'auto',
+    },
 }));
 
 
@@ -198,7 +201,7 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
             {isLoading ? (
                 <CircularProgress />
             ) : (
-                <Grid container style={{ display: 'flex' }} className={classes.marginBottom}>
+                <Grid container className={classes.marginBottom}>
                     {/*progetto titolo e descrizione */}
                     <Container maxWidth="md" component="main" className={classes.heroContent}>
                         <Typography component="h2" variant="h4" align="center" color="textPrimary" gutterBottom>
@@ -211,10 +214,10 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
                     </Container>
                     {/* form di modifica */}
                     <Grid item xs={12}>
-                        <Typography variant="h6" component="h1" className={classes.margin}>
-                            Informazioni Progetto
-                        </Typography>
                         <Paper className={classes.paperContainer}>
+                            <Typography variant="h6" component="h1">
+                                Informazioni Progetto
+                            </Typography>
                             <Form
                                 onSubmit={onSubmit}
                                 initialValues={{
@@ -243,8 +246,10 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
                                         </FormControl>
                                         <FormControl className={classes.formControl}>
                                             <Field fullWidth name="annoScolastico" component={Select} type="text" label="Anno Scolastico" validate={required}>
-                                                {genYears().map((o) => (
-                                                    <MenuItem value={o}>{o}</MenuItem>
+                                                {genYears().map((o, index) => (
+                                                    <MenuItem key={index} value={o}>
+                                                        {o}
+                                                    </MenuItem>
                                                 ))}
                                             </Field>
                                         </FormControl>
@@ -268,16 +273,19 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
                     </Grid>
                     {/* aggiungere una classe */}
                     <Grid item xs={12}>
-                        <Typography variant="h6" component="h1" className={classes.margin}>
-                            Classi partecipanti al progetto
-                        </Typography>
+                        <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} className={classes.margin}>
+                            <Typography variant="h6" component="h1">
+                                Classi partecipanti al progetto
+                            </Typography>
+                            <Button variant="contained" color="primary" onClick={handleOpenAggiungiClasse}>
+                                Aggiungi Classe
+                            </Button>
+                        </Box>
+
                         <Modal open={openAggiungiClasse} onClose={handleCloseAggiungiClasse} aria-labelledby="nuova classe" aria-describedby="puoi aggiungere una nuova classe" className={classes.modal}>
-                            <AggiungiClasse updater={setReloader} pid={pid} ceStanno={classiProgetto} toaster={toaster}/>
+                            <AggiungiClasse updater={setReloader} pid={pid} ceStanno={classiProgetto} toaster={toaster} />
                         </Modal>
-                        <Button variant="contained" color="primary" className={classes.marginLeft} onClick={handleOpenAggiungiClasse}>
-                            Aggiungi Classe
-                        </Button>
-                        <TableContainer component={Paper}>
+                        <TableContainer component={Paper} className={`${classes.margin} ${classes.notHundred}`}>
                             <Table size="small">
                                 <TableHead>
                                     <TableRow>
@@ -320,13 +328,16 @@ const ProjectTableDialogQuattro = ({ pid, closer }) => {
                         </Typography>
                     </Container>
                     <Grid item xs={12}>
+                        <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} className={classes.margin}>
+
                         <Typography variant="h6" component="h1" className={classes.margin}>
                             Docenti partecipanti al progetto
                         </Typography>
                         <Button variant="contained" color="primary" className={classes.marginLeft} onClick={handleOpenAggiungiClasse}>
                             Aggiungi Classe
                         </Button>
-                        <TableContainer component={Paper}>
+                        </Box>
+                        <TableContainer component={Paper} className={`${classes.margin} ${classes.notHundred}`}>
                             <Table size="small">
                                 <TableHead>
                                     <TableRow>

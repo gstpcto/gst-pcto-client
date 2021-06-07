@@ -63,12 +63,12 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
         padding: theme.spacing(2),
     },
-    appBar: {
-        position: 'relative',
-    },
     title: {
         marginLeft: theme.spacing(2),
         flex: 1,
+    },
+    appBar: {
+        position: 'relative',
     },
     form: {
         display: 'inline-flex',
@@ -78,9 +78,6 @@ const useStyles = makeStyles((theme) => ({
     },
     margin: {
         margin: theme.spacing(2),
-    },
-    marginLeft: {
-        marginLeft: theme.spacing(2),
     },
     marginBottom: {
         marginBottom: theme.spacing(4),
@@ -330,7 +327,7 @@ const StudenteDialogContent = ({ did, closer, toaster }) => {
     return isLoading ? (
         <CircularProgress />
     ) : (
-        <Grid spacing={2}>
+        <>
             <AppBar className={classes.appBar}>
                 <Toolbar>
                     <IconButton edge="start" color="inherit" onClick={closer} aria-label="close">
@@ -346,13 +343,13 @@ const StudenteDialogContent = ({ did, closer, toaster }) => {
                     </Button>
                 </Toolbar>
             </AppBar>
-            <Grid container style={{ display: 'flex' }}>
+            <Grid container>
                 {/* modify data item */}
                 <Grid item md={6} xs={12}>
-                    <Typography variant="h6" component="h1" className={classes.marginLeft}>
-                        Informazioni utente
-                    </Typography>
                     <Paper className={classes.paperContainer}>
+                        <Typography variant="h6" component="h1">
+                            Informazioni utente
+                        </Typography>
                         <Form
                             onSubmit={onSubmit}
                             initialValues={{ nome: docente.nome, cognome: docente.cognome, email: docente.email, codiceF: docente.codiceF, dataN: docente.dataN.split('T')[0] }}
@@ -382,15 +379,21 @@ const StudenteDialogContent = ({ did, closer, toaster }) => {
                         />
                     </Paper>
                 </Grid>
-                <PWResetForm id={did} toaster={toaster}/>
+                <Grid item md={6} xs={12}>
+                    <PWResetForm id={did} toaster={toaster} />
+                </Grid>
                 {/* tabella storico */}
-                <Grid item md={12} xs={12}>
-                    <Typography variant="h6" className={classes.title}>
-                        Storico dello Docente
-                    </Typography>
-                    <Button variant="contained" color="primary" onClick={handleOpenModificaStorico} className={`${classes.marginLeft} ${classes.marginBottom}`}>
-                        Aggiungi o Modifica
-                    </Button>
+                <Grid item md={12} xs={12} className={classes.paperContainer}>
+                    <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <Typography variant="h6">
+                            Storico dello Docente
+                        </Typography>
+                        <Box>
+                            <Button variant="contained" color="primary" onClick={handleOpenModificaStorico} className={classes.marginBottom}>
+                                Aggiungi o Modifica
+                            </Button>
+                        </Box>
+                    </Box>
                     <Modal //add classe modal
                         open={modificaStoricoModal}
                         onClose={handleCloseModificaStorico}
@@ -437,7 +440,7 @@ const StudenteDialogContent = ({ did, closer, toaster }) => {
                     </TableContainer>
                 </Grid>
             </Grid>
-        </Grid>
+        </>
     );
 };
 
@@ -465,11 +468,9 @@ const ModificaStorico = ({ updater, did, toaster }) => {
             };
             await axios.put(`${baseRoute}/docenti/toReferenteClasse`, { token: auth.token, data: req }).then((res) => {
                 console.log('OH MY GAH', res);
-            })
-            .then((res) => {
                 resetter().then(() => {
-                    toaster(<SuccessAlert message={res.data.message} />)
-                })
+                    toaster(<SuccessAlert message={res.data.message} />);
+                });
             })
             .catch((err)=> {
                 resetter().then(() => {
@@ -487,8 +488,6 @@ const ModificaStorico = ({ updater, did, toaster }) => {
                 .put(`${baseRoute}/docenti/toReferenteIndirizzo`, { token: auth.token, data: req })
                 .then((res) => {
                     console.log('DOCENTE INDIRIZZO', res);
-                })
-                .then((res) => {
                     resetter().then(() => {
                         toaster(<SuccessAlert message={res.data.message} />);
                     });
@@ -561,12 +560,7 @@ const ModificaStorico = ({ updater, did, toaster }) => {
             .then((res) => {
                 console.log(res.data.data, 'SADASJDASLHD');
                 setIndirizzi([...res.data.data.map(({ indirizzo }) => <MenuItem value={indirizzo}>{indirizzo}</MenuItem>)]);
-            })
-            .then((res) => {
-                resetter().then(() => {
-                    toaster(<SuccessAlert message={res.data.message} />);
-                });
-            })
+            })  
             .catch((err) => {
                 resetter().then(() => {
                     toaster(<ErrorAlert message={err.response.data.cause} />);
@@ -598,8 +592,8 @@ const ModificaStorico = ({ updater, did, toaster }) => {
                             </Typography>
                             <FormControl className={classes.formControl}>
                                 <Field fullWidth name="annoScolastico" component={Select} type="text" label="Anno Scolastico" validate={required}>
-                                    {genYears().map((o) => (
-                                        <MenuItem value={o}>{o}</MenuItem>
+                                    {genYears().map((o, index) => (
+                                        <MenuItem key={index} value={o} >{o}</MenuItem>
                                     ))}
                                 </Field>
                             </FormControl>
@@ -643,8 +637,6 @@ const AggiungiDocente = ({ updater, toaster }) => {
             .post(`${baseRoute}/docenti/create`, { token: auth.token, data: req })
             .then((res) => {
                 console.log(res);
-            })
-            .then((res) => {
                 resetter().then(() => {
                     toaster(<SuccessAlert message={res.data.message} />);
                 });

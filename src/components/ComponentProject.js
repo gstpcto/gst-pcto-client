@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
     card: {
         display: 'flex',
         flexDirection: 'row',
-        minHeight: 200
+        minHeight: 200,
     },
     cardMedia: {
         width: 150,
@@ -90,7 +90,7 @@ const useStyles = makeStyles((theme) => ({
         display: 'inline-flex',
         flex: 1,
         justifyContent: 'space-between',
-        verticalAlign: "top",
+        verticalAlign: 'top',
         alignItems: 'space-between',
     },
     chevron: {
@@ -106,7 +106,7 @@ const useStyles = makeStyles((theme) => ({
         width: '90%',
     },
     button: {
-        margin: theme.spacing(1)
+        margin: theme.spacing(1),
     },
     modifyButton: {
         backgroundColor: green[500],
@@ -117,6 +117,9 @@ const useStyles = makeStyles((theme) => ({
             backgroundColor: green[800],
             color: 'white',
         },
+    },
+    margin: {
+        margin: theme.spacing(2),
     },
 }));
 
@@ -342,34 +345,27 @@ const ProjectTableDialog = ({ pid, closer, link, idClasse }) => {
                 </Toolbar>
             </AppBar>
             <Grid container>
-
-                <Box display="flex" justifyContent="center" flexDirection={{ xs: 'column', sm: 'row' }} style={{ marginTop: theme.spacing(1), marginLeft: theme.spacing(1) }}>
+                <Box display="flex" justifyContent="center" flexDirection={{ xs: 'column', sm: 'row' }} className={classes.margin}>
                     <Paper className={classes.paperContainer}>
-                        {link ? <a href={link} target="blank" >Link al form</a> : "link non ancora creato"}
+                        {link ? (
+                            <a href={link} target="blank">
+                                Link al form
+                            </a>
+                        ) : (
+                            'link non ancora creato'
+                        )}
                     </Paper>
-                    {sendButton ?
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            className={classes.button}
-                            startIcon={<WarningIcon />}
-                            onClick={handleOpenSendAlert}
-                        >
+                    {sendButton ? (
+                        <Button variant="contained" color="secondary" className={classes.button} startIcon={<WarningIcon />} onClick={handleOpenSendAlert}>
                             Manda Avviso
-                    </Button> :
-                        <Button
-                            variant="outlined" color="primary"
-                            className={`${classes.button}`}
-                            startIcon={<DoneAll />}
-
-                        >
+                        </Button>
+                    ) : (
+                        <Button variant="outlined" color="primary" className={`${classes.button}`} startIcon={<DoneAll />}>
                             Tutto ok
-                    </Button>
-                    }
-
-
+                        </Button>
+                    )}
                 </Box>
-                <TableContainer style={{ margin: '25px' }} component={Paper}>
+                <TableContainer component={Paper} className={classes.margin}>
                     <Table size="small">
                         <TableHead>
                             <TableRow>
@@ -415,16 +411,22 @@ const ProjectTableDialog = ({ pid, closer, link, idClasse }) => {
                                         )}
                                     </TableCell>
                                     <TableCell scope="row" align="center">
-                                        {
-                                            !oreEffettive ? <Tooltip title="Ore Mancanti">
-                                                <IconButton aria-label="warning" onClick={() => { handleOpenSendAlert(iduser) }}>
+                                        {!oreEffettive ? (
+                                            <Tooltip title="Ore Mancanti">
+                                                <IconButton
+                                                    aria-label="warning"
+                                                    onClick={() => {
+                                                        handleOpenSendAlert(iduser);
+                                                    }}
+                                                >
                                                     <WarningIcon style={{ color: red[500] }} />
                                                 </IconButton>
-
-                                            </Tooltip> : <Tooltip title="Tutto ok">
+                                            </Tooltip>
+                                        ) : (
+                                            <Tooltip title="Tutto ok">
                                                 <Done style={{ color: green[500] }} />
                                             </Tooltip>
-                                        }
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             ))}

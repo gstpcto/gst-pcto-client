@@ -50,6 +50,7 @@ const useStyles = makeStyles((theme) => ({
     },
     paperContainer: {
         padding: theme.spacing(2),
+        margin: theme.spacing(2),
     },
     heroContent: {
         padding: theme.spacing(4, 0, 6),
@@ -71,6 +72,15 @@ const useStyles = makeStyles((theme) => ({
     title: {
         marginLeft: theme.spacing(2),
         flex: 1,
+    },
+    margin: {
+        margin: theme.spacing(2),
+    },
+    marginBottom: {
+        marginBottom: theme.spacing(4),
+    },
+    notHundred: {
+        width: 'auto',
     },
 }));
 
@@ -566,7 +576,7 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader, toaster }) => {
     return isLoading ? (
         <CircularProgress />
     ) : (
-        <Grid spacing={2}>
+        <>
             <AppBar className={classes.appBar}>
                 <Toolbar>
                     <IconButton edge="start" color="inherit" onClick={closer} aria-label="close">
@@ -582,13 +592,13 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader, toaster }) => {
                     </Button>
                 </Toolbar>
             </AppBar>
-            <Grid container style={{ display: 'flex' }}>
+            <Grid container>
                 {/* update student data component */}
                 <Grid item md={6} xs={12}>
-                    <Typography variant="h6" component="h1">
-                        Informazioni utente
-                    </Typography>
                     <Paper className={classes.paperContainer}>
+                        <Typography variant="h6" component="h1">
+                            Informazioni utente
+                        </Typography>
                         <Form
                             onSubmit={onSubmit}
                             initialValues={{ nome: studente.nome, cognome: studente.cognome, email: studente.email, codiceF: studente.codiceF, dataN: studente.dataN.split('T')[0] }}
@@ -619,15 +629,18 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader, toaster }) => {
                     </Paper>
                 </Grid>
                 {/* password admin reset component */}
-                <PWResetForm id={uid} toaster={toaster} />
+                <Grid item md={6} xs={12}>
+                    <PWResetForm id={uid} toaster={toaster} />
+                </Grid>
                 {/**storico delle classi frequentate */}
                 <Grid item md={12} xs={12}>
-                    <Typography variant="h6" className={classes.title}>
-                        Storico dello Studente
-                    </Typography>
-                    <Button variant="contained" color="primary" onClick={handleOpenAggiungiModal}>
-                        Aggiungi Anno
-                    </Button>
+                    <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <Typography variant="h6">Storico dello Studente</Typography>
+                        <Button variant="contained" color="primary" onClick={handleOpenAggiungiModal}>
+                            Aggiungi Anno
+                        </Button>
+                    </Box>
+
                     <Modal //add classe modal
                         open={openAggiungiAnnoModal}
                         onClose={handleCloseAggiungiModal}
@@ -638,7 +651,7 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader, toaster }) => {
                         <AggiungiAnnoModal updater={updater} studenteid={studente.id} toaster={toaster} />
                     </Modal>
                     {/* tabella con le relazioni */}
-                    <TableContainer component={Paper}>
+                    <TableContainer component={Paper} className={`${classes.margin} ${classes.notHundred}`}>
                         <Table size="small">
                             <TableHead>
                                 <TableRow>
@@ -676,15 +689,12 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader, toaster }) => {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                </Grid>
-                {/* voti dello studente */}
-                <Grid item md={12} xs={12}>
-                    <Typography variant="h6" className={classes.title}>
-                        Voti dello studente
-                    </Typography>
-                    <Button variant="contained" color="primary" onClick={handleOpenAggiungiVoto}>
-                        Aggiungi Voto
-                    </Button>
+                    <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} className={classes.marginBottom}>
+                        <Typography variant="h6">Voti dello studente</Typography>
+                        <Button variant="contained" color="primary" onClick={handleOpenAggiungiVoto}>
+                            Aggiungi Voto
+                        </Button>
+                    </Box>
 
                     <Modal //modifica un voto
                         open={openModificaVoto}
@@ -700,7 +710,7 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader, toaster }) => {
                         <AggiungiVoto updater={updater} uid={uid} toaster={toaster} />
                     </Modal>
 
-                    <TableContainer component={Paper}>
+                    <TableContainer component={Paper} className={`${classes.margin} ${classes.notHundred}`}>
                         <Table size="small">
                             <TableHead>
                                 <TableRow>
@@ -740,7 +750,7 @@ const StudenteDialogContent = ({ uid, updater, closer, reloader, toaster }) => {
                     </TableContainer>
                 </Grid>
             </Grid>
-        </Grid>
+        </>
     );
 };
 
