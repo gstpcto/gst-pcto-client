@@ -36,7 +36,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import WarningIcon from '@material-ui/icons/Warning';
 import Done from '@material-ui/icons/Done';
 import SendAlertModal from 'components/sendAlertModal'
-import { theme } from 'theme';
 import { DoneAll } from '@material-ui/icons';
 const useStyles = makeStyles((theme) => ({
     bgRed: {
