@@ -274,7 +274,7 @@ const ProjectTableDialog = ({ pid, closer, link, idClasse }) => {
         fetchData()
             .then((res) => {
                 console.log('OMG', res.data.progetti);
-                if (res.data.progetti === []) return;
+                if (res.data.progetti.length === 0) return;
                 else {
                     setDatiProgetto(res.data['progetti'].infoProgetto);
                     setAlunniProgetto(res.data['progetti']['alunni']);
