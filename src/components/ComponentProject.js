@@ -206,7 +206,7 @@ export default function ComponentProject({ nome, descrizione, id, linkValutazion
             </Grid>
 
             <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-                {livelloUp === undefined ? <DialogProgettoLivelloQuattro pid={pid} closer={handleClose} /> : <ProjectTableDialog pid={pid} closer={handleClose} link={linkValutazioni} idClasse={idClasse} />}
+                {livelloUp === undefined && auth.user.livello === 4 ? <DialogProgettoLivelloQuattro pid={pid} closer={handleClose} /> : <ProjectTableDialog pid={pid} closer={handleClose} link={linkValutazioni} idClasse={idClasse} />}
             </Dialog>
         </>
     );

@@ -146,7 +146,7 @@ export default function TabellaVotiDocenteClasse() {
                                 <TableCell scope="row">{`${user.nome} ${user.cognome}`}</TableCell>
                                 {progetti.map(({ infoProgetto, voto }, indice) => (
                                     <TableCell key={indice} scope="row">
-                                        {voto.voto ? (
+                                        {voto?.voto ? (
                                             <Button
                                                 variant="contained"
                                                 disableElevation
